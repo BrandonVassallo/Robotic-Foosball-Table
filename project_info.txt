@@ -1,5 +1,12 @@
 OpenCV Python Virtual Enviroment Name:
     ".opencv"
+Runninng the Virtual Enviroment:
+    .opencv\Scripts\Activate.ps1
+Remember to specify the Python Interpreter
+    Ctrl+Shift+P
+    "Python: Select Interpreter"
+    Select the Interpreter with (.opencv)
+
 
 Steps to setting up and enviroment:
     https://chatgpt.com/c/697cf88d-4668-8332-8f9e-390e47d4cf9d
