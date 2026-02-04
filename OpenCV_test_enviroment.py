@@ -210,11 +210,82 @@ def annotation():
     cv2.destroyAllWindows()
     cv2.waitKey(1000)
 
+def masking():
+    imag = cv2.imread("Yellow_Fish.jpg") 
+
+    if imag.all() == None:
+        print("no image exists from this name")
+        return
+
+    cv2.imshow("TITLE: What do you call a fish with no eye?", imag)
+    cv2.waitKey(0)      # Wait until any keyboard input to move onto the next line
+    cv2.destroyAllWindows()
+    cv2.waitKey(1000)
+
+
+    ############################
+    # Adjusting the brightness
+    ############################
+
+    # Create a matrix the exact size of the image with each pixel as a constant of 100
+    #   Remember: Grayscale constants go from 0 (white) to 255 (black) per pixel
+    gray_scale_const_matrix = numpy.ones(imag.shape, dtype="uint8") * 150
+
+    darker_img = cv2.add(imag, gray_scale_const_matrix)
+    lighter_img = cv2.subtract(imag, gray_scale_const_matrix)
+
+    cv2.imshow("TITLE: An overused joke that you're definitelty too old to laugh at", darker_img)
+    cv2.waitKey(0)      # Wait until any keyboard input to move onto the next line
+    cv2.destroyAllWindows()
+    cv2.waitKey(1000)
+
+    cv2.imshow("TITLE: A FSHHHHHHHHHHHHH !!!", lighter_img)
+    cv2.waitKey(0)      # Wait until any keyboard input to move onto the next line
+    cv2.destroyAllWindows()
+    cv2.waitKey(1000)
+
+    ###########################
+    # Adjusting the contrast
+    ###########################
+
+    low_contrast_matrix = numpy.ones(imag.shape) * 0.8
+    high_contrast_matrix = numpy.ones(imag.shape) * 1.2
+
+    low_cont_img = numpy.uint8(cv2.multiply(numpy.float64(imag), low_contrast_matrix))
+    high_cont_img = numpy.uint8(cv2.multiply(numpy.float64(imag), high_contrast_matrix))
+
+    cv2.imshow("TITLE: Something you can't find in the dictionary", low_cont_img)
+    cv2.waitKey(0)      # Wait until any keyboard input to move onto the next line
+    cv2.destroyAllWindows()
+    cv2.waitKey(1000)
+
+    cv2.imshow("TITLE: Laughter", high_cont_img)
+    cv2.waitKey(0)      # Wait until any keyboard input to move onto the next line
+    cv2.destroyAllWindows()
+    cv2.waitKey(1000)
+
+    """
+    The above image will have some sharp colors that are a result of some pixels going over 255, the bounds of openCV.
+    The below command fixes that using numpy.clip() to keep the pixel values between 0 and 255
+    """
+
+    fixed_high_cont_img = numpy.uint8(
+        numpy.clip(
+            cv2.multiply(numpy.float64(imag), high_contrast_matrix), 
+            0,      # Keep the included matrix values above 0
+            255))   # Keep the included matrix values below 255
+
+    cv2.imshow("TITLE: Laughter, but better", fixed_high_cont_img)
+    cv2.waitKey(0)      # Wait until any keyboard input to move onto the next line
+    cv2.destroyAllWindows()
+    cv2.waitKey(1000)
+
 def main():
     #reading_img()
     #crop_resize_image(1) # Select = 0 is ONLY Cropping, Select = 1 is ONLY resizing, Select = 2 is both
     #flipping()
-    annotation()
+    #annotation()
+    masking()
     pass
 
 main()
