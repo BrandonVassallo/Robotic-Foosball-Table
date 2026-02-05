@@ -1,0 +1,36 @@
+OpenCV Python Virtual Enviroment Name:
+    ".opencv"
+Runninng the Virtual Enviroment:
+    .opencv\Scripts\Activate.ps1
+Remember to specify the Python Interpreter
+    Ctrl+Shift+P
+    "Python: Select Interpreter"
+    Select the Interpreter with (.opencv)
+
+Current Libraries to Install:
+    numpy
+    opencv-python
+    matplotlib
+    IPython
+
+Steps to setting up and enviroment:
+    https://chatgpt.com/c/697cf88d-4668-8332-8f9e-390e47d4cf9d
+
+    1) Make sure python is installed:
+            python --version
+
+    2) Create the virtual enviroment with the virtual enviroment name, opencv:
+            python -m venv opencv
+
+    3) Activate the enviroment using cmd:
+            .opencv\Scripts\activate
+
+    4) Install the libraries you need from above:
+            pip install <lib1> <lib2> <...>
+
+    5) Tell VSCode to use the Virtual Interpreter
+            Ctrl + Shift + P
+            "Python: Select Interpreter"
+            Choose the one labeled (.opencv)
+
+
