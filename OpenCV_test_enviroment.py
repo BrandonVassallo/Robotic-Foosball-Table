@@ -303,7 +303,7 @@ def video_tracking_builtin():
         print("ERROR: frame not found")
         return
     
-    frame = cv2.resize(frame, (640, 480))
+    frame = cv2.resize(frame, (1280, 720))
     
     bbox = cv2.selectROI("Select Object", frame, False)
 
@@ -324,6 +324,8 @@ def video_tracking_builtin():
             print("ERROR: frame not found")
             return
         
+        frame = cv2.resize(frame, (1280, 720))
+
         # Use the tracker
         success, bbox = tracker.update(frame)
         if not success:
@@ -381,7 +383,8 @@ def main():
     #reading_img()
     #crop_resize_image(1) # Select = 0 is ONLY Cropping, Select = 1 is ONLY resizing, Select = 2 is both
     #flipping()
-    annotation()
+    #annotation()
+    video_tracking_builtin()
     pass
 
 main()
