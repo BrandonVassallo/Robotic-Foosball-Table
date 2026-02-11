@@ -9,7 +9,7 @@ Remember to specify the Python Interpreter
 
 Current Libraries to Install:
     numpy
-    opencv-python
+    opencv-contrib-python
     matplotlib
     IPython
 

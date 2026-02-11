@@ -210,11 +210,12 @@ def annotation():
     cv2.destroyAllWindows()
     cv2.waitKey(1000)
 
-def video_tracking():
+def video_tracking_builtin():
     
     # Opens the DEFAULT webcame with the parameter 0
     vid = cv2.VideoCapture(0)
 
+    # Check if the webcam is detected
     if not vid.isOpened():
         print("No webcam found")
         return
@@ -223,143 +224,64 @@ def video_tracking():
         v_width = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))
         v_height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-    # Define the bounding box
-    bbox = (300, 400, 200, 100)
-
-    # Define your tracking types for ease of use
-
-    tracker_types = [
-    "BOOSTING",
-    "MIL",
-    "KCF",
-    "CSRT",
-    "TLD",
-    "MEDIANFLOW",
-    "GOTURN",
-    "MOSSE",
-]
-
-    # Change the index to change the tracker type
-    tracker_type = tracker_types[3]
-
-    if tracker_type == 'BOOSTING':
-        tracker = cv2.legacy.TrackerBoosting_create()
-    elif tracker_type == 'MIL':
-        tracker = cv2.TrackerMIL_create()
-    elif tracker_type == 'KCF':
-        tracker = cv2.TrackerKCF_create()
-    elif tracker_type == 'TLD':
-        tracker = cv2.legacy.TrackerTLD_create()
-    elif tracker_type == 'MEDIANFLOW':
-        tracker = cv2.legacy.TrackerMedianFlow_create()
-    elif tracker_type == 'GOTURN':
-        tracker = cv2.TrackerGOTURN_create()
-    elif tracker_type == "CSRT":
-        tracker = cv2.TrackerCSRT_create()
-    elif tracker_type == "MOSSE":
-        tracker = cv2.legacy.TrackerMOSSE_create()
-    else:
-        tracker = None
-
-    # read frame
-    frame = vid.read()
-
     # Initalize tracker
-    ok = tracker.__init__(frame, bbox)
+    tracker = cv2.legacy.TrackerMOSSE.create()
+
+    ok, frame = vid.read()
+
+    if not ok:
+        print("ERROR: frame not found")
+        return
+    
+    frame = cv2.resize(frame, (640, 480))
+    
+    bbox = cv2.selectROI("Select Object", frame, False)
+
+    tracker.init(frame, bbox)
+
+    prev = 0
+    count = 0
+    fps = 0
     
     while True:
+
+        curr = time.time()
+
+        # Read the current frame
         ok, frame = vid.read()
 
         if not ok:
-            break
-
-        # Start timer
-        timer = cv2.getTickCount()
-
-        # Update tracker
-        ok, bbox = tracker.update(frame)
-
-        # Calculate Frames per second (FPS)
-        fps = cv2.getTickFrequency() / (cv2.getTickCount() - timer)
-
-        # Draw bounding box
-        if ok:
-            drawRectangle(frame, bbox)
+            print("ERROR: frame not found")
+            return
+        
+        # Use the tracker
+        success, bbox = tracker.update(frame)
+        if not success:
+            cv2.putText(frame, "LOST", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)
         else:
-            drawText(frame, "Tracking failure detected", (80, 140), (0, 0, 255))
+            x, y, w, h = [int(v) for v in bbox]
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2)
+            cv2.putText(frame, "Tracking", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)
+        
+        # Calculate frames every 0.25 seconds
+        if count == 25:
+            fps = 1 / (curr - prev)
+            count = 0
+        else:
+            count += 1
+        prev = curr
 
-        # Display Info
-        drawText(frame, tracker_type + " Tracker", (80, 60))
-        drawText(frame, "FPS : " + str(int(fps)), (80, 100))
-
-        cv2.imshow('Webcam', frame)
-
-
-
-    """
-    Below is my half witted attempt at an fps counter for the video
-    
-    """
-
-    # fps = 0.0
-    # fps_diff = 0
-    # spf_strt = 0.0
-    # spf_end = 0.0
-    # count = 0
-    # fps_scale = 20
-
-    # Gives a live feed of the camera capture
-
-    # while True:
-    #     ok, frame = vid.read()
+        cv2.putText(frame, f"FPS: {int(fps)}", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)
 
         
+        cv2.imshow("Webcam", frame)
 
-        # text = str(fps)
-        # bottom_left_pos = (20, 20) 
-        # font = cv2.FONT_HERSHEY_PLAIN
-        # scale = 1
-        # color = (0, 200, 100) # Around Green
-
-        # # Display Frames Per Second
-        # frame = cv2.putText(frame, text, bottom_left_pos, font, scale, color, thickness=2, lineType=cv2.LINE_AA)
-
-        # # Display the starting time of frame
-        # bottom_left_pos = (20, 50) 
-        # frame = cv2.putText(frame, str(spf_strt), bottom_left_pos, font, scale, color, thickness=2, lineType=cv2.LINE_AA)
         
-        # # Display the ending amount of frame
-        # bottom_left_pos = (20, 60) 
-        # frame = cv2.putText(frame, str(spf_end), bottom_left_pos, font, scale, color, thickness=2, lineType=cv2.LINE_AA)        
-
-        # if not ok:
-        #     print("No Frame")
-        #     break
-
-
-        # # Calculating the actual FPS of the system
-
-        # if count == 0:
-        #     spf_strt = round(time.time_ns()/1_000_000)
-        #     count += 1
-        # elif count == fps_scale:
-        #     spf_end = round(time.time_ns()/1_000_000)
-        #     if spf_end-spf_strt != 0:
-        #         fps_diff = (abs(spf_end-spf_strt)*10^-3)^-1
-        #         fps = fps_diff*fps_scale
-        #     else:
-        #         fps = "TOO BIG"
-        #     count = 0
-        # else:
-        #     count += 1
-        
-        # cv2.imshow('Webcam', frame)
         
         
 
-
-        # if cv2.waitKey(1) and 0xFF == ord("q"):
-        #     break
+        if cv2.waitKey(1) & 0xFF == 27:  # ESC key
+            break
 
     vid.release()
     cv2.destroyAllWindows()
@@ -390,7 +312,7 @@ def main():
     #crop_resize_image(1) # Select = 0 is ONLY Cropping, Select = 1 is ONLY resizing, Select = 2 is both
     #flipping()
     #annotation()
-    video_tracking()
+    video_tracking_builtin()
     pass
 
 main()
