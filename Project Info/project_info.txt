@@ -20,7 +20,7 @@ Steps to setting up and enviroment:
             python --version
 
     2) Create the virtual enviroment with the virtual enviroment name, opencv:
-            python -m venv opencv
+            python -m venv .opencv
 
     3) Activate the enviroment using cmd:
             .opencv\Scripts\activate
