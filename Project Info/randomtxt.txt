@@ -1,8 +1,0 @@
-garbo
-
-try using a bitwise and function to compare the b g and
-r numpy arrays and record any points tha have above a certain threshold
-for all three arrays to identify white
-
-record any white points, and find the largest and smallest values for
-each point to find your bounds
