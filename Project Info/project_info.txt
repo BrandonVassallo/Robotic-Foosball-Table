@@ -23,7 +23,8 @@ Steps to setting up and enviroment:
             python -m venv .opencv
 
     3) Activate the enviroment using cmd:
-            .opencv\Scripts\activate
+            (Widnows)   .opencv\Scripts\activate
+            (linux)     source venv/bin/activate
 
     4) Install the libraries you need from above:
             pip install <lib1> <lib2> <...>
