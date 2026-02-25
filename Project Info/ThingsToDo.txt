@@ -1,0 +1,31 @@
+1) Adapt ComputerVision.py to use with main.py
+    a) Remove the while loop in ComputerVision.py's video_tracking_builtin
+    b) Add code in main.py to kill ComputerVision.py if a goal is scored
+        i) Reset Players positions
+        ii) Wait for the player to acknowledge they are ready
+        iii) Prompt the player to reset the ball
+
+2) Use percentage measurements to help track the players positions
+    a) Use this position to move the servos
+    b) Send the servo movement data to arduino
+        i) Set up USB communication to the arduino
+    
+3) Create code to capture the field
+    a) looks for the specific corner colors provided by the corner ramps
+    using the same program used to find the ROI
+    b) returns the total size of the field
+        i) This will be used to calculate the percentage values of where
+        each player is and where the ball is rather than using pure pixel positioning
+    c) can be reset via the player for recalibration
+        i) Or after each score?
+
+SLIDE IDEAS:
+- Include a picture of the field with ramps
+- Explain OpenCV
+- Include a video of the tracker UI
+- Code stages
+    1) Finding the field
+    2) Finding/Tracking the object
+    3) Resetting the tracker
+    4) Scoring
+    5) Recalibration

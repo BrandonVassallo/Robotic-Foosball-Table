@@ -583,7 +583,7 @@ def main():
     #crop_resize_image(1) # Select = 0 is ONLY Cropping, Select = 1 is ONLY resizing, Select = 2 is both
     #flipping()
     #annotation()
-    video_tracking_builtin()
+    #video_tracking_builtin()
     #findingROI()
     pass
 

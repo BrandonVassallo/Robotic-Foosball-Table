@@ -2,7 +2,12 @@ import cv2
 import numpy
 import time
 
-def video_tracking_builtin():
+def video_tracking_builtin(INTERRUPT):
+    '''
+    docstring for video_tracking_builtin
+
+    INTERUPT: A boolean to stop the tracking if necessary
+    '''
     
     # ADJUSTABLE PARAMETERS
     buffer = 5  # The ammount of additional pixels to add to the ROI to ensure the object is in frame of the tracker
@@ -32,6 +37,9 @@ def video_tracking_builtin():
     if not ok:
         print("ERROR: frame not found")
         return
+    
+    current_center_of_object = None
+    past_center_of_object = None
     
     ################################
     # STARTING ROI
@@ -86,7 +94,7 @@ def video_tracking_builtin():
             (see the "if not success --> else" branch)
     '''
        
-    while True:
+    while not INTERRUPT:
 
         curr = time.time()  
 
@@ -116,10 +124,13 @@ def video_tracking_builtin():
 
         else:                                       # If the object is FOUND
             x, y, w, h = [int(v) for v in bbox]     # Create a rectangle around it
+            current_center_of_object = (x+(w/2), y+(h/2))
+            past_center_of_object = current_center_of_object
+
+            frame, move_vector = movementVector(frame, current_center_of_object, past_center_of_object)
 
             """ 
             USE THESE "x" and "y" VALUES TO FIND CURRENT POSITION
-                Also incorperate a previous position to help calculate velo
             """
 
             cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2)      # Slap the rectangle on the screen
@@ -248,6 +259,7 @@ This function focuses on isolating the colors inside each provided blue, green a
 numpy arrays to find the target color for a specific pixel. The pixels returned will 
 represent the top and bottom of the object
 '''
+##### UNTESTED #####
 def BoundDetect(b, g, r, colr, sensitivity, x_size, y_size):
     '''
     Docstring for BoundDetect
@@ -343,6 +355,41 @@ def BoundDetect(b, g, r, colr, sensitivity, x_size, y_size):
 
     return top_of_object, bottom_of_object
 
+
+"""
+This function finds the movement vector of the object and adds a line in the UI
+"""
+def movementVector(frame, object_center_curr, object_center_prev):
+    '''
+    docstring for movementVector
+
+    frame: the current frame from the webcam
+    object_center_curr: the current center of the tracked object
+    object_center_prev: the previous center of the tracked object
+    '''
+
+    ##################################################################
+    # CHANGE THIS VALUE TO ADJUST THE SIZE OF THE VECTOR IN THE FRAME
+    vector_scale = 1
+    ##################################################################
+
+    # If either of these points do not exist yet, ignore everything
+    if object_center_curr == None or object_center_prev == None:
+        return None
+    
+    # Use the change in the two points to find the total movement over one frame
+    x_change = object_center_curr[0] - object_center_prev[0]
+    y_change = object_center_curr[1] - object_center_prev[1]
+    move_vector = (x_change, y_change)
+
+    # Create the points used for the vector lines
+    x_vector = (object_center_curr[0] + x_change)*vector_scale
+    y_vector = (object_center_curr[1] + y_change)*vector_scale
+    
+    # Draw the vector line on the current frame
+    frame = cv2.line(frame, object_center_curr, (x_vector, y_vector), (0,0,255), 3)
+
+    return frame, move_vector 
 
 
 def main():
