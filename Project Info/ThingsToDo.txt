@@ -19,6 +19,9 @@
     c) can be reset via the player for recalibration
         i) Or after each score?
 
+4) Implement the laser goal system
+    a) Should reset ComputerVision and prompt the player to reset the ball
+
 SLIDE IDEAS:
 - Include a picture of the field with ramps
 - Explain OpenCV
