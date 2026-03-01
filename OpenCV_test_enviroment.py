@@ -468,7 +468,7 @@ def findingROI(frame, x_size, y_size):
     
     for y_arr in frame_red:                     # This will iterate through the y arrays first
         for x_arr in y_arr:                     # Then iterate through each y level to find the x coordinate of the top of the ball
-            if frame_red[y_pos][x_pos] > 100:   # If the selected coordinate is within the correct range of color,
+            if frame_red[y_pos][x_pos] < 40:   # If the selected coordinate is within the correct range of color,
                 top_of_ball = (x_pos, y_pos)    # record the point
                 found = True                    # say you found something
                 break                           # Stop iterating
@@ -484,7 +484,7 @@ def findingROI(frame, x_size, y_size):
     found = False
 
     for y in range(top_of_ball[1], y_size, 1):         # Iterate Straight down to try and find the last point that conforms to the correct color
-        if frame_red[y][top_of_ball[0]] < 100:      # the x value (top_of_ball[0]) will stay the same to go straight down
+        if frame_red[y][top_of_ball[0]] > 40:      # the x value (top_of_ball[0]) will stay the same to go straight down
             bottom_of_ball = (top_of_ball[0], y)    # If the current coordinate is not the color of the ball, record it as the bottom of the ball
             found = True                            # say you found the end
             break                                   # Stop iterating
@@ -527,10 +527,10 @@ def findingROI(frame, x_size, y_size):
 
 
     """ Debugging """
-    #cv2.imshow("ROI", frame_red)
-    #cv2.waitKey()
-    #cv2.waitKey(1000)
-    #cv2.destroyAllWindows()
+    cv2.imshow("ROI", frame_red)
+    cv2.waitKey()
+    cv2.waitKey(1000)
+    cv2.destroyAllWindows()
 
     #print(f"WIDTH: {box_width}\n")
     #print(f"HEIGHT: {box_height}\n")
@@ -548,8 +548,8 @@ def findingROI(frame, x_size, y_size):
     
     # The Box Width/Height for the red testing ball should be around 90/90 (an Area of 8100)
     # Anything significantly smaller or larger than that should be considered an error and prompt another initalization
-    if box_width * box_height < 6000 or box_width * box_height > 15000:
-        return "Nothing Found"
+    # if box_width * box_height < 6000 or box_width * box_height > 15000:
+    #     return "Nothing Found"
     
     return (pt1[0], pt1[1], box_width, box_height)
 
@@ -583,7 +583,7 @@ def main():
     #crop_resize_image(1) # Select = 0 is ONLY Cropping, Select = 1 is ONLY resizing, Select = 2 is both
     #flipping()
     #annotation()
-    #video_tracking_builtin()
+    video_tracking_builtin()
     #findingROI()
     pass
 

@@ -1,3 +1,4 @@
+import sys
 import cv2
 import numpy
 import time
@@ -11,6 +12,15 @@ def video_tracking_builtin(INTERRUPT):
     
     # ADJUSTABLE PARAMETERS
     buffer = 5  # The ammount of additional pixels to add to the ROI to ensure the object is in frame of the tracker
+
+    '''
+    CUSTOMIZE YOUR RENDER SIZE:
+        Default is: (640, 360)
+    '''
+
+    x_size = 640
+    y_size = 360
+
 
     ################################
     # INITALIZATION
@@ -29,15 +39,34 @@ def video_tracking_builtin(INTERRUPT):
         return
     else:
         print("Openning webcam...")
-        v_width = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))    # Get the capture width and height
-        v_height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        
+    # Request MJPG (for high FPS)
+    vid.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
 
-    ok, frame = vid.read()              # Read the first frame to make sure the camera is working
+    # Request 1080p
+    vid.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+    vid.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
-    if not ok:
-        print("ERROR: frame not found")
-        return
-    
+    # Request 60 FPS
+    vid.set(cv2.CAP_PROP_FPS, 60)
+
+    # Critical stability settings
+    vid.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)
+    vid.set(cv2.CAP_PROP_EXPOSURE, -6)
+    vid.set(cv2.CAP_PROP_AUTO_WB, 0)
+    vid.set(cv2.CAP_PROP_WB_TEMPERATURE, 4500)
+
+    v_width = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))    # Get the capture width and height
+    v_height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+
+    print("Width :", v_width)
+    print("Height:", v_height)
+    print("FPS   :", vid.get(cv2.CAP_PROP_FPS))
+
+
+    frame = pull_frame(vid, x_size, y_size, v_width, v_height)
+
     current_center_of_object = None
     past_center_of_object = None
     
@@ -53,7 +82,7 @@ def video_tracking_builtin(INTERRUPT):
     #bbox = cv2.selectROI("Select Object", frame, False)
 
     # THIS will do it automatically (Comment the below line when debugging)
-    bbox = findingROI(frame, v_width, v_height)
+    bbox = findingROI(frame, x_size, y_size, buffer)
 
     #-------------------------------------------------------#
     #return     # Uncomment if you need to debug findingROI()
@@ -62,11 +91,9 @@ def video_tracking_builtin(INTERRUPT):
     while bbox == "Nothing Found":                  # While the findingROI function cannot detect the ball
         cv2.putText(frame, "LOST", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)    # Show LOST
         cv2.imshow("Webcam", frame)                 # We'd still like to show the frame
-        ok, frame = vid.read()                      # Try to read the next frame
-        if not ok:                                  # If there is no next frame, throw an error
-            print("ERROR: frame not found")
-            return  
-        bbox = findingROI(frame, v_width, v_height)     # Try findingROI() again
+        cv2.waitKey(1)
+        
+        frame = pull_frame(vid, x_size, y_size, v_width, v_height)
         
 
     ################################
@@ -94,29 +121,15 @@ def video_tracking_builtin(INTERRUPT):
             (see the "if not success --> else" branch)
     '''
        
-    while not INTERRUPT:
+    while True:
 
         curr = time.time()  
 
-        ok, frame = vid.read()      # Read the current frame
-
-        if not ok:                  # If there is no frame, throw an error
-            print("ERROR: frame not found")
-            return
-        
-        '''
-        CUSTOMIZE YOUR RENDER SIZE:
-            Default is: (640, 480)
-        '''
-
-        x_size = 640
-        y_size = 480
-
-        frame = cv2.resize(frame, (x_size, y_size))   # Resize the frame to a specified value
+        frame = pull_frame(vid, x_size, y_size, v_width, v_height)
 
         success, bbox = tracker.update(frame)       # Update the tracker every frame
         if not success:                             # If the object is LOST
-            cv2.putText(frame, "LOST", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)    # Show lost
+            cv2.putText(frame, "LOST", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)    # Show lost
             bbox = findingROI(frame, x_size, y_size, buffer)                # Try to reinitalize the bbox
             if bbox != "Nothing Found":                             # If it doesn't work, keep trying
                 tracker = cv2.legacy.TrackerCSRT.create()
@@ -127,7 +140,7 @@ def video_tracking_builtin(INTERRUPT):
             current_center_of_object = (x+(w/2), y+(h/2))
             past_center_of_object = current_center_of_object
 
-            frame, move_vector = movementVector(frame, current_center_of_object, past_center_of_object)
+            # frame, move_vector = movementVector(frame, current_center_of_object, past_center_of_object)
 
             """ 
             USE THESE "x" and "y" VALUES TO FIND CURRENT POSITION
@@ -141,7 +154,7 @@ def video_tracking_builtin(INTERRUPT):
             fps = 1 / (curr - prev)
             
         if count == 3000:   # Reset the tracker every 3 seconds for accuracy
-            bbox = findingROI(frame, x_size, y_size)    # Reinitalize the tracker for accuracy
+            bbox = findingROI(frame, x_size, y_size, buffer)    # Reinitalize the tracker for accuracy
             tracker = cv2.legacy.TrackerCSRT.create()
             tracker.init(frame, bbox)
             count = 0       # Reset the timer
@@ -154,6 +167,7 @@ def video_tracking_builtin(INTERRUPT):
 
         # Show the current frame
         cv2.imshow("Webcam", frame)
+        cv2.waitKey(1)
         
         # If the user presses the ESC key, kill the program
         if cv2.waitKey(1) & 0xFF == 27:  # ESC key
@@ -161,6 +175,7 @@ def video_tracking_builtin(INTERRUPT):
 
     vid.release()
     cv2.destroyAllWindows()
+    sys.exit()
     pass
 
 '''
@@ -179,11 +194,11 @@ def findingROI(frame, x_size, y_size, buffer):
     '''
 
     # ADJUSTABLE PARAMETERS
-    tgt_color = (255, 255, 255) # The objects target color (Blue, Green, Red)
-    sensitivity = 10            # ammount of color units of buffer between each tgt color
+    tgt_color = (30, 30, 30) # The objects target color (Blue, Green, Red)
+    sensitivity = 30            # ammount of color units of buffer between each tgt color
 
-    area_low_bound = 6000       # The lower bounds of the objects area for error checking
-    area_high_bound = 15000     # The upper bounds of the objects area for error checking
+    area_low_bound = 1000       # The lower bounds of the objects area for error checking
+    area_high_bound = 30000     # The upper bounds of the objects area for error checking
     # The Box Width/Height for the red testing ball should be around 90/90 (an Area of 8100)
     
     ################################
@@ -207,10 +222,12 @@ def findingROI(frame, x_size, y_size, buffer):
     
     '''
 
+    if top_of_object == "Nothing Found" or bottom_of_object == "Nothing Found":
+        return "Nothing Found"
 
-    box_radius = (bottom_of_object[1]-top_of_object[1])//2 + buffer
+    box_radius = abs(bottom_of_object[1]-top_of_object[1])//2 + buffer
 
-    box_center = (top_of_object[0], box_radius//2 + top_of_object[1])
+    box_center = top_of_object[0], box_radius//2 + top_of_object[1]
 
     top_left_of_box_x = box_center[0] - box_radius - buffer
     top_left_of_box_y = top_of_object[1] - buffer
@@ -220,20 +237,20 @@ def findingROI(frame, x_size, y_size, buffer):
     bottom_right_of_box_y = bottom_of_object[1] + buffer
     pt2 = (bottom_right_of_box_x, bottom_right_of_box_y)
 
-    box_width = pt2[0] - pt1[0]
-    box_height = pt2[1] - pt1[1]
+    box_width = abs(pt2[0] - pt1[0])
+    box_height = abs(pt2[1] - pt1[1])
 
-    frame_red = cv2.rectangle(r, pt1, pt2, (255, 0, 0), 2)      # Draw out the ROI
+    frame = cv2.rectangle(frame, pt1, pt2, (255, 0, 0), 2)      # Draw out the ROI
 
 
     """ Debugging """
-    #cv2.imshow("ROI", frame_red)
-    #cv2.waitKey()
-    #cv2.waitKey(1000)
-    #cv2.destroyAllWindows()
+    # cv2.imshow("ROI", frame)
+    # cv2.waitKey()
+    # cv2.waitKey(1000)
+    # cv2.destroyAllWindows()
 
-    #print(f"WIDTH: {box_width}\n")
-    #print(f"HEIGHT: {box_height}\n")
+    # print(f"WIDTH: {box_width}\n")
+    # print(f"HEIGHT: {box_height}\n")
 
     #cv2.putText(frame_red, "Reinitalizing...", (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)
     """           """
@@ -250,8 +267,14 @@ def findingROI(frame, x_size, y_size, buffer):
     # Anything significantly smaller or larger than the provided bounds should be 
     # considered an error and prompt another initalization
     if (box_width * box_height) < area_low_bound or (box_width * box_height) > area_high_bound:
-        return "Nothing Found"
+       return "Nothing Found"
     
+    if pt1[0] + box_width >= x_size:
+        box_width = x_size - pt1[0]
+    
+    if pt1[1] >= y_size:
+        box_height = y_size - pt1[1]
+
     return (pt1[0], pt1[1], box_width, box_height)
 
 '''
@@ -259,7 +282,6 @@ This function focuses on isolating the colors inside each provided blue, green a
 numpy arrays to find the target color for a specific pixel. The pixels returned will 
 represent the top and bottom of the object
 '''
-##### UNTESTED #####
 def BoundDetect(b, g, r, colr, sensitivity, x_size, y_size):
     '''
     Docstring for BoundDetect
@@ -330,20 +352,19 @@ def BoundDetect(b, g, r, colr, sensitivity, x_size, y_size):
                         top_of_object = (x_pos, y_pos)  # Label this point as the top of the object
                         found = True                    # Tell the program you found a point
                         break
+        if found:
+            break
 
     # If a point wasn't found, return "Nothing Found" to prompt the ROI to start again
     if not found:
-        return "Nothing Found"
+        return "Nothing Found", "Nothing Found"
     
     found = False
 
-    # NOTE: If something is found, the below for loop should find the point from above in worst case scenario
-    #       This removes the need for a second "found" check
-
     # Find the bottom point of the object by iterating through the provided frame from bottom to top
     # Iterating through each array will first iterate through each value in a y arr before moving to the next y level
-    for y_pos in range(y_size, 0, -1): 
-        for x_pos in range(x_size, 0, -1):
+    for y_pos in range(y_size-1, -1, -1): 
+        for x_pos in range(x_size-1, -1, -1):
             # IF the point in the blue array is within the sensitivity bounds
             if frame_blue[y_pos][x_pos] <= (tgt_blue + sensitivity) and frame_blue[y_pos][x_pos] >= (tgt_blue - sensitivity):
                 # IF the point in the green array is within the sensitivity bounds
@@ -351,7 +372,10 @@ def BoundDetect(b, g, r, colr, sensitivity, x_size, y_size):
                     # IF the point in the red array is within the sensitivity bounds
                     if frame_red[y_pos][x_pos] <= (tgt_red + sensitivity) and frame_red[y_pos][x_pos] >= (tgt_red - sensitivity):
                         bottom_of_object = (x_pos, y_pos)  # Label this point as the top of the object
+                        found = True
                         break
+        if found:
+            break
 
     return top_of_object, bottom_of_object
 
@@ -359,6 +383,7 @@ def BoundDetect(b, g, r, colr, sensitivity, x_size, y_size):
 """
 This function finds the movement vector of the object and adds a line in the UI
 """
+############ UNWORKING ###########
 def movementVector(frame, object_center_curr, object_center_prev):
     '''
     docstring for movementVector
@@ -391,9 +416,83 @@ def movementVector(frame, object_center_curr, object_center_prev):
 
     return frame, move_vector 
 
+def pull_frame(vid, x_size, y_size, vwidth, vheight):
 
-def main():
-    video_tracking_builtin()
-    pass
+    ok = False
+    ok_count = 0
 
-main()
+    while not ok:
+        ok, frame = vid.read()              # Read the first frame to make sure the camera is working
+
+        if not ok:
+            print("ERROR: frame not found")
+            ok_count += 1
+
+        if ok_count == 5:
+            sys.exit()
+        
+    
+    #frame = cv2.resize(frame, (x_size, y_size))   # Resize the frame to a specified value
+
+    frame = frame[y_size:vheight-y_size, x_size:vwidth-x_size] # Crop the frame instead of resize
+
+    # frame = cv2.convertScaleAbs(frame, 1.0, 2)    # Increase the brigtness a bit
+
+    return frame
+
+def debug():
+    x_size = 640
+    y_size = 360
+
+
+    ################################
+    # INITALIZATION
+    ################################
+    '''
+    Notes:
+    
+    '''
+
+    # Opens the DEFAULT webcam with the parameter 0 ( 0 -> Default Webcam )
+    vid = cv2.VideoCapture(0)
+
+    # Check if the webcam is detected
+    if not vid.isOpened():
+        print("No webcam found")
+        return
+    else:
+        print("Openning webcam...")
+        v_width = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))    # Get the capture width and height
+        v_height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    # Request MJPG (for high FPS)
+    vid.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
+
+    # Request 1080p
+    vid.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+    vid.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
+    # Request 60 FPS
+    vid.set(cv2.CAP_PROP_FPS, 60)
+
+    # Critical stability settings
+    vid.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)
+    vid.set(cv2.CAP_PROP_EXPOSURE, -6)
+    vid.set(cv2.CAP_PROP_AUTO_WB, 0)
+    vid.set(cv2.CAP_PROP_WB_TEMPERATURE, 4500)
+
+    vwidth = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))
+    vheight = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    print("Width :", vwidth)
+    print("Height:", vheight)
+    print("FPS   :", vid.get(cv2.CAP_PROP_FPS))
+
+    frame = pull_frame(vid, x_size, y_size, vwidth, vheight)
+
+    cv2.imshow("1080p60 Test", frame)
+    cv2.waitKey()
+    cv2.waitKey(1000)
+
+    vid.release()
+    cv2.destroyAllWindows()
