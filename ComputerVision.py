@@ -155,8 +155,9 @@ def video_tracking_builtin(INTERRUPT):
             
         if count == 3000:   # Reset the tracker every 3 seconds for accuracy
             bbox = findingROI(frame, x_size, y_size, buffer)    # Reinitalize the tracker for accuracy
-            tracker = cv2.legacy.TrackerCSRT.create()
-            tracker.init(frame, bbox)
+            if bbox != "Nothing Found":                             # If it doesn't work, keep trying
+                tracker = cv2.legacy.TrackerCSRT.create()
+                tracker.init(frame, bbox)
             count = 0       # Reset the timer
         else:
             count += 1
@@ -172,6 +173,13 @@ def video_tracking_builtin(INTERRUPT):
         # If the user presses the ESC key, kill the program
         if cv2.waitKey(1) & 0xFF == 27:  # ESC key
             break
+
+        # If the user presses R, recalibrate the tracker
+        if cv2.waitKey(1) & 0xFF == ord('r'):
+            bbox = findingROI(frame, x_size, y_size, buffer)                # Try to reinitalize the bbox
+            if bbox != "Nothing Found":                             # If it doesn't work, keep trying
+                tracker = cv2.legacy.TrackerCSRT.create()
+                tracker.init(frame, bbox)
 
     vid.release()
     cv2.destroyAllWindows()
@@ -416,30 +424,48 @@ def movementVector(frame, object_center_curr, object_center_prev):
 
     return frame, move_vector 
 
+
+'''
+This function will pull a frame from the webcam
+'''
 def pull_frame(vid, x_size, y_size, vwidth, vheight):
+    '''
+    docstring for pull_frame
 
-    ok = False
-    ok_count = 0
+    vid: The webcame variable from OpenCV
+    x_size: The prefered x size of the frame (for either resizing or cropping)
+    y_size: The prefered y size of the frame (for either resizing or cropping)
+    vwidth: The unedited video feed's width
+    vheight: The uneditied video feed's height
+    '''
 
+    ok = False      # Initalize the frame OK variable
+    ok_count = 0    # Initalize the OK count
+
+    # If a frame is not found, 
     while not ok:
-        ok, frame = vid.read()              # Read the first frame to make sure the camera is working
+        ok, frame = vid.read()      # Try and grab another frame
 
-        if not ok:
+        if not ok:                  # If it still is not found, report an error and add 1 to the counr
             print("ERROR: frame not found")
             ok_count += 1
 
-        if ok_count == 5:
+        if ok_count == 5:           # If the count exceeds 5, kill the program
             sys.exit()
         
     
     #frame = cv2.resize(frame, (x_size, y_size))   # Resize the frame to a specified value
 
-    frame = frame[y_size:vheight-y_size, x_size:vwidth-x_size] # Crop the frame instead of resize
+    frame = frame[y_size:vheight-y_size, x_size:vwidth-x_size] # Crop the frame instead of resize for zooming
 
     # frame = cv2.convertScaleAbs(frame, 1.0, 2)    # Increase the brigtness a bit
 
     return frame
 
+
+'''
+All code for debugging stuff is in here
+'''
 def debug():
     x_size = 640
     y_size = 360
