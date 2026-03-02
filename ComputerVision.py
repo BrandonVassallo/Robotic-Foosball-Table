@@ -1,3 +1,4 @@
+import os
 import sys
 import cv2
 import numpy
@@ -94,6 +95,8 @@ def video_tracking_builtin(INTERRUPT):
         cv2.waitKey(1)
         
         frame = pull_frame(vid, x_size, y_size, v_width, v_height)
+
+        bbox = findingROI(frame, x_size, y_size, buffer)
         
 
     ################################
@@ -127,6 +130,21 @@ def video_tracking_builtin(INTERRUPT):
 
         frame = pull_frame(vid, x_size, y_size, v_width, v_height)
 
+        # Calculate frames every 0.25 seconds
+        if count % 25 == 0:
+            fps = 1 / (curr - prev)
+            
+        if count == 100:   # Reset the tracker every couple seconds for accuracy
+            bbox = findingROI(frame, x_size, y_size, buffer)    # Reinitalize the tracker for accuracy
+            cv2.waitKey(1)
+            if bbox != "Nothing Found":                             # If it doesn't work, keep trying
+                tracker = cv2.legacy.TrackerCSRT.create()
+                tracker.init(frame, bbox)
+                cv2.waitKey(1)
+            count = 0       # Reset the timer
+        else:
+            count += 1
+
         success, bbox = tracker.update(frame)       # Update the tracker every frame
         if not success:                             # If the object is LOST
             cv2.putText(frame, "LOST", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)    # Show lost
@@ -149,18 +167,6 @@ def video_tracking_builtin(INTERRUPT):
             cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2)      # Slap the rectangle on the screen
             cv2.putText(frame, "Tracking", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)    # Show that it's tracking
         
-        # Calculate frames every 0.25 seconds
-        if count % 25 == 0:
-            fps = 1 / (curr - prev)
-            
-        if count == 3000:   # Reset the tracker every 3 seconds for accuracy
-            bbox = findingROI(frame, x_size, y_size, buffer)    # Reinitalize the tracker for accuracy
-            if bbox != "Nothing Found":                             # If it doesn't work, keep trying
-                tracker = cv2.legacy.TrackerCSRT.create()
-                tracker.init(frame, bbox)
-            count = 0       # Reset the timer
-        else:
-            count += 1
         prev = curr         # Used for FPS Tracking
 
         # Display the FPS
@@ -202,11 +208,11 @@ def findingROI(frame, x_size, y_size, buffer):
     '''
 
     # ADJUSTABLE PARAMETERS
-    tgt_color = (30, 30, 30) # The objects target color (Blue, Green, Red)
-    sensitivity = 30            # ammount of color units of buffer between each tgt color
+    tgt_color = (30, 40, 75) # The objects target color (Blue, Green, Red)
+    sensitivity = 25            # ammount of color units of buffer between each tgt color
 
     area_low_bound = 1000       # The lower bounds of the objects area for error checking
-    area_high_bound = 30000     # The upper bounds of the objects area for error checking
+    area_high_bound = 2000     # The upper bounds of the objects area for error checking
     # The Box Width/Height for the red testing ball should be around 90/90 (an Area of 8100)
     
     ################################
@@ -257,8 +263,11 @@ def findingROI(frame, x_size, y_size, buffer):
     # cv2.waitKey(1000)
     # cv2.destroyAllWindows()
 
-    # print(f"WIDTH: {box_width}\n")
-    # print(f"HEIGHT: {box_height}\n")
+    os.system('cls')
+
+    print(f"WIDTH:  {box_width}\n")
+    print(f"HEIGHT: {box_height}\n")
+    print(f"AREA:   {box_width*box_height}")
 
     #cv2.putText(frame_red, "Reinitalizing...", (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)
     """           """
@@ -454,11 +463,11 @@ def pull_frame(vid, x_size, y_size, vwidth, vheight):
             sys.exit()
         
     
-    #frame = cv2.resize(frame, (x_size, y_size))   # Resize the frame to a specified value
+    frame = cv2.resize(frame, (x_size, y_size))   # Resize the frame to a specified value
 
-    frame = frame[y_size:vheight-y_size, x_size:vwidth-x_size] # Crop the frame instead of resize for zooming
+    #frame = frame[y_size:vheight-y_size, x_size:vwidth-x_size] # Crop the frame instead of resize for zooming
 
-    # frame = cv2.convertScaleAbs(frame, 1.0, 2)    # Increase the brigtness a bit
+    frame = cv2.convertScaleAbs(frame, 1.0, 3)    # Increase the brigtness a bit
 
     return frame
 
