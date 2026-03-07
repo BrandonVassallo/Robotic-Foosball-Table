@@ -42,7 +42,7 @@ def video_tracking_builtin(INTERRUPT):
         print("Openning webcam...")
         
     # Request MJPG (for high FPS)
-    vid.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
+    # vid.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
 
     # Request 1080p
     vid.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
@@ -52,9 +52,9 @@ def video_tracking_builtin(INTERRUPT):
     vid.set(cv2.CAP_PROP_FPS, 60)
 
     # Critical stability settings
-    vid.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)
-    vid.set(cv2.CAP_PROP_EXPOSURE, -6)
-    vid.set(cv2.CAP_PROP_AUTO_WB, 0)
+    vid.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.75)
+    #vid.set(cv2.CAP_PROP_EXPOSURE, -6)
+    vid.set(cv2.CAP_PROP_AUTO_WB, 1)
     vid.set(cv2.CAP_PROP_WB_TEMPERATURE, 4500)
 
     v_width = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))    # Get the capture width and height
@@ -97,6 +97,10 @@ def video_tracking_builtin(INTERRUPT):
         frame = pull_frame(vid, x_size, y_size, v_width, v_height)
 
         bbox = findingROI(frame, x_size, y_size, buffer)
+
+        # If the user presses the ESC key, kill the program
+        if cv2.waitKey(1) & 0xFF == 27:  # ESC key
+            sys.exit()
         
 
     ################################
@@ -175,13 +179,15 @@ def video_tracking_builtin(INTERRUPT):
         # Show the current frame
         cv2.imshow("Webcam", frame)
         cv2.waitKey(1)
+
+        key = cv2.waitKey(1) & 0xFF
         
         # If the user presses the ESC key, kill the program
-        if cv2.waitKey(1) & 0xFF == 27:  # ESC key
+        if key == 27:  # ESC key
             break
 
         # If the user presses R, recalibrate the tracker
-        if cv2.waitKey(1) & 0xFF == ord('r'):
+        if key == ord('r'):
             bbox = findingROI(frame, x_size, y_size, buffer)                # Try to reinitalize the bbox
             if bbox != "Nothing Found":                             # If it doesn't work, keep trying
                 tracker = cv2.legacy.TrackerCSRT.create()
@@ -208,11 +214,11 @@ def findingROI(frame, x_size, y_size, buffer):
     '''
 
     # ADJUSTABLE PARAMETERS
-    tgt_color = (30, 40, 75) # The objects target color (Blue, Green, Red)
-    sensitivity = 25            # ammount of color units of buffer between each tgt color
+    tgt_color = (70, 70, 80) # The objects target color (Blue, Green, Red)
+    sensitivity = 15            # ammount of color units of buffer between each tgt color
 
     area_low_bound = 1000       # The lower bounds of the objects area for error checking
-    area_high_bound = 2000     # The upper bounds of the objects area for error checking
+    area_high_bound = 12000     # The upper bounds of the objects area for error checking
     # The Box Width/Height for the red testing ball should be around 90/90 (an Area of 8100)
     
     ################################
@@ -467,7 +473,13 @@ def pull_frame(vid, x_size, y_size, vwidth, vheight):
 
     #frame = frame[y_size:vheight-y_size, x_size:vwidth-x_size] # Crop the frame instead of resize for zooming
 
-    frame = cv2.convertScaleAbs(frame, 1.0, 3)    # Increase the brigtness a bit
+    frame = cv2.convertScaleAbs(frame, 1.0, 2)    # Increase the brigtness a bit
+    
+    # cv2.imshow("1080p60 Test", frame)
+    # cv2.waitKey()
+    # cv2.waitKey(1000)
+
+    print(frame.dtype, frame.min(), frame.max())
 
     return frame
 
