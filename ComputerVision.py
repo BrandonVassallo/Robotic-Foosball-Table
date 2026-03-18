@@ -110,6 +110,9 @@ def initalize_video(buffer: int, x_size: int, y_size: int, tgt_color: tuple[int,
 '''
 This function involves running the tracking algorithm.
 This function is intended to be called in a loop.
+If called in a loop, the below inputs/outputs must be connected in a feedback configuration:
+    - tracker
+    - count
 '''
 def tracking_alg(vid: cv2.VideoCapture, 
                  buffer: int, 
@@ -167,18 +170,28 @@ def tracking_alg(vid: cv2.VideoCapture,
     else:
         count += 1
 
-    success, bbox = tracker.update(frame)       # Update the tracker every frame
-    if not success:                             # If the object is LOST
-        cv2.putText(frame, "LOST", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)    # Show lost
+    # If the user presses R, recalibrate the tracker
+    if key == ord('r'):
+        cv2.putText(frame, "Recalibrating", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)    # Show that it's recalibrating
         bbox = findingROI(frame, x_size, y_size, buffer, tgt_color)                # Try to reinitalize the bbox
-        if bbox != "Nothing Found":                             # If it doesn't work, keep trying
+        if bbox == "Nothing Found":                             # If it doesn't work, keep trying
             tracker = cv2.legacy.TrackerCSRT.create()
             tracker.init(frame, bbox)
 
-    else:                                       # If the object is FOUND
-        x, y, w, h = [int(v) for v in bbox]     # Create a rectangle around it
-        current_center_of_object = (x+(w/2), y+(h/2))
-        past_center_of_object = current_center_of_object
+    # If the user doesn't press R, track the object
+    else:
+        success, bbox = tracker.update(frame)       # Update the tracker every frame
+        if not success:                             # If the object is LOST
+            cv2.putText(frame, "LOST", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)    # Show lost
+            bbox = findingROI(frame, x_size, y_size, buffer, tgt_color)                # Try to reinitalize the bbox
+            if bbox == "Nothing Found":                             # If it doesn't work, keep trying
+                tracker = cv2.legacy.TrackerCSRT.create()
+                tracker.init(frame, bbox)
+
+        else:                                       # If the object is FOUND
+            x, y, w, h = [int(v) for v in bbox]     # Create a rectangle around it
+            current_center_of_object = (x+(w/2), y+(h/2))
+            past_center_of_object = current_center_of_object
 
         # frame, move_vector = movementVector(frame, current_center_of_object, past_center_of_object)
 
@@ -200,12 +213,7 @@ def tracking_alg(vid: cv2.VideoCapture,
 
     key = cv2.waitKey(1) & 0xFF
 
-    # If the user presses R, recalibrate the tracker
-    if key == ord('r'):
-        bbox = findingROI(frame, x_size, y_size, buffer, tgt_color)                # Try to reinitalize the bbox
-        if bbox == "Nothing Found":                             # If it doesn't work, keep trying
-            tracker = cv2.legacy.TrackerCSRT.create()
-            tracker.init(frame, bbox)
+    
 
     return count, tracker
 
