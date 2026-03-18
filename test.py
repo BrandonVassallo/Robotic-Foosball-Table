@@ -51,9 +51,9 @@ if ret:
 
     b, g, r = cv2.split(frame)
     
-    numpy.savetxt("REDmarkerpic.csv", b, '%d', ",")
-    numpy.savetxt("GREENmarkerpic.csv", g, '%d', ",")
-    numpy.savetxt("BLUEmarkerpic.csv", r, '%d', ",")
+    numpy.savetxt("./.debugfolder/REDmarkerpic.csv", b, '%d', ",")
+    numpy.savetxt("./.debugfolder/GREENmarkerpic.csv", g, '%d', ",")
+    numpy.savetxt("./.debugfolder/BLUEmarkerpic.csv", r, '%d', ",")
 
     cv2.imshow("1080p60 Test", frame)
     cv2.waitKey()
