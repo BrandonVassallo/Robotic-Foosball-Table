@@ -11,6 +11,8 @@ buffer = 5  # The ammount of additional pixels to add to the ROI to ensure the o
 tgt_color = (70, 70, 80) # The objects target color (Blue, Green, Red)
     # Sensitivity and ROI Area bounds can be adjusted within the function
 
+# CROPPING Values are in the pull_frame function
+
 '''
 CUSTOMIZE YOUR RENDER SIZE:
     Default is: (640, 360)
