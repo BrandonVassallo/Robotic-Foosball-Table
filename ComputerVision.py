@@ -1,5 +1,6 @@
 import os
 import sys
+import platform
 import cv2
 import numpy
 import time
@@ -89,6 +90,7 @@ def initalize_video(buffer: int, x_size: int, y_size: int, tgt_color: tuple[int,
 
         # If the user presses the ESC key, kill the program
         if cv2.waitKey(1) & 0xFF == 27:  # ESC key
+            print("EXITING...")
             sys.exit()
         
 
@@ -290,7 +292,11 @@ def findingROI(frame, x_size, y_size, buffer, tgt_color):
     # cv2.waitKey(1000)
     # cv2.destroyAllWindows()
 
-    os.system('cls')
+    # Clear the CLI depending on the Operating System
+    if platform.system() == "Linux":
+        os.system('clear')
+    if platform.system() == "Windows":
+        os.system('cls')
 
     print(f"WIDTH:  {box_width}\n")
     print(f"HEIGHT: {box_height}\n")
@@ -467,7 +473,7 @@ def movementVector(frame, object_center_curr, object_center_prev):
 '''
 This function will pull a frame from the webcam
 '''
-def pull_frame(vid: cv2.VideoCapture, x_size: int, y_size: int):
+def pull_frame(vid: cv2.VideoCapture, x_size: int, y_size: int, vwidth: int, vheight: int):
     '''
     docstring for pull_frame
 
@@ -478,6 +484,12 @@ def pull_frame(vid: cv2.VideoCapture, x_size: int, y_size: int):
     vheight: The uneditied video feed's height
     '''
 
+    left_crop_x = 95    # Crops the beginning (left <-) of the frame array
+    right_crop_x = 88   # Crops the end (right ->) of the frame array
+
+    top_crop_y = 72     # Crops the top of the frame array
+    bot_crop_y = 82     # Crops the bottom of the frame array
+
     ok = False      # Initalize the frame OK variable
     ok_count = 0    # Initalize the OK count
 
@@ -485,19 +497,23 @@ def pull_frame(vid: cv2.VideoCapture, x_size: int, y_size: int):
     while not ok:
         ok, frame = vid.read()      # Try and grab another frame
 
-        if not ok:                  # If it still is not found, report an error and add 1 to the counr
+        if not ok or frame.all() == None:                  # If it still is not found, report an error and add 1 to the counr
             print("ERROR: frame not found")
+            ok = False
             ok_count += 1
 
         if ok_count == 5:           # If the count exceeds 5, kill the program
+            print("TOO MANY FRAMES DROPPED. EXITING...")
             sys.exit()
-        
-    
-    frame = cv2.resize(frame, (x_size, y_size))   # Resize the frame to a specified value
 
-    #frame = frame[y_size:vheight-y_size, x_size:vwidth-x_size] # Crop the frame instead of resize for zooming
+    frame = cv2.resize(frame, (x_size, y_size))   # Resize the frame to a specified value        
 
-    frame = cv2.convertScaleAbs(frame, 1.0, 2)    # Increase the brigtness a bit
+    # frame = frame[y_size:vheight-y_size, x_size:vwidth-x_size] # Crop the frame INSTEAD of resize for zooming
+    frame = frame[top_crop_y:y_size - bot_crop_y, left_crop_x:x_size - right_crop_x] # Crop the frame WITH resize for zooming
+
+    frame = cv2.resize(frame, (x_size, y_size))   # Resize the frame again to ensure standard resolution
+
+    frame = cv2.convertScaleAbs(frame, 1.0, 1)    # Increase the brigtness (default 1)
     
     # cv2.imshow("1080p60 Test", frame)
     # cv2.waitKey()
