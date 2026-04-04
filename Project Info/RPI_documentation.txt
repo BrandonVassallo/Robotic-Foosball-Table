@@ -1,0 +1,9 @@
+
+
+-gpiozero documentation
+https://gpiozero.readthedocs.io/en/stable/recipes.html
+
+
+
+-pinout diagram
+https://pinout-ai.s3.eu-west-2.amazonaws.com/raspberry-pi-5-gpio-pinout-diagram.webp
