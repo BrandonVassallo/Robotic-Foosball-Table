@@ -1,2 +1,3 @@
 .opencv
 .debugfolder
+__pycache__
