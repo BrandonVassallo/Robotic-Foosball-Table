@@ -58,8 +58,12 @@ def initalize_video(buffer: int, x_size: int, y_size: int, tgt_color: tuple[int,
 
     frame = pull_frame(vid, x_size, y_size, v_width, v_height)
 
+    return vid, frame, v_width, v_height
+
     current_center_of_object = None
     past_center_of_object = None
+
+def initalize_tracker(vid, frame, x_size, y_size, v_width, v_height, buffer, tgt_color):
     
     ################################
     # STARTING ROI
@@ -105,7 +109,7 @@ def initalize_video(buffer: int, x_size: int, y_size: int, tgt_color: tuple[int,
     tracker = cv2.legacy.TrackerCSRT.create()       # When a bbox is finally found, start the tracker
     tracker.init(frame, bbox)                       # Initalize the tracker with the bbox on the ball
 
-    return vid, tracker, v_width, v_height
+    return frame, tracker
 
 
 
