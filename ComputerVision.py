@@ -5,7 +5,7 @@ import cv2
 import numpy
 import time
 
-def initalize_video(buffer: int, x_size: int, y_size: int, tgt_color: tuple[int, int, int]):
+def initalize_video(buffer: int, x_size: int, y_size: int):
     '''
     docstring for video_tracking_builtin
 
@@ -56,7 +56,10 @@ def initalize_video(buffer: int, x_size: int, y_size: int, tgt_color: tuple[int,
     print("FPS   :", vid.get(cv2.CAP_PROP_FPS))
 
 
-    frame = pull_frame(vid, x_size, y_size, v_width, v_height)
+    frame = pull_frame(vid, x_size, y_size)
+
+    for i in range(10): # Pull some frames to let auto exposure do it's thang
+        frame = pull_frame(vid, x_size, y_size)
 
     return vid, frame, v_width, v_height
 
@@ -84,11 +87,11 @@ def initalize_tracker(vid, frame, x_size, y_size, v_width, v_height, buffer, tgt
     #-------------------------------------------------------#
 
     while bbox == "Nothing Found":                  # While the findingROI function cannot detect the ball
-        cv2.putText(frame, "LOST", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)    # Show LOST
+        cv2.putText(frame, "LOST", (10,30), cv2.FONT_HERSHEY_PLAIN, 0.7, (255,0,0), 2)    # Show LOST
         cv2.imshow("Webcam", frame)                 # We'd still like to show the frame
         cv2.waitKey(1)
         
-        frame = pull_frame(vid, x_size, y_size, v_width, v_height)
+        frame = pull_frame(vid, x_size, y_size)
 
         bbox = findingROI(frame, x_size, y_size, buffer, tgt_color)
 
@@ -128,7 +131,9 @@ def tracking_alg(vid: cv2.VideoCapture,
                  v_width: int, 
                  v_height: int,
                  tgt_color: tuple[int, int, int],
-                 count: int):
+                 count: int,
+                 prev: int,
+                 fps: int):
     '''
     docstring for tracking_alg:
 
@@ -142,11 +147,9 @@ def tracking_alg(vid: cv2.VideoCapture,
     v_heigh: The actual height of the raw input frame
     tgt_color: The color of the object being tracked (blue, green , red)
     count: Used for FPS calculation
+    prev: Used for FPS Calculation
+    fps: Used for FPS calculation
     '''
-
-
-    prev = 0    # These constants are used for the FPS counter
-    fps = 0
 
     ################################
     # RUNNING THE TRACKER
@@ -157,18 +160,21 @@ def tracking_alg(vid: cv2.VideoCapture,
         calculation in this section
             (see the "if not success --> else" branch)
     '''
-    curr = time.time()  
+    curr = time.time()      # For FPS Calculaiton
+    
+    key = cv2.waitKey(1) & 0xFF
 
-    frame = pull_frame(vid, x_size, y_size, v_width, v_height)
+    frame = pull_frame(vid, x_size, y_size)
 
     # Calculate frames every 0.25 seconds
     if count % 25 == 0:
         fps = 1 / (curr - prev)
         
-    if count == 100:   # Reset the tracker every couple seconds for accuracy
+    if count == 100:   # Reset the tracker every couple frames for accuracy
         bbox = findingROI(frame, x_size, y_size, buffer, tgt_color)    # Reinitalize the tracker for accuracy
+        tracker = None
         cv2.waitKey(1)
-        if bbox == "Nothing Found":                             # If it doesn't work, keep trying
+        if bbox != "Nothing Found":                             # If it doesn't work, keep trying
             tracker = cv2.legacy.TrackerCSRT.create()
             tracker.init(frame, bbox)
             cv2.waitKey(1)
@@ -179,18 +185,26 @@ def tracking_alg(vid: cv2.VideoCapture,
     # If the user presses R, recalibrate the tracker
     if key == ord('r'):
         cv2.putText(frame, "Recalibrating", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)    # Show that it's recalibrating
+        tracker = None
         bbox = findingROI(frame, x_size, y_size, buffer, tgt_color)                # Try to reinitalize the bbox
-        if bbox == "Nothing Found":                             # If it doesn't work, keep trying
+        cv2.waitKey(5)
+        if bbox != "Nothing Found":                             # If it doesn't work, keep trying
             tracker = cv2.legacy.TrackerCSRT.create()
             tracker.init(frame, bbox)
+            cv2.waitKey(5)
+
+    elif key == 27:
+        print("ESCAPED IN CV")
+        sys.exit()
 
     # If the user doesn't press R, track the object
     else:
-        success, bbox = tracker.update(frame)       # Update the tracker every frame
-        if not success:                             # If the object is LOST
+        if tracker != None:
+            success, bbox = tracker.update(frame)       # Update the tracker every frame
+        if tracker == None or not success:                             # If the object is LOST
             cv2.putText(frame, "LOST", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)    # Show lost
             bbox = findingROI(frame, x_size, y_size, buffer, tgt_color)                # Try to reinitalize the bbox
-            if bbox == "Nothing Found":                             # If it doesn't work, keep trying
+            if bbox != "Nothing Found":                             # If it doesn't work, keep trying
                 tracker = cv2.legacy.TrackerCSRT.create()
                 tracker.init(frame, bbox)
 
@@ -199,14 +213,14 @@ def tracking_alg(vid: cv2.VideoCapture,
             current_center_of_object = (x+(w/2), y+(h/2))
             past_center_of_object = current_center_of_object
 
-        # frame, move_vector = movementVector(frame, current_center_of_object, past_center_of_object)
+            # frame, move_vector = movementVector(frame, current_center_of_object, past_center_of_object)
 
-        """ 
-        USE THESE "x" and "y" VALUES TO FIND CURRENT POSITION
-        """
+            """ 
+            USE THESE "x" and "y" VALUES TO FIND CURRENT POSITION
+            """
 
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2)      # Slap the rectangle on the screen
-        cv2.putText(frame, "Tracking", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)    # Show that it's tracking
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2)      # Slap the rectangle on the screen
+            cv2.putText(frame, "Tracking", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)    # Show that it's tracking
     
     prev = curr         # Used for FPS Tracking
 
@@ -217,17 +231,17 @@ def tracking_alg(vid: cv2.VideoCapture,
     cv2.imshow("Webcam", frame)
     cv2.waitKey(1)
 
-    key = cv2.waitKey(1) & 0xFF
-
     
 
-    return count, tracker
+    return count, tracker, fps, prev
 
 
 
 '''
 This function involves finding the Reigon of Interest to help restart
 the targeted tracking object every time.
+
+NOTE: Sensivity Adjustments can be made here
 '''
 def findingROI(frame, x_size, y_size, buffer, tgt_color):
     '''
@@ -242,10 +256,10 @@ def findingROI(frame, x_size, y_size, buffer, tgt_color):
 
     # ADJUSTABLE PARAMETERS
     
-    sensitivity = 15            # ammount of color units of buffer between each tgt color
+    sensitivity = 30            # ammount of color units of buffer between each tgt color
 
-    area_low_bound = 1000       # The lower bounds of the objects area for error checking
-    area_high_bound = 12000     # The upper bounds of the objects area for error checking
+    area_low_bound = 0       # The lower bounds of the objects area for error checking
+    area_high_bound = 10000     # The upper bounds of the objects area for error checking
         # The Box Width/Height for the red testing ball should be around 90/90 (an Area of 8100)
     
     ################################
@@ -297,10 +311,10 @@ def findingROI(frame, x_size, y_size, buffer, tgt_color):
     # cv2.destroyAllWindows()
 
     # Clear the CLI depending on the Operating System
-    if platform.system() == "Linux":
-        os.system('clear')
-    if platform.system() == "Windows":
-        os.system('cls')
+    # if platform.system() == "Linux":
+    #     os.system('clear')
+    # if platform.system() == "Windows":
+    #     os.system('cls')
 
     print(f"WIDTH:  {box_width}\n")
     print(f"HEIGHT: {box_height}\n")
@@ -477,7 +491,7 @@ def movementVector(frame, object_center_curr, object_center_prev):
 '''
 This function will pull a frame from the webcam
 '''
-def pull_frame(vid: cv2.VideoCapture, x_size: int, y_size: int, vwidth: int, vheight: int):
+def pull_frame(vid: cv2.VideoCapture, x_size: int, y_size: int):
     '''
     docstring for pull_frame
 
@@ -517,13 +531,13 @@ def pull_frame(vid: cv2.VideoCapture, x_size: int, y_size: int, vwidth: int, vhe
 
     frame = cv2.resize(frame, (x_size, y_size))   # Resize the frame again to ensure standard resolution
 
-    frame = cv2.convertScaleAbs(frame, 1.0, 1)    # Increase the brigtness (default 1)
+    #frame = cv2.convertScaleAbs(frame, 1.0, 1)    # Increase the brigtness (default 1)
     
     # cv2.imshow("1080p60 Test", frame)
     # cv2.waitKey()
     # cv2.waitKey(1000)
 
-    print(frame.dtype, frame.min(), frame.max())
+    # print(frame.dtype, frame.min(), frame.max())
 
     return frame
 
@@ -579,7 +593,7 @@ def debug():
     print("Height:", vheight)
     print("FPS   :", vid.get(cv2.CAP_PROP_FPS))
 
-    frame = pull_frame(vid, x_size, y_size, vwidth, vheight)
+    frame = pull_frame(vid, x_size, y_size)
 
     cv2.imshow("1080p60 Test", frame)
     cv2.waitKey()

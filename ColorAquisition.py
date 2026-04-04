@@ -39,7 +39,7 @@ b, g, r = cv2.split(frame)
 
 max_g = 150 # Maximum green value 
 
-min_b = 100
+min_b = 40
 min_r = 100
 
 top_of_object = ()    # The position at the top of the object
@@ -111,14 +111,14 @@ for y_pos in range(y_size-1, -1, -1):
     if found:
         break
 
-frame = cv2.rectangle(frame, top_of_object, bottom_of_object, (255, 0, 255), 2)      # Draw out the ROI
+box_x_radius = abs(bottom_of_object[1]-top_of_object[1])//2
+box_y_radius = abs(bottom_of_object[0]-top_of_object[0])//2
+
+frame = cv2.rectangle(frame, top_of_object, (bottom_of_object[0] - box_x_radius, bottom_of_object[1] + box_x_radius), (255, 0, 255), 2)      # Draw out the ROI
 
 bottom_left_pos = (20, 100) 
 font = cv2.FONT_HERSHEY_PLAIN
 scale = 1
-
-box_x_radius = abs(bottom_of_object[1]-top_of_object[1])//2
-box_y_radius = abs(bottom_of_object[0]-top_of_object[0])//2
 
 box_center = (top_of_object[1] + box_x_radius, top_of_object[0] + box_y_radius)
 
