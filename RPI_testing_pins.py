@@ -38,7 +38,16 @@ start.when_pressed = go
 #-------------------SERVO RELATED CODE------------------------------------------------------------------------
 
 
-#I don't think we had to enable PWM on the extra pins, the example code uses GPIO only pins for this...
+#So upon futher examination there are two forms of pwm, hardware and software. This code uses any gpio pin,
+#which means it uses software I think. I am not yet sure if changing to a hardware pin will automatically use
+#hardware pwm instead of software. We want to use hardware because software uses cpu processing, hurting fps
+#
+#
+#We also need to figure out what happened when you changed the pin in the kernal, it either set it to software
+#or did some gate array stuff to make it hardware pwm. 
+# 
+# 
+# Still working on research for this.
 
 
 BackLinearMotor_1 = gpiozero.Servo(17)
@@ -66,6 +75,7 @@ BackKickMotor_2.angle = 22
 #If we just say go to this angle it will go as fast as possible which we want I think
 
 
+#--------------LASER GOAL DETECTION SYSTEM CODE--------------------------------------------------------------
 
 
 
