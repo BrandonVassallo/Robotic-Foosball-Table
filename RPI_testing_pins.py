@@ -41,16 +41,16 @@ start.when_pressed = go
 #I don't think we had to enable PWM on the extra pins, the example code uses GPIO only pins for this...
 
 
-BackMotor_1 = gpiozero.Servo(17)
+BackLinearMotor_1 = gpiozero.Servo(17)
 
 
-BackMotor_1.min()
+BackLinearMotor_1.min()
 #set to minimum position
 
-BackMotor_1.mid()
+BackLinearMotor_1.mid()
 #set to middle position
 
-BackMotor_1.max()
+BackLinearMotor_1.max()
 #set to maximum position
 
 #^^^^^^^^^^^^^These shortcuts should be very useful for the linear motors but not the kicking ones
