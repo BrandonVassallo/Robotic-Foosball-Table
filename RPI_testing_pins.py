@@ -4,9 +4,6 @@ import gpiozero
 #gpio pin library for simple tasks
 
 
-#takes off the training wheels of gpiozero, allows for direct manipulation of pins for laser system
-
-
 #----------------------BUTTON RELATED CODE---------------------------------------------------------------
 
 reset = gpiozero.Button(2)
@@ -83,6 +80,10 @@ BackKickMotor_2.angle = 22
 
 #--------------LASER GOAL DETECTION SYSTEM CODE--------------------------------------------------------------
 
+
+#basically need to create a class for the laser goal tech, also the reciever
+#then use the class to control it. Will be working on that next
+#gpio-zero will work for all this
 
 
 

@@ -7,3 +7,25 @@ https://gpiozero.readthedocs.io/en/stable/recipes.html
 
 -pinout diagram
 https://pinout-ai.s3.eu-west-2.amazonaws.com/raspberry-pi-5-gpio-pinout-diagram.webp
+
+
+
+
+
+-information on the laser module
+https://www.watelectronics.com/ky-008-laser-module/
+
+
+-information on the laser reciever
+https://www.codrey.com/electronic-circuits/the-mysterious-laser-receiver-sensor-module/
+
+
+
+
+
+-gpiozero converting RPi.GPIO and has VITAL PWM HARDWARE/SOFTWARE FIX  USE THIS!!
+https://gpiozero.readthedocs.io/en/stable/migrating_from_rpigpio.html
+
+
+-goated chart for classes in gpiozero
+https://gpiozero.readthedocs.io/en/stable/_images/output_device_hierarchy.svg
