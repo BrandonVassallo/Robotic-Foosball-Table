@@ -4,6 +4,8 @@ import gpiozero
 #gpio pin library
 
 
+#-----------------------------------------------BUTTON RELATED CODE-----------------------------------------
+
 reset = gpiozero.Button(2)
 #creates a button named reset which uses GPIO2 (this is different from pin 2 and is actually pin 3)
 #Refer to this https://pinout-ai.s3.eu-west-2.amazonaws.com/raspberry-pi-5-gpio-pinout-diagram.webp for pins/gpio names
@@ -32,4 +34,6 @@ start.when_pressed = go
 
 
 
+
+#-----------------------------SERVO RELATED CODE---------------------------------------------------------------
 
