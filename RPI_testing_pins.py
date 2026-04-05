@@ -71,6 +71,9 @@ BackLinearMotor_1.max()
 BackKickMotor_2 = gpiozero.AngularServo(27, min_angle=-90, max_angle=90)
 #Because of the gearbox, we may need to limit the servo from -45 to 45 but I am not certain yet
 
+#the above comment is probably false, the small gear goes around the big one 3 full rotations
+#I have no idea what this means for the math
+
 BackKickMotor_2.angle = -90
 BackKickMotor_2.angle = 22
 
