@@ -1,4 +1,4 @@
-
+Use these links for help with rpi things.
 
 -gpiozero documentation
 https://gpiozero.readthedocs.io/en/stable/recipes.html
