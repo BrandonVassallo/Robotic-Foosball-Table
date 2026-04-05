@@ -1,7 +1,10 @@
 #This is a test file for controlling pins on the pi
 
 import gpiozero
-#gpio pin library
+#gpio pin library for simple tasks
+
+
+#takes off the training wheels of gpiozero, allows for direct manipulation of pins for laser system
 
 
 #----------------------BUTTON RELATED CODE---------------------------------------------------------------
@@ -40,7 +43,7 @@ start.when_pressed = go
 
 #So upon futher examination there are two forms of pwm, hardware and software. This code uses any gpio pin,
 #which means it uses software I think. I am not yet sure if changing to a hardware pin will automatically use
-#hardware pwm instead of software. We want to use hardware because software uses cpu processing, hurting fps
+#hardware pwm instead of software. We want to use hardware because software uses cpu processing, hurting fps?
 #
 #
 #We also need to figure out what happened when you changed the pin in the kernal, it either set it to software
