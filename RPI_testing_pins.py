@@ -4,7 +4,7 @@ import gpiozero
 #gpio pin library
 
 
-#-----------------------------------------------BUTTON RELATED CODE-----------------------------------------
+#----------------------BUTTON RELATED CODE---------------------------------------------------------------
 
 reset = gpiozero.Button(2)
 #creates a button named reset which uses GPIO2 (this is different from pin 2 and is actually pin 3)
@@ -35,5 +35,38 @@ start.when_pressed = go
 
 
 
-#-----------------------------SERVO RELATED CODE---------------------------------------------------------------
+#-------------------SERVO RELATED CODE------------------------------------------------------------------------
+
+
+#I don't think we had to enable PWM on the extra pins, the example code uses GPIO only pins for this...
+
+
+BackMotor_1 = gpiozero.Servo(17)
+
+
+BackMotor_1.min()
+#set to minimum position
+
+BackMotor_1.mid()
+#set to middle position
+
+BackMotor_1.max()
+#set to maximum position
+
+#^^^^^^^^^^^^^These shortcuts should be very useful for the linear motors but not the kicking ones
+
+
+BackKickMotor_2 = gpiozero.AngularServo(27, min_angle=-90, max_angle=90)
+
+BackKickMotor_2.angle = -90
+BackKickMotor_2.angle = 22
+
+#There are ways to itterate over this but I don't see a point,
+#If we just say go to this angle it will go as fast as possible which we want I think
+
+
+
+
+
+
 
