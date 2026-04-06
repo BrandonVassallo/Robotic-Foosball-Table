@@ -3,6 +3,10 @@
 import gpiozero
 #gpio pin library for simple tasks
 
+from Laser_Activities import Goal
+#imports the laser classes I developed in another file
+#I have not figured out why I cannot just import the whole file but should not matter
+
 
 #----------------------BUTTON RELATED CODE---------------------------------------------------------------
 
@@ -80,10 +84,26 @@ BackKickMotor_2.angle = 22
 
 #--------------LASER GOAL DETECTION SYSTEM CODE--------------------------------------------------------------
 
+#uses the custom class Goal created in Laser_Activities file  --has two subclasses
+#If these do not work, modify that file...
 
-#basically need to create a class for the laser goal tech, also the reciever
-#then use the class to control it. Will be working on that next
-#gpio-zero will work for all this
+
+Reciever_pin = 17
+Laser_pin = 18
+
+
+Goal_1 = Goal(Reciever_pin, Laser_pin)
+#YOU MUST INPUT RECIEVER PIN FIRST THEN LASER PIN
+
+Goal_1.on()
+#turns the goal on
+
+Goal_1.off()
+#turns the goal off
+
+
+
+
 
 
 
