@@ -10,10 +10,10 @@ from gpiozero import DigitalInputDevice
 class Goal:
 
 
-    def __init__(self,pinNum1,pinNum2):
-        self.reciever=DigitalInputDevice(pinNum1)
-        self.laser=OutputDevice(pinNum2)
-
+    def __init__(self,Rpin,Lpin):
+        self.reciever=DigitalInputDevice(Rpin)
+        self.laser=OutputDevice(Lpin)
+#YOU MUST INPUT THE RECIEVER PIN FIRST THEN THE LASER PIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     def is_laser_detected(self): 
         return self.reciever.is_active
