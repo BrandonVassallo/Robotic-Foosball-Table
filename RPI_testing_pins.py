@@ -101,6 +101,12 @@ Goal_1.on()
 Goal_1.off()
 #turns the goal off
 
+Goal_1.is_laser_detected()
+#returns a true or false for if the laser is on or off. May or may not be useful
+
+Goal_1.is_goal()
+#returns true if there has been any downtime since last checked and then sets that time to 0
+#downtime implies a goal has been scored since something blocked the laser
 
 
 

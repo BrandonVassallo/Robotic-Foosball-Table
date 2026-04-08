@@ -1,12 +1,6 @@
-#This file is intended to be imported into all files where the laser reciever or producer is used. 
-#It contains two subclasses, one for reciever, one for producer, and will provide all functionality required
+#This file is intended to be imported into all files where the laser or reciever is used. 
 #
-#
-#These subclasses are wrapped into the overarching goal class. This will help avoid confusion with code as
-#We only have to use one var per goal. 
-# 
-# If we want, I can wrap this further so that the entire goal sys is a class but not needed I think
-#  
+#This file contains a single class for a goal which houses both devices and all required functions
 
 from gpiozero import OutputDevice
 from gpiozero import DigitalInputDevice 
@@ -34,6 +28,7 @@ class Goal:
             return True
     #checks if there has been inactive time, if there has been inactive time, the ball crossed the line-> goal    
     #sets the inactive time to 0 to reset the is_goal check
+
 
     def on (self):
         self.laser.on()
