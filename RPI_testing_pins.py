@@ -66,7 +66,6 @@ BackLinearMotor_1.mid()
 BackLinearMotor_1.max()
 #set to maximum position
 
-#^^^^^^^^^^^^^These shortcuts should be very useful for the linear motors but not the kicking ones
 
 
 BackKickMotor_2 = gpiozero.AngularServo(27, min_angle=-90, max_angle=90)
