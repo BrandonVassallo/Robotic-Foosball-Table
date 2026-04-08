@@ -15,46 +15,35 @@ from gpiozero import DigitalInputDevice
 #overarching class
 class Goal:
 
-    def __init__ (self, pinNum1, pinNum2):
-        self.pinNum1 = pinNum1
-        self.pinNum2 = pinNum2
-        return
 
+    def __init__(self,pinNum1,pinNum2):
+        self.reciever=DigitalInputDevice(pinNum1)
+        self.laser=OutputDevice(pinNum2)
 
-
-#for reciever, only function is: "is_laser_detected"
-class LaserReciever(Goal):
-    
-    def __init__ (self,pinNum1):
-        super().__init__(pinNum1)
-        self.reciever = DigitalInputDevice(pinNum1)
 
     def is_laser_detected(self): 
         return self.reciever.is_active
     #checks if laser is currently detected. This may or may not work depending on our clock cycle
     #Ex: if the ball passes through faster than the clock cycle, a goal will not be detected if we check this
-    
+     
+
     def is_goal(self):
         time = self.reciever.inactive_time
         if time>0:
+            self.reciever.inactive_time = 0
             return True
-
-    
-
-#for shooter, functions are "on" and "off"
-class LaserShooter(Goal):
-
-    def __init__(self,pinNum2):
-        super().__init__(pinNum2)
-        self.shooter = OutputDevice(pinNum2)
+    #checks if there has been inactive time, if there has been inactive time, the ball crossed the line-> goal    
+    #sets the inactive time to 0 to reset the is_goal check
 
     def on (self):
-        self.shooter.on()
+        self.laser.on()
+
 
     def off (self):
-        self.shooter.off()
+        self.laser.off()
 
- 
+          
+
         
 
     
