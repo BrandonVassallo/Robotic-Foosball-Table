@@ -13,7 +13,9 @@ class Goal:
     def __init__(self,Rpin,Lpin):
         self.reciever=DigitalInputDevice(Rpin)
         self.laser=OutputDevice(Lpin)
-#YOU MUST INPUT THE RECIEVER PIN FIRST THEN THE LASER PIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        self.reciever.inactive_time = 0
+        #YOU MUST INPUT THE RECIEVER PIN FIRST THEN THE LASER PIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
     def is_laser_detected(self): 
         return self.reciever.is_active
@@ -32,10 +34,16 @@ class Goal:
 
     def on (self):
         self.laser.on()
-
+        self.reciever.inactive_time = 0
+    #sets inactive time to 0 since when the laser is off, inactive time accumulates
 
     def off (self):
         self.laser.off()
+
+    
+    def set_inactive_timer_zero(self):
+        self.reciever.inactive_time = 0
+    #sets inactive time to 0
 
           
 

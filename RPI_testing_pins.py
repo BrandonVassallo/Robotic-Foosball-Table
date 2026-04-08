@@ -108,6 +108,9 @@ Goal_1.is_goal()
 #returns true if there has been any downtime since last checked and then sets that time to 0
 #downtime implies a goal has been scored since something blocked the laser
 
+Goal_1.set_inactive_timer_zero()
+#Might be needed to reset the downtime if we use the is_goal method --> may also work without depending on setup
+#sets inactive time to 0
 
 
 
