@@ -3,7 +3,7 @@ import time
 
 # Create the main window
 root = tk.Tk()
-root.title("Timer")
+root.title("Display")
 
 # Set window size
 root.geometry("800x400")
@@ -12,12 +12,13 @@ root.geometry("800x400")
 root.configure(bg="green")
 
 # Label to display the timer
-label = tk.Label(root, text="", font=("Arial", 60), bg="green", fg="white")
+label = tk.Label(root, text="", font=("Wingdings", 60), bg="green", fg="white")
 label.pack(expand=True)
+
+start_time = 60
 
 
 def update_timer():
-    elapsed_time = 60
 
     if(elapsed_time>0):
         elapsed_time = int(elapsed_time - 1)
