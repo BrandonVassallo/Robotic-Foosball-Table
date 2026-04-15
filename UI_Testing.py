@@ -15,9 +15,10 @@ root.configure(bg="green")
 label = tk.Label(root, text="", font=("Wingdings", 60), bg="green", fg="white")
 label.pack(expand=True)
 
+
 start_time = 60
 
-
+#start time and elapsed time currently not interacting!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 def update_timer():
 
     if(elapsed_time>0):
