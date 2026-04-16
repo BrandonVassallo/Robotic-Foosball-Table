@@ -29,6 +29,9 @@ def update_timer():
         start_time -= 1    #reduces start time
         root.after(1000, update_timer)  # update every second
 
+    if start_time<0:
+        label.config(text=f"Game Over")
+
 
 # Start the timer
 update_timer()
