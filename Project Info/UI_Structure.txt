@@ -1,0 +1,41 @@
+Classes:
+
+1. Timer Class
+    -Controls Timer Placement on UI
+    -Updates Timer 
+    -Controls Timer Displays
+
+2. Scoreboard Class
+    -Display current score
+    -Alter display when goal scored
+
+3. Background Class
+    -Create the boxes for the field and the zone for scoreboard
+
+4. Ball position
+    -Adds the ball position to the UI
+    -Takes in x,y coordiantes, places pink circle at spot
+    -Top left of field is 0,0 ........ south of field is positive y direction even though it seems negative
+
+5. UI Event
+    -In event goal scored, creates a effect (make board one color with GOOOALLLL!!!) 
+    -After goal is scored, makes the scoreboard cover whole screen---with text waiting for ball/button/whatever
+    -Does the game over screen
+    -Announces winner
+
+6. Maybe Ball Vectors
+    -Creates a vector from ball to enemy goal based on ball position
+    -Creates a vector for the ball's trajectory (straight line with no bounces)
+    -Displays aprox. speed
+
+MAIN CLASS:
+
+UI_Main
+    -Initializes the UI as a function
+    -Calls the functions in the other classes when an event happens
+    -Calls the update ball position function
+
+
+*Notes*
+
+-The UI_Main class is intended to have it's functions called by the main, I just wanted a consolidated system

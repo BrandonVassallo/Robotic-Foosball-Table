@@ -12,7 +12,7 @@ root.geometry("800x400")
 root.configure(bg="green")
 
 # Label to display the timer
-label = tk.Label(root, text="", font=("Ariel", 60), bg="green", fg="white")
+label = tk.Label(root, text="", font=("Arial", 60), bg="green", fg="white")
 label.pack(expand=True)
 
 
