@@ -27,15 +27,15 @@ for i in range (12):
 
     BackLinearMotor_1.min()
 #set to minimum position
-    time.wait(3000)
+    time.sleep(3)
 
     BackLinearMotor_1.mid()
 #set to middle position
-    time.wait(3000)
+    time.sleep(3)
 
     BackLinearMotor_1.max()
 #set to maximum position
-    time.wait(3000)
+    time.sleep(3)
 
 
 
