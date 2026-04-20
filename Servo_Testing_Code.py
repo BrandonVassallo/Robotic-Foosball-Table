@@ -1,4 +1,7 @@
 import gpiozero
+
+from gpiozero import Servo
+
 import time
 
 
@@ -20,22 +23,22 @@ import time
 
 BackLinearMotor_1 = gpiozero.Servo(12)
 
-for i in range (12):
+for i in range (3):
 
-
+    print(i)
 
 
     BackLinearMotor_1.min()
 #set to minimum position
-    time.sleep(3)
+    time.sleep(0.5)
 
-    BackLinearMotor_1.mid()
+    # BackLinearMotor_1.mid()
 #set to middle position
-    time.sleep(3)
+    # time.sleep(3)
 
     BackLinearMotor_1.max()
 #set to maximum position
-    time.sleep(3)
+    time.sleep(0.5)
 
 
 
