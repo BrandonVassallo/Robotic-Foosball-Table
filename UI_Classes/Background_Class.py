@@ -27,25 +27,29 @@ class Background:
         self.height = 400
 
         #Create the main window
-        screen = tk.Tk()
+        self.screen = tk.Tk()
        
         #Name the window
-        screen.title("Jumbotron")
+        self.screen.title("Jumbotron")
 
         #Set window size
-        screen.geometry(self.window_size)
+        self.screen.geometry(self.window_size)
 
         #Set green background
-        screen.configure(bg="green")
+        self.screen.configure(bg="green")
 
         #Create a canvas so I can add a rectangle for scoreboard, don't know why I need pack
-        canvas = tk.Canvas(screen, self.width, self.height)
-        canvas.pack()
+        self.canvas = tk.Canvas(self.screen, width = self.width, height = self.height, bg = "green")
+        self.canvas.pack()
 
         #Create a giant black rectangle to make scoreboard on
-        scoreboard_bg = canvas.create_rectangle(0,0,self.width,int(0.3*self.height), fill = "black" )
+        scoreboard_bg = self.canvas.create_rectangle(0,0,self.width,int(0.3*self.height), fill = "black" )
 
-        
+
+
+        self.screen.mainloop()
+
+
 
 
 
