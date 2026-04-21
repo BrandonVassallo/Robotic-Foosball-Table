@@ -21,14 +21,21 @@ Steps to setting up and enviroment:
             python --version
 
     2) Create the virtual enviroment with the virtual enviroment name, opencv:
-            python -m venv .opencv
+            python -m venv --system-site-packages .opencv
 
     3) Activate the enviroment using cmd:
             (Widnows)   .opencv\Scripts\activate
-            (linux)     source .opencv/bin/activate
+            (linux)     source .opencv/bin/activate            
 
     4) Install the libraries you need from above:
             pip install <lib1> <lib2> <...>
+
+    4a) Install the lgpio system library (Linux only)
+            sudo apt update
+            sudo apt install python3-lgpio
+
+            export GPIOZERO_PIN_FACTORY=lgpio
+
 
     5) Tell VSCode to use the Virtual Interpreter
             Ctrl + Shift + P
