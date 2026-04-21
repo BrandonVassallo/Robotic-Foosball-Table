@@ -13,6 +13,14 @@ of the screen in order to have it fit correctly. The only values you *should* ne
     
 All of these values are at the top of the init class. The main functions will be init,
 away_goal, home_goal, ball_lost, press_start, and reset/recalibration
+
+
+Mainloop could either ruin our plans or work very nicely:
+
+    -I have no idea what the mainloop() really is or what it is doing. Assuming it is just a while loop?
+    -That said, if we can stick all our code in there, it could be our overarching loop?
+    -I do not know how to implement a UI without it but there likley is a way to manually update it.
+
       
 """
 
@@ -42,8 +50,21 @@ class Background:
         self.canvas = tk.Canvas(self.screen, width = self.width, height = self.height, bg = "green")
         self.canvas.pack()
 
+
+        self.top_of_field = int(0.3*self.height)
+        #The rectangle is 30% of the field---> change the value right above this (0.3) to adjust
         #Create a giant black rectangle to make scoreboard on
-        scoreboard_bg = self.canvas.create_rectangle(0,0,self.width,int(0.3*self.height), fill = "black" )
+        scoreboard_bg = self.canvas.create_rectangle(0,0,self.width,self.top_of_field, fill = "black" )
+
+
+
+        #Creates 2 goals on either side of the field that take up 1/3 of the width
+        goal_1_bg = self.canvas.create_rectangle(0,(((self.height-self.top_of_field)//3)+self.top_of_field), int(self.width*0.02), (((self.height-self.top_of_field)//3)*2+self.top_of_field), fill = "black")
+        goal_2_bg = self.canvas.create_rectangle(self.width,(((self.height-self.top_of_field)//3)+self.top_of_field), int(self.width*0.98), (((self.height-self.top_of_field)//3)*2+self.top_of_field), fill = "black")
+        
+
+        #creates an outline of the field
+        field_outline = self.canvas.create_rectangle(self.width*0.02,self.top_of_field, self.width*0.98,self.height, outline = "white")
 
 
 
