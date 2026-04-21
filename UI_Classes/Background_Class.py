@@ -28,7 +28,6 @@ class Background:
 
     def __init__(self):
 
-
         #These values will need to be tweaked in the future!!!!!!!  Changes all window sizes -> and shapes
         self.window_size = "800x400"
         self.width = 800
@@ -57,7 +56,6 @@ class Background:
         scoreboard_bg = self.canvas.create_rectangle(0,0,self.width,self.top_of_field, fill = "black" )
 
 
-
         #Creates 2 goals on either side of the field that take up 1/3 of the width
         goal_1_bg = self.canvas.create_rectangle(0,(((self.height-self.top_of_field)//3)+self.top_of_field), int(self.width*0.02), (((self.height-self.top_of_field)//3)*2+self.top_of_field), fill = "black")
         goal_2_bg = self.canvas.create_rectangle(self.width,(((self.height-self.top_of_field)//3)+self.top_of_field), int(self.width*0.98), (((self.height-self.top_of_field)//3)*2+self.top_of_field), fill = "black")
@@ -67,6 +65,10 @@ class Background:
         field_outline = self.canvas.create_rectangle(self.width*0.02,self.top_of_field, self.width*0.98,self.height, outline = "white")
 
 
+        
+
+
+        
 
         self.screen.mainloop()
 
