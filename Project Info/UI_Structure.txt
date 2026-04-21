@@ -11,6 +11,7 @@ Classes:
 
 3. Background Class
     -Create the boxes for the field and the zone for scoreboard
+    -Goal Locations, maybe Home Vs Away labels
 
 4. Ball position
     -Adds the ball position to the UI
