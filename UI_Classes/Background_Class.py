@@ -94,10 +94,7 @@ class Background:
             self.timer -= 1
 
             #updates display
-            self.canvas.itemconfig(
-                self.timer_text,
-                text=self.format_time(self.timer)
-            )
+            self.canvas.itemconfig(self.timer_text,text=self.format_time(self.timer))
 
             #call this function again after second
             self.screen.after(1000, self.update_timer)
