@@ -1,4 +1,14 @@
 import tkinter as tk
+import gpiozero
+
+
+#TODO
+"""
+-Goal scored function
+-ball_lost screen
+-reset fxn
+"""
+
 
 #To whom it may concern:
 
@@ -12,7 +22,7 @@ of the screen in order to have it fit correctly. The only values you *should* ne
     self.height
     
 All of these values are at the top of the init class. The main functions will be init,
-away_goal, home_goal, ball_lost, press_start, and reset/recalibration
+goal, ball_lost, press_start, and reset/recalibration
       
 """
 
@@ -24,6 +34,9 @@ class Background:
         self.window_size = "800x400"
         self.width = 800
         self.height = 400
+
+
+        self.start_button = gpiozero.button(3)
 
         #Create the main window
         self.screen = tk.Tk()
@@ -59,7 +72,6 @@ class Background:
         #Creates text for the top of the scoreboard for the away and home labels
         self.scoreboard_text= self.canvas.create_text(self.width*0.25,self.top_of_field//2,text="HOME", fill="white", font=("Impact",40)) 
         self.scoreboard_text= self.canvas.create_text(self.width*0.75,self.top_of_field//2,text="AWAY", fill="white", font=("Impact",40)) 
-
 
 
         #scores will be 0-0 in initialization, used to track score of the game
@@ -98,6 +110,39 @@ class Background:
 
             #call this function again after second
             self.screen.after(1000, self.update_timer)
+
+
+
+    def wait_for_ball(self):
+        
+        #creates a waiting screen with instructions
+        self.waiting_screen = self.canvas.create_rectangle(0,0,self.width,self.height, fill="red")
+        self.waiting_text = self.canvas.create_text (text="Place the ball in the enclosure, then press the ball button.", fill="black",font=("Impact",80))
+
+        #Halts code until the button is pressed. You must press this button AFTER the ball is in the field.
+        self.start_button.wait_for_press()
+
+        #gets rid of waiting screen and text
+        self.canvas.delete(self.waiting_screen)
+        self.canvas.delete(self.waiting_text)
+
+
+    
+    def start_game(self):
+
+        #make timer display 5mins but do not begin updating yet, I think that function will call itself a ton
+        self.timer = 300
+        self.canvas.itemconfig(self.timer_text, text=self.format_time(self.timer))
+
+        self.wait_for_ball()
+
+        self.update_timer()
+
+
+
+
+
+
 
 
 
