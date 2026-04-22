@@ -53,8 +53,8 @@ class Background:
         self.goal_2_bg = self.canvas.create_rectangle(self.width,(((self.height-self.top_of_field)//3)+self.top_of_field), int(self.width*0.98), (((self.height-self.top_of_field)//3)*2+self.top_of_field), fill = "black")
         
 
-        #Creates an outline of the field
-        self.field_outline = self.canvas.create_rectangle(self.width*0.02,self.top_of_field, self.width*0.98,self.height, outline = "white")
+        #Creates an outline of the field and green field.
+        self.field_outline = self.canvas.create_rectangle(self.width*0.02,self.top_of_field, self.width*0.98,self.height, outline = "white", fill="green")
 
         #Creates text for the top of the scoreboard for the away and home labels
         self.scoreboard_text= self.canvas.create_text(self.width*0.25,self.top_of_field//2,text="HOME", fill="white", font=("Impact",40)) 
@@ -67,19 +67,44 @@ class Background:
         self.away_score = 0
 
         #displays current score on scoreboard
-        self.scoreboard_text = self.canvas.create_text(self.width*0.1, self.top_of_field//2, text= self.home_score, fill = "white", font = ("Impact",55))
-        self.scoreboard_text = self.canvas.create_text(self.width*0.9, self.top_of_field//2, text= self.away_score, fill = "white", font = ("Impact",55))
+        self.home_scoreboard_text = self.canvas.create_text(self.width*0.1, self.top_of_field//2, text= self.home_score, fill = "white", font = ("Impact",55))
+        self.away_scoreboard_text = self.canvas.create_text(self.width*0.9, self.top_of_field//2, text= self.away_score, fill = "white", font = ("Impact",55))
         
+        #time in seconds
+        self.timer = 0 
 
+        #initialize the timer on the scoreboard
+        self.timer_text = self.canvas.create_text(self.width*0.5, self.top_of_field//2, text= "0:00",fill="blue",font=("Impact",50) )
 
 
         self.screen.mainloop()
 
 
 
+    #used to convert timer into text format
+    def format_time(self, seconds):
+        mins = seconds//60
+        secs = seconds % 60
+        return f"{mins}:{secs:02d}"
 
 
 
+    def update_timer(self):
+        if self.timer > 0:
+            self.timer -= 1
+
+            #updates display
+            self.canvas.itemconfig(
+                self.timer_text,
+                text=self.format_time(self.timer)
+            )
+
+            #call this function again after second
+            self.screen.after(1000, self.update_timer)
+
+
+
+    
 
 
 
