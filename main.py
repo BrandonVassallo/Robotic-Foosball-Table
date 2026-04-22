@@ -30,7 +30,15 @@ prev = 0
 
 
 while True:     # Should break when the goal is triggered or the recalibration button is pressed
-    count, tracker, fps, prev = my_cv.tracking_alg(vid, buffer, tracker, x_size, y_size, v_width, v_height, tgt_color, count, prev, fps)
+    count, tracker, fps, prev, ball_pos = my_cv.tracking_alg(vid, buffer, tracker, x_size, y_size, v_width, v_height, tgt_color, count, prev, fps)
+    '''
+    count -> Used for ROI resetting
+    tracker -> the updated tracker option
+    fps -> For FPS usage
+    prev -> For FPS usage
+    ball_pos -> Current Center of the Ball (x, y)
+    '''
+
 
     if cv2.waitKey(1) & 0xFF == 27:
         print("ESCAPED IN MAIN")

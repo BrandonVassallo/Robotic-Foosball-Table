@@ -227,13 +227,15 @@ def tracking_alg(vid: cv2.VideoCapture,
     # Display the FPS
     cv2.putText(frame, f"FPS: {int(fps)}", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)
 
+    # ----------------- UPDATE PLAYER POSITION ------------------- #
+
     # Show the current frame
     cv2.imshow("Webcam", frame)
     cv2.waitKey(1)
 
     
 
-    return count, tracker, fps, prev
+    return count, tracker, fps, prev, current_center_of_object
 
 
 
