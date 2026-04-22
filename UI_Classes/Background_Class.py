@@ -13,14 +13,6 @@ of the screen in order to have it fit correctly. The only values you *should* ne
     
 All of these values are at the top of the init class. The main functions will be init,
 away_goal, home_goal, ball_lost, press_start, and reset/recalibration
-
-
-Mainloop could either ruin our plans or work very nicely:
-
-    -I have no idea what the mainloop() really is or what it is doing. Assuming it is just a while loop?
-    -That said, if we can stick all our code in there, it could be our overarching loop?
-    -I do not know how to implement a UI without it but there likley is a way to manually update it.
-
       
 """
 
