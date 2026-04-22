@@ -114,6 +114,8 @@ class Background:
             #call this function again after second
             self.screen.after(1000, self.update_timer)
 
+        #TODO Add if self.timer<=0, call game over fxn, then make game over fxn
+
 
     #run when we need to wait for human to put ball in arena
     def wait_for_ball(self):
