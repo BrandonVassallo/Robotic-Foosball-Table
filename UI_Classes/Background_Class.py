@@ -1,12 +1,13 @@
 import tkinter as tk
 import gpiozero
-
+#import Recalibration
+ 
+ #Need to make recalibrate class in seperate file
 
 #TODO
 """
 -Goal scored function
 -ball_lost screen
--reset fxn
 """
 
 
@@ -35,7 +36,7 @@ class Background:
         self.width = 800
         self.height = 400
 
-
+        #makes the start button GPIO pin 3 -----> this button is used to move the game out of the waiting for ball state 
         self.start_button = gpiozero.button(3)
 
         #Create the main window
@@ -112,7 +113,7 @@ class Background:
             self.screen.after(1000, self.update_timer)
 
 
-
+    #run when we need to wait for human to put ball in arena
     def wait_for_ball(self):
         
         #creates a waiting screen with instructions
@@ -127,8 +128,10 @@ class Background:
         self.canvas.delete(self.waiting_text)
 
 
-    
+
     def start_game(self):
+
+        #recalibrate()
 
         #make timer display 5mins but do not begin updating yet, I think that function will call itself a ton
         self.timer = 300
@@ -137,6 +140,20 @@ class Background:
         self.wait_for_ball()
 
         self.update_timer()
+
+    
+
+    def reset(self):
+        #reset basic vars
+        self.timer = 0
+        self.away_score=0
+        self.home_score=0
+        self.canvas.itemconfig(self.timer_text,text=self.format_time(self.timer))
+
+
+
+
+
 
 
 
