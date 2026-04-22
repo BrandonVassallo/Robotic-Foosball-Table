@@ -6,8 +6,9 @@ import gpiozero
 
 #TODO
 """
--Goal scored function
 -ball_lost screen
+-ball position update
+-player position update
 """
 
 
@@ -85,6 +86,7 @@ class Background:
         
         #time in seconds
         self.timer = 0 
+        self.timer_running = False
 
         #initialize the timer on the scoreboard
         self.timer_text = self.canvas.create_text(self.width*0.5, self.top_of_field//2, text= "0:00",fill="blue",font=("Impact",50) )
@@ -103,7 +105,7 @@ class Background:
 
 
     def update_timer(self):
-        if self.timer > 0:
+        if self.timer > 0 and self.timer_running==True:
             self.timer -= 1
 
             #updates display
@@ -115,6 +117,9 @@ class Background:
 
     #run when we need to wait for human to put ball in arena
     def wait_for_ball(self):
+
+        #stop the timer
+        self.timer_running = False
         
         #creates a waiting screen with instructions
         self.waiting_screen = self.canvas.create_rectangle(0,0,self.width,self.height, fill="red")
@@ -127,15 +132,19 @@ class Background:
         self.canvas.delete(self.waiting_screen)
         self.canvas.delete(self.waiting_text)
 
+        #start the timer again
+        self.timer_running = True
+
 
 
     def start_game(self):
 
         #recalibrate()
 
-        #make timer display 5mins but do not begin updating yet, I think that function will call itself a ton
+        #make timer display 5mins
         self.timer = 300
         self.canvas.itemconfig(self.timer_text, text=self.format_time(self.timer))
+        self.timer_running = False
 
         self.wait_for_ball()
 
@@ -145,6 +154,7 @@ class Background:
 
     def reset(self):
         #reset basic vars
+        self.timer_running = False
         self.timer = 0
         self.away_score=0
         self.home_score=0
@@ -152,7 +162,19 @@ class Background:
 
 
 
+    def goal(self,whom):
+    #whom is a boolean which dicatates who scored,   TRUE FOR HOME (ROBOT), FALSE FOR AWAY (HUMAN)
+        
+        self.timer_running = False
 
+        if whom == True:
+            self.home_score+=1
+            self.canvas.itemconfig(self.home_scoreboard_text, text=self.home_score)
+        else:
+            self.away_score+=1
+            self.canvas.itemconfig(self.away_scoreboard_text, text=self.away_score)
+
+        self.wait_for_ball()
 
 
 
