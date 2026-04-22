@@ -37,9 +37,9 @@ class Background:
         #Set green background
         self.screen.configure(bg="green")
 
-        #Create a canvas so I can add a rectangle for scoreboard, don't know why I need pack
+        #Create a canvas so I can add a rectangle for scoreboard, pack lets the screen expand with the board centered
         self.canvas = tk.Canvas(self.screen, width = self.width, height = self.height, bg = "green")
-        self.canvas.pack()
+        self.canvas.pack(expand=True)
 
 
         self.top_of_field = int(0.3*self.height)
@@ -57,11 +57,21 @@ class Background:
         self.field_outline = self.canvas.create_rectangle(self.width*0.02,self.top_of_field, self.width*0.98,self.height, outline = "white")
 
         #Creates text for the top of the scoreboard for the away and home labels
-        self.scoreboard_text= self.canvas.create_text(self.width//2,self.top_of_field//2,text="HOME                                    AWAY", fill="white", font=("Impact",40)) 
-   
+        self.scoreboard_text= self.canvas.create_text(self.width*0.25,self.top_of_field//2,text="HOME", fill="white", font=("Impact",40)) 
+        self.scoreboard_text= self.canvas.create_text(self.width*0.75,self.top_of_field//2,text="AWAY", fill="white", font=("Impact",40)) 
 
 
+
+        #scores will be 0-0 in initialization, used to track score of the game
+        self.home_score = 0
+        self.away_score = 0
+
+        #displays current score on scoreboard
+        self.scoreboard_text = self.canvas.create_text(self.width*0.1, self.top_of_field//2, text= self.home_score, fill = "white", font = ("Impact",55))
+        self.scoreboard_text = self.canvas.create_text(self.width*0.9, self.top_of_field//2, text= self.away_score, fill = "white", font = ("Impact",55))
         
+
+
 
         self.screen.mainloop()
 
