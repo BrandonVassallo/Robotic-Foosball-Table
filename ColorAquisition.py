@@ -37,9 +37,9 @@ cv2.destroyAllWindows()
 
 b, g, r = cv2.split(frame)
 
-max_g = 150 # Maximum green value 
+max_g = 80 # Maximum green value 
 
-min_b = 40
+min_b = 100
 min_r = 100
 
 top_of_object = ()    # The position at the top of the object

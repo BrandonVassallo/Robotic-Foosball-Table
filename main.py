@@ -8,7 +8,7 @@ import time
 # ADJUSTABLE PARAMETERS
 buffer = 5  # The ammount of additional pixels to add to the ROI to ensure the object is in frame of the tracker
 
-tgt_color = (30, 60, 230) # The objects target color (Blue, Green, Red)
+tgt_color = (121, 46, 202) # The objects target color (Blue, Green, Red)
     # Sensitivity and ROI Area bounds can be adjusted within the function
 
 # CROPPING Values are in the pull_frame function

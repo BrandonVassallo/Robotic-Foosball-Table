@@ -207,6 +207,7 @@ def tracking_alg(vid: cv2.VideoCapture,
             if bbox != "Nothing Found":                             # If it doesn't work, keep trying
                 tracker = cv2.legacy.TrackerCSRT.create()
                 tracker.init(frame, bbox)
+            current_center_of_object = None         # Say the ball isn't found
 
         else:                                       # If the object is FOUND
             x, y, w, h = [int(v) for v in bbox]     # Create a rectangle around it
