@@ -38,7 +38,7 @@ class Background:
         self.height = 400
 
         #makes the start button GPIO pin 3 -----> this button is used to move the game out of the waiting for ball state 
-        self.start_button = gpiozero.button(3)
+        self.start_button = gpiozero.Button(3)
 
         #Create the main window
         self.screen = tk.Tk()
