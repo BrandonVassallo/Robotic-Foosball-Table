@@ -45,19 +45,20 @@ class Background:
         self.top_of_field = int(0.3*self.height)
         #The rectangle is 30% of the field---> change the value right above this (0.3) to adjust
         #Create a giant black rectangle to make scoreboard on
-        scoreboard_bg = self.canvas.create_rectangle(0,0,self.width,self.top_of_field, fill = "black" )
+        self.scoreboard_bg = self.canvas.create_rectangle(0,0,self.width,self.top_of_field, fill = "black" )
 
 
         #Creates 2 goals on either side of the field that take up 1/3 of the width
-        goal_1_bg = self.canvas.create_rectangle(0,(((self.height-self.top_of_field)//3)+self.top_of_field), int(self.width*0.02), (((self.height-self.top_of_field)//3)*2+self.top_of_field), fill = "black")
-        goal_2_bg = self.canvas.create_rectangle(self.width,(((self.height-self.top_of_field)//3)+self.top_of_field), int(self.width*0.98), (((self.height-self.top_of_field)//3)*2+self.top_of_field), fill = "black")
+        self.goal_1_bg = self.canvas.create_rectangle(0,(((self.height-self.top_of_field)//3)+self.top_of_field), int(self.width*0.02), (((self.height-self.top_of_field)//3)*2+self.top_of_field), fill = "black")
+        self.goal_2_bg = self.canvas.create_rectangle(self.width,(((self.height-self.top_of_field)//3)+self.top_of_field), int(self.width*0.98), (((self.height-self.top_of_field)//3)*2+self.top_of_field), fill = "black")
         
 
         #Creates an outline of the field
-        field_outline = self.canvas.create_rectangle(self.width*0.02,self.top_of_field, self.width*0.98,self.height, outline = "white")
+        self.field_outline = self.canvas.create_rectangle(self.width*0.02,self.top_of_field, self.width*0.98,self.height, outline = "white")
 
-
-        
+        #Creates text for the top of the scoreboard for the away and home labels
+        self.scoreboard_text= self.canvas.create_text(self.width//2,self.top_of_field//2,text="HOME                                    AWAY", fill="white", font=("Impact",40)) 
+   
 
 
         
