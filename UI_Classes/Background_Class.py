@@ -144,6 +144,7 @@ class Background:
 
         #start the timer again
         self.timer_running = True
+        self.update_timer()
 
 
 
@@ -158,7 +159,6 @@ class Background:
 
         self.wait_for_ball()
 
-        self.update_timer()
 
     
 
