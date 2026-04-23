@@ -1,5 +1,5 @@
 import tkinter as tk
-import gpiozero
+#import gpiozero
 #import Recalibration
  
  #Need to make recalibrate class in seperate file
@@ -8,7 +8,6 @@ import gpiozero
 """
 -ball position update
 -player position update
--game_over fxn
 """
 
 
@@ -38,7 +37,7 @@ class Background:
         self.height = 400
 
         #makes the start button GPIO pin 3 -----> this button is used to move the game out of the waiting for ball state 
-        self.start_button = gpiozero.Button(3)
+#        self.start_button = gpiozero.Button(3)
 
         #Create the main window
         self.screen = tk.Tk()
@@ -91,7 +90,7 @@ class Background:
         #initialize the timer on the scoreboard
         self.timer_text = self.canvas.create_text(self.width*0.5, self.top_of_field//2, text= "0:00",fill="blue",font=("Impact",50) )
 
-        #init ball, will make visible later in code when it is needed
+
         self.ball = self.canvas.create_oval(self.width//2,self.height//2,self.width//2+30,self.height//2+30, fill = "magenta", state="hidden")
 
         self.screen.mainloop()
@@ -107,8 +106,6 @@ class Background:
 
 
     def update_timer(self):
-
-        #basic timer ticking down
         if self.timer > 0 and self.timer_running==True:
             self.timer -= 1
 
@@ -118,12 +115,7 @@ class Background:
             #call this function again after second
             self.screen.after(1000, self.update_timer)
 
-        #If time is up, call game over fxn
-        if self.timer <= 0:
-            self.canvas.itemconfig(self.timer_text,text=self.format_time(self.timer))
-            self.timer_running=False
-            #game_over(self)
-
+        #TODO Add if self.timer<=0, call game over fxn, then make game over fxn
 
 
     #run when we need to wait for human to put ball in arena ----> can also call when the CV seriously loses ball
@@ -137,7 +129,7 @@ class Background:
         self.waiting_text = self.canvas.create_text (text="Place the ball in the enclosure, then press the ball button.", fill="black",font=("Impact",80))
 
         #Halts code until the button is pressed. You must press this button AFTER the ball is in the field.
-        self.start_button.wait_for_press()
+ #       self.start_button.wait_for_press()
 
         #gets rid of waiting screen and text
         self.canvas.delete(self.waiting_screen)
