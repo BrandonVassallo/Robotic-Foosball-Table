@@ -8,7 +8,6 @@ import gpiozero
 """
 -ball position update
 -player position update
--game_over fxn
 """
 
 
@@ -171,6 +170,9 @@ class Background:
         self.home_score=0
         self.canvas.itemconfig(self.timer_text,text=self.format_time(self.timer))
 
+        #start new game
+        self.start_game()
+
 
 
     def goal(self,whom):
@@ -195,8 +197,35 @@ class Background:
 
         #We want the y position of the ball to be the value to be below the scoreboard and provide a margin for the ball size
         self.ball_y = int(cord[1])+self.top_of_field+15
+    #TODO - Finish this
         
 
+
+    def game_over(self):
+        
+        #determines winner
+        if self.away_score > self.home_score:
+            self.winner = "Robot"
+            self.color = "red"
+        elif self.away_score < self.home_score:
+            self.winner = "Human"
+            self.color = "green"
+        else:
+            self.winner = "Tie"
+            self.color = "blue"
+
+        #displays winner, also leaves scoreboard up
+        self.game_over_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill=self.color)
+        self.game_over_text = self.canvas.create_text (text=self.winner+" wins!\nTo play again, press the start button.", fill="black",font=("Impact",80))
+
+        #wait for them to hit start
+        self.start_button.wait_for_press()
+
+        #gets rid of waiting screen and text
+        self.canvas.delete(self.game_over_screen)
+        self.canvas.delete(self.game_over_text)
+
+        self.start_game()
 
 
 
