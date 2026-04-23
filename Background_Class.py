@@ -28,12 +28,15 @@ goal, ball_lost, press_start, and reset/recalibration
 
 class Background:
 
-    def __init__(self):
+    def __init__(self,ball_cords):
 
         #These values will need to be tweaked in the future!!!!!!!  Changes all window sizes -> and shapes
         self.window_size = "800x400"
         self.width = 800
         self.height = 400
+
+        #need a way to get these vals, feed this in as a function to the class when creating in main file
+        self.ball_cords = ball_cords
 
         #makes the start button GPIO pin 3 -----> this button is used to move the game out of the waiting for ball state 
         self.start_button = gpiozero.Button(3)
@@ -111,6 +114,10 @@ class Background:
             #updates display
             self.canvas.itemconfig(self.timer_text,text=self.format_time(self.timer))
 
+
+            #should set the ball pos on the display once every 0.1 seconds --> could adjust
+            self.screen.after(100 ,self.ball_pos(self.ball_cords))
+
             #call this function again after second
             self.screen.after(1000, self.update_timer)
 
@@ -118,7 +125,7 @@ class Background:
         if self.timer <= 0:
             self.canvas.itemconfig(self.timer_text,text=self.format_time(self.timer))
             self.timer_running=False
-            #game_over(self)
+            self.game_over()
 
 
 
@@ -201,14 +208,12 @@ class Background:
 
         #We want the y position of the ball to be the value to be below the scoreboard and provide a margin for the ball size
         #Convert Brandon coordinates tuple (x, y) to UI coordinates
-        self.ball_x = self.width*0.02 + cord(0) * ((self.width*0.98 - self.width*0.02)/640)
-        self.ball_y = self.top_of_field + cord(1) * ((self.height - self.top_of_field)/360)
+        self.ball_x = self.width*0.02 + cord[0] * ((self.width*0.98 - self.width*0.02)/640)
+        self.ball_y = self.top_of_field + cord[1] * ((self.height - self.top_of_field)/360)
 
         self.ball=self.canvas.create_oval(self.ball_x-15,self.ball_y-15,self.ball_x+15,self.ball_y+15, fill="magenta")
-   
 
         
-
 
     def game_over(self):
         
