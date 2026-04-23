@@ -7,7 +7,6 @@ import gpiozero
 #TODO
 """
 -ball position update
--player position update
 """
 
 
@@ -90,8 +89,6 @@ class Background:
         #initialize the timer on the scoreboard
         self.timer_text = self.canvas.create_text(self.width*0.5, self.top_of_field//2, text= "0:00",fill="blue",font=("Impact",50) )
 
-        #init ball, will make visible later in code when it is needed
-        self.ball = self.canvas.create_oval(self.width//2,self.height//2,self.width//2+30,self.height//2+30, fill = "magenta", state="hidden")
 
         self.screen.mainloop()
 
@@ -192,12 +189,24 @@ class Background:
     
     
     def ball_pos(self, cord):
+
+        #the best method I found was to delete the ball and make a new one every time this is called.
+        #There is a move function but it needs difference in cords so we would have to init which would be annoying
+        #this should work with little to no performance hit
+        self.canvas.delete(self.ball)
+
+
         #cord is a tuple containing the x,y cordinate of the ball.
         #Brandon code uses 0,0 as top left and 640,360 as bottom right
 
         #We want the y position of the ball to be the value to be below the scoreboard and provide a margin for the ball size
-        self.ball_y = int(cord[1])+self.top_of_field+15
-    #TODO - Finish this
+        #Convert Brandon coordinates tuple (x, y) to UI coordinates
+        self.ball_x = self.width*0.02 + cord(0) * ((self.width*0.98 - self.width*0.02)/640)
+        self.ball_y = self.top_of_field + cord(1) * ((self.height - self.top_of_field)/360)
+
+        self.ball=self.canvas.create_oval(self.ball_x-15,self.ball_y-15,self.ball_x+15,self.ball_y+15, fill="magenta")
+   
+
         
 
 
