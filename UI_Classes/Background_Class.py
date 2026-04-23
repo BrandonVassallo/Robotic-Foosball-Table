@@ -191,8 +191,11 @@ class Background:
     
     def ball_pos(self, cord):
         #cord is a tuple containing the x,y cordinate of the ball.
-        #Brandon code uses 0,0 as top left and 480,360 as bottom right
-        pass
+        #Brandon code uses 0,0 as top left and 640,360 as bottom right
+
+        #We want the y position of the ball to be the value to be below the scoreboard and provide a margin for the ball size
+        self.ball_y = int(cord[1])+self.top_of_field+15
+        
 
 
 
