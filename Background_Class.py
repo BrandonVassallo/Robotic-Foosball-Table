@@ -6,7 +6,8 @@ import gpiozero
 
 #TODO
 """
--ball position update
+-player position update
+-vectors if time
 """
 
 
