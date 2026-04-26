@@ -29,10 +29,14 @@ class Player_Line:
         pass
 
     
-    def post_up(self):
+    def up(self):
         
         self.linear_motor.angle = 90
 
         #add method to make them stand vertically with rotational motor
         
+        pass
+
+    def down(self):
+        self.linear_motor.angle = 90
         pass

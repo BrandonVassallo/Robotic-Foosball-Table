@@ -118,12 +118,6 @@ class Background:
         self.x_size = 640
         self.y_size = 360
 
-        self.vid, self.frame, self.v_width, self.v_height = my_cv.initalize_video(self.buffer, self.x_size, self.y_size)
-        self.frame, self.tracker = my_cv.initalize_tracker(self.vid, self.frame, self.x_size, self.y_size, self.v_width, self.v_height, self.buffer, self.tgt_color)
-
-        self.count = 0
-        self.fps = 0
-        self.prev = 0
 
     #________________________________________________________________________________________________________________________
 
