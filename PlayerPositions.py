@@ -24,6 +24,7 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
     MAX_PLAYER_3_PIXEL = MAX_ROD_MOVEMENT_PIXELS*2 + PLAYER_2_RANGE
 
     if (ball_pos == None):
+        print("NO BALL POSITION INPUTTED")
         return None     # DO NOT MOVE THE SERVOS
 
     active_player = goalie      # Initalize the active player as the goalie for now
@@ -81,7 +82,7 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
     else:
         print("BALL POSITION INVALID!\n")
         print(f"ball_pos was: {ball_pos}")
-        return 
+        return None         # DO NOT MOVE THE SERVOS
 
 
     ##### WHAT PLAYER ON THE ROD IS RESPONSIBLE? #####
@@ -115,8 +116,14 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
         print(f"ball_pos was: {ball_pos}")
         return None         # DO NOT MOVE THE SERVOS
 
+    # Do we need to kick?
     if kick_bool:
         active_player.kick()
+
+
+
+
+    ####################### Notes #######################
 
     # Player 1 y pos = Servo % * 119 + 17
         # Player 1 handles 36.5% of the field
