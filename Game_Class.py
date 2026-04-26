@@ -48,9 +48,9 @@ class Game:
     #-------------Setting up values needed later------------------------------------------------------------------------
 
         #These values will need to be tweaked in the future!!!!!!!  Changes all window sizes -> and shapes
-        self.window_size = "800x400"
-        self.width = 800
-        self.height = 400
+        self.window_size = "1024x600"
+        self.width = 1024
+        self.height = 600
 
 
         #scores will be 0-0 in initialization, used to track score of the game
@@ -104,7 +104,7 @@ class Game:
         # ADJUSTABLE PARAMETERS
         self.buffer = 5  # The ammount of additional pixels to add to the ROI to ensure the object is in frame of the tracker
 
-        self.tgt_color = (121, 46, 202) # The objects target color (Blue, Green, Red)
+        self.tgt_color = (121, 46, 130)     # The objects target color (Blue, Green, Red)
             # Sensitivity and ROI Area bounds can be adjusted within the function
 
         # CROPPING Values are in the pull_frame function

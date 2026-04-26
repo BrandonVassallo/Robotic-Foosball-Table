@@ -13,7 +13,7 @@ class Goal:
     def __init__(self,Rpin,Lpin):
         self.reciever=DigitalInputDevice(Rpin)
         self.laser=OutputDevice(Lpin)
-        self.reciever.inactive_time = 0
+        #self.reciever.inactive_time = 0
         #YOU MUST INPUT THE RECIEVER PIN FIRST THEN THE LASER PIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -26,7 +26,7 @@ class Goal:
     def is_goal(self):
         time = self.reciever.inactive_time
         if time>0:
-            self.reciever.inactive_time = 0
+            #self.reciever.inactive_time = 0
             return True
     #checks if there has been inactive time, if there has been inactive time, the ball crossed the line-> goal    
     #sets the inactive time to 0 to reset the is_goal check
@@ -34,7 +34,7 @@ class Goal:
 
     def on (self):
         self.laser.on()
-        self.reciever.inactive_time = 0
+        #self.reciever.inactive_time = 0
     #sets inactive time to 0 since when the laser is off, inactive time accumulates
 
     def off (self):
@@ -42,7 +42,8 @@ class Goal:
 
     
     def set_inactive_timer_zero(self):
-        self.reciever.inactive_time = 0
+        #self.reciever.inactive_time = 0
+        pass
     #sets inactive time to 0
 
           
