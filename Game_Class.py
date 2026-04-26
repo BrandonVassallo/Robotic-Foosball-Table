@@ -373,7 +373,6 @@ class Background:
         if self.timer <= 0:         # Has a timer run out?
             self.game_over()
             self.game_state = Game_States.IDLE
-        self.is_reset()             # Was the reset button triggered?
 
     #Calls itself constantly to run whatever services are needed for each state
     def active_state(self):
