@@ -176,6 +176,11 @@ class Background:
 
 
         self.ball = self.canvas.create_oval(0,0,1,1, fill="magenta", state="hidden")
+        self.waiting_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill="red", state="hidden")
+        self.waiting_text = self.canvas.create_text (text="Place the ball in the enclosure, then press the start button.", fill="black",font=("Impact",80),state="hidden")
+        self.game_over_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill=self.color, state="hidden")
+        self.game_over_text = self.canvas.create_text (text=" wins!\nTo play again, press the start button.", fill="black",font=("Impact",80),state="hidden")
+
     #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         #runs the loop
@@ -188,6 +193,15 @@ class Background:
         mins = seconds//60
         secs = seconds % 60
         return f"{mins}:{secs:02d}"
+
+
+    def clear_screen_events(self):
+        #gets rid of waiting screen and text
+        self.canvas.delete(self.waiting_screen)
+        self.canvas.delete(self.waiting_text)
+        #gets rid of gameover screen and text
+        self.canvas.delete(self.game_over_screen)
+        self.canvas.delete(self.game_over_text)
 
 
 
@@ -309,14 +323,25 @@ class Background:
         self.waiting_text = self.canvas.create_text (text="Place the ball in the enclosure, then press the start button.", fill="black",font=("Impact",80))
 
 
-        #gets rid of waiting screen and text
-        self.canvas.delete(self.waiting_screen)
-        self.canvas.delete(self.waiting_text)
-
-
 
     def game_over(self):
-        pass
+
+        #determines winner
+        if self.away_score > self.home_score:
+            self.winner = "Robot"
+            self.color = "red"
+        elif self.away_score < self.home_score:
+            self.winner = "Human"
+            self.color = "green"
+        else:
+            self.winner = "Tie"
+            self.color = "blue"
+
+        #displays winner, also leaves scoreboard up
+        self.game_over_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill=self.color)
+        self.game_over_text = self.canvas.create_text (text=self.winner+" wins!\nTo play again, press the start button.", fill="black",font=("Impact",80))
+
+
 
 
     
@@ -336,9 +361,11 @@ class Background:
     def reset_pressed(self):
         
         if self.game_state == Game_States.PLAYING:
+            self.reset()
             self.game_state = Game_States.IDLE
 
         elif self.game_state == Game_States.WAITING:
+            self.reset()
             self.game_state = Game_States.IDLE
 
         
@@ -353,8 +380,6 @@ class Background:
     def update_WAITING(self):
         pass
 
-    def is_reset(self):
-        pass
 
 
 
