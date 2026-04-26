@@ -190,6 +190,12 @@ class Background:
 
 
     def clear_screen_events(self):
+        
+        self.waiting_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill="red", state="hidden")
+        self.waiting_text = self.canvas.create_text (text="Place the ball in the enclosure, then press the start button.", fill="black",font=("Impact",80),state="hidden")
+        self.game_over_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill=self.color, state="hidden")
+        self.game_over_text = self.canvas.create_text (text=" wins!\nTo play again, press the start button.", fill="black",font=("Impact",80),state="hidden")
+
         #gets rid of waiting screen and text
         self.canvas.delete(self.waiting_screen)
         self.canvas.delete(self.waiting_text)
