@@ -69,6 +69,10 @@ class Background:
         self.start_button = gpiozero.Button(3)
         self.reset_button = gpiozero.Button(2)
 
+        self.start_button.when_activated = self.start_pressed
+        self.reset_button.when_activated = self.reset_pressed
+
+
 
         #*****************************THESE PINS MAY ALSO NEED TO BE CHANGED******************************************
         #creates the two laser systems for the goals according to the laser activities class structure
@@ -264,6 +268,7 @@ class Background:
 
 
         """MOVE TO WAITING STATE"""
+        self.enter_WAITING()
         self.game_state = Game_States.WAITING
 
 
@@ -300,7 +305,7 @@ class Background:
     def enter_WAITING(self):
         
         #creates a waiting screen with instructions
-        self.waiting_screen = self.canvas.create_rectangle(0,0,self.width,self.height, fill="red")
+        self.waiting_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill="red")
         self.waiting_text = self.canvas.create_text (text="Place the ball in the enclosure, then press the start button.", fill="black",font=("Impact",80))
 
 
@@ -309,9 +314,19 @@ class Background:
         self.canvas.delete(self.waiting_text)
 
 
+
     def game_over(self):
         pass
 
+
+    
+    def start_pressed(self):
+        pass
+
+
+
+    def reset_pressed(self):
+        pass
 
 
     def update_IDLE(self):
