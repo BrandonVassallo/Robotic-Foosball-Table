@@ -321,12 +321,27 @@ class Background:
 
     
     def start_pressed(self):
-        pass
+
+        if self.game_state == Game_States.IDLE:
+            self.start_game()
+
+        elif self.game_state == Game_States.WAITING:
+            self.game_state = Game_States.PLAYING
+
+        elif self.game_state == Game_States.PLAYING:
+            self.game_state = Game_States.WAITING
 
 
 
     def reset_pressed(self):
-        pass
+        
+        if self.game_state == Game_States.PLAYING:
+            self.game_state = Game_States.IDLE
+
+        elif self.game_state == Game_States.WAITING:
+            self.game_state = Game_States.IDLE
+
+        
 
 
     def update_IDLE(self):
