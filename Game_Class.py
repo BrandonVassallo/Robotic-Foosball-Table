@@ -240,6 +240,11 @@ class Background:
         self.away_goal.on()
         self.home_goal.on()
 
+        # Move all three player rods down, to begin playing
+        self.goalie.down()
+        self.defense.down()
+        self.offense.down()
+
         """MOVE TO WAITING STATE"""
         self.enter_WAITING()
         self.game_state = Game_States.WAITING
@@ -266,6 +271,11 @@ class Background:
         self.away_goal.on()
         self.home_goal.on()
         self.clear_screen_events()
+
+        # Move all three player rods up
+        self.goalie.up()
+        self.defense.up()
+        self.offense.up()
 
         """MOVE TO IDLE STATE"""
         self.game_state = Game_States.IDLE
@@ -384,8 +394,6 @@ class Background:
 
     def update_WAITING(self):
         # Check interupts
-        self.start_pressed()    # Was the start button pressed? (Acts like resume)
-        self.reset_pressed()    # Was the reset button pressed?
         pass
 
 
