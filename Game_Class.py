@@ -41,7 +41,7 @@ class Game_States(Enum):
     PLAYING = 3
 
 
-class Background:
+class Game:
 
     def __init__(self):
     #-------------Setting up values needed later------------------------------------------------------------------------
