@@ -213,7 +213,7 @@ class Game:
 
 
             #call this function again after second
-        self.screen.after(1000, self.update_timer)
+            self.screen.after(1000, self.update_timer)
 
 
 
@@ -344,8 +344,8 @@ class Game:
     def enter_WAITING(self):
         self.clear_screen_events()
         #creates a waiting screen with instructions
-        self.waiting_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill="red", state="normal")
-        self.waiting_text = self.canvas.create_text (self.width//2,self.height//2,text="Place the ball in the enclosure, then press the start button.", fill="black",font=("Impact",80),state="normal")
+        self.canvas.itemconfig(self.waiting_screen, state="normal")
+        self.canvas.itemconfig(self.waiting_text,state="normal")
 
 
 
@@ -365,8 +365,8 @@ class Game:
             self.color = "blue"
 
         #displays winner, also leaves scoreboard up
-        self.game_over_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill=self.color, state="normal")
-        self.game_over_text = self.canvas.create_text (self.width//2,self.height//2,text=self.winner+" wins!\nTo play again, press the start button.", fill="black",font=("Impact",80),state="normal")
+        self.canvas.itemconfig(self.game_over_screen, state="normal")
+        self.canvas.itemconfig(self.game_over_text, state="normal")
         
         """MOVES TO IDLE"""
         self.game_state = Game_States.IDLE
@@ -384,6 +384,7 @@ class Game:
             self.game_state = Game_States.PLAYING
 
         elif self.game_state == Game_States.PLAYING:
+            self.enter_WAITING()
             self.game_state = Game_States.WAITING
 
 
