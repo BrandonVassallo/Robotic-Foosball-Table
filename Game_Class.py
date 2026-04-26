@@ -330,12 +330,16 @@ class Background:
 
 
     def update_IDLE(self):
+        self.start_pressed()    # Was the start button pressed?
         pass
 
 
 
 
     def update_WAITING(self):
+        # Check interupts
+        self.start_pressed()    # Was the start button pressed? (Acts like resume)
+        self.reset_pressed()    # Was the reset button pressed?
         pass
 
     def is_reset(self):
@@ -355,6 +359,8 @@ class Background:
 
         # Step 3: Check for interupts
         self.was_goal_scored()      # Was a goal scored?
+        self.start_pressed()        # Was the start button pressed? (Acts like pause)
+        self.reset_pressed()        # Was the reset button pressed?
         if self.timer <= 0:         # Has a timer run out?
             self.game_over()
             self.game_state = Game_States.IDLE
