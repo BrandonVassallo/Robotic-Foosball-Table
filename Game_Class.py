@@ -175,3 +175,77 @@ class Background:
 
             #call this function again after second
             self.screen.after(1000, self.update_timer)
+
+
+
+    #Writes the scoreboard with current vals because im tired of typing this
+    def update_scores(self):
+        self.canvas.itemconfig(self.away_scoreboard_text,text=self.away_score)
+        self.canvas.itemconfig(self.home_scoreboard_text, text=self.home_score)
+
+
+
+    #Used to after IDLE is exited to setup a new game
+    def start_game(self):
+
+        #recalibrate()
+
+        #make timer display 5mins
+        self.timer = 300
+        self.canvas.itemconfig(self.timer_text, text=self.format_time(self.timer))
+        
+        #reset scores
+        self.home_score = 0
+        self.away_score = 0
+        self.update_scores()
+
+        #Move game states to wait for ball
+        self.game_state = Game_States.WAITING
+
+
+
+    #run after any update function calls reset
+    def reset(self):
+        #reset basic vars
+        self.timer = 0
+        self.away_score=0
+        self.home_score=0
+        self.update_scores
+        self.canvas.itemconfig(self.timer_text,text=self.format_time(self.timer))
+
+        #start new game
+        self.game_state = Game_States.IDLE
+    
+
+
+    def update_IDLE(self):
+        pass
+
+
+
+
+    def update_WAITING(self):
+        pass
+
+
+
+
+    def update_PLAYING(self):
+        pass
+
+
+
+    #Calls itself constantly to run whatever services are needed for each state
+    def active_state(self):
+        if self.game_state == Game_States.IDLE:
+            self.update_IDLE()
+        elif self.game_state == Game_States.PLAYING:
+            self.update_PLAYING()
+        else:
+            self.update_WAITING()
+
+        #THIS VARIABLE IS THE SPEED AT WHICH THE GAME WILL RUN, CURRENTLY 50ms PER LOOP
+        self.screen.after(50,self.active_state)
+
+    
+
