@@ -18,7 +18,7 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
 
     MAX_ROD_MOVEMENT_PIXELS = 136
     PLAYER_2_RANGE = 88
-    
+
     MAX_PLAYER_1_PIXEL = MAX_ROD_MOVEMENT_PIXELS
     MAX_PLAYER_2_PIXEL = MAX_ROD_MOVEMENT_PIXELS + PLAYER_2_RANGE
     MAX_PLAYER_3_PIXEL = MAX_ROD_MOVEMENT_PIXELS*2 + PLAYER_2_RANGE
@@ -88,8 +88,8 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
 
     # Player 1 (Closest to Player)
     if ball_pos[1] < MAX_PLAYER_1_PIXEL:
-        if ball_pos[1] < 17:
-            move_to = 0
+        if ball_pos[1] < RUBBER_BARRIER:
+            move_to = 0     # If the ball is past the rubber barrier, move the servo to 0%
         else:
             move_to = int((ball_pos[1]-RUBBER_BARRIER)/MAX_ROD_MOVEMENT_PIXELS)
         active_player.move(move_to)
@@ -103,8 +103,8 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
 
     # Player 3 (Closest to Servos)
     elif ball_pos[1] < MAX_PLAYER_3_PIXEL:
-        if ball_pos[1] > 343:
-            move_to = 1
+        if ball_pos[1] > (360 - RUBBER_BARRIER):
+            move_to = 1     # If the ball is past the rubber barier, move the servo to 100%
         else:
             move_to = int((ball_pos[1]-MAX_PLAYER_2_PIXEL)/MAX_ROD_MOVEMENT_PIXELS)
         active_player.move(move_to)
@@ -113,7 +113,7 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
     else:
         print("BALL POSITION INVALID!\n")
         print(f"ball_pos was: {ball_pos}")
-        return 
+        return None         # DO NOT MOVE THE SERVOS
 
     if kick_bool:
         active_player.kick()
