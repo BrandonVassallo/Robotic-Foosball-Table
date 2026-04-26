@@ -3,3 +3,6 @@ will probably have to import all the gpiozero things for this too. This will not
 in the main file that can trigger this as well as a button."""
 
 """I will need you to write CV recalibration code in here if that is a thing we need, I can handle the rest"""
+
+def recalibrate():
+    pass
