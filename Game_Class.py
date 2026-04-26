@@ -175,3 +175,45 @@ class Background:
 
             #call this function again after second
             self.screen.after(1000, self.update_timer)
+
+
+
+    #Used to after IDLE is exited to setup a new game
+    def start_game(self):
+
+        #recalibrate()
+
+        #make timer display 5mins
+        self.timer = 300
+        self.canvas.itemconfig(self.timer_text, text=self.format_time(self.timer))
+        
+        #reset scores
+        self.home_score = 0
+        self.away_score = 0
+
+        #Move game states to wait for ball
+        self.game_state = Game_States.WAITING
+
+
+    def update_IDLE(self):
+        pass
+
+    def update_WAITING(self):
+        pass
+
+    def update_PLAYING(self):
+        pass
+
+
+
+    #Calls itself constantly to run whatever services are needed for each state
+    def active_state(self):
+        if self.game_state == Game_States.IDLE:
+            self.update_IDLE()
+        elif self.game_state == Game_States.PLAYING:
+            self.update_PLAYING()
+        else:
+            self.update_WAITING()
+
+    
+
