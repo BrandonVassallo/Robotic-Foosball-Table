@@ -246,6 +246,7 @@ class Background:
         self.home_goal.on()
 
         """MOVE TO WAITING STATE"""
+        self.enter_WAITING()
         self.game_state = Game_States.WAITING
 
 
@@ -260,6 +261,7 @@ class Background:
         self.canvas.itemconfig(self.timer_text,text=self.format_time(self.timer))
         self.away_goal.on()
         self.home_goal.on()
+        self.clear_screen_events()
 
         """MOVE TO IDLE STATE"""
         self.game_state = Game_States.IDLE
@@ -317,7 +319,7 @@ class Background:
    
 
     def enter_WAITING(self):
-        
+        self.clear_screen_events()
         #creates a waiting screen with instructions
         self.waiting_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill="red")
         self.waiting_text = self.canvas.create_text (text="Place the ball in the enclosure, then press the start button.", fill="black",font=("Impact",80))
@@ -325,6 +327,8 @@ class Background:
 
 
     def game_over(self):
+        self.clear_screen_events
+
 
         #determines winner
         if self.away_score > self.home_score:
@@ -342,8 +346,6 @@ class Background:
         self.game_over_text = self.canvas.create_text (text=self.winner+" wins!\nTo play again, press the start button.", fill="black",font=("Impact",80))
 
 
-
-
     
     def start_pressed(self):
 
@@ -351,6 +353,7 @@ class Background:
             self.start_game()
 
         elif self.game_state == Game_States.WAITING:
+            self.clear_screen_events
             self.game_state = Game_States.PLAYING
 
         elif self.game_state == Game_States.PLAYING:
@@ -370,11 +373,9 @@ class Background:
 
         
 
-
     def update_IDLE(self):
         self.start_pressed()    # Was the start button pressed?
         pass
-
 
 
 
@@ -383,7 +384,6 @@ class Background:
         self.start_pressed()    # Was the start button pressed? (Acts like resume)
         self.reset_pressed()    # Was the reset button pressed?
         pass
-
 
 
 
