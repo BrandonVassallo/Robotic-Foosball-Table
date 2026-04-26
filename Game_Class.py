@@ -76,8 +76,8 @@ class Game:
         #*****************************THESE PINS MAY ALSO NEED TO BE CHANGED******************************************
         #creates the two laser systems for the goals according to the laser activities class structure
         #pin one is reciever, pin two is laser
-        self.home_goal = pew(4,5)
-        self.away_goal = pew(6,7)
+        self.home_goal = pew.Goal(4,5)
+        self.away_goal = pew.Goal(6,7)
         
         #*****************************PLAYER DECLERATIONS******************************************
         goalie_move_pin = 0
@@ -170,9 +170,9 @@ class Game:
         self.color = "red"
         self.ball = self.canvas.create_oval(0,0,1,1, fill="magenta", state="hidden")
         self.waiting_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill="red", state="hidden")
-        self.waiting_text = self.canvas.create_text (text="Place the ball in the enclosure, then press the start button.", fill="black",font=("Impact",80),state="hidden")
+        self.waiting_text = self.canvas.create_text (self.width//2,self.height//2,text="Place the ball in the enclosure, then press the start button.", fill="black",font=("Impact",80),state="hidden")
         self.game_over_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill=self.color, state="hidden")
-        self.game_over_text = self.canvas.create_text (text=" wins!\nTo play again, press the start button.", fill="black",font=("Impact",80),state="hidden")
+        self.game_over_text = self.canvas.create_text (self.width//2,self.height//2,text=" wins!\nTo play again, press the start button.", fill="black",font=("Impact",80),state="hidden")
 
         self.screen.after(50,self.active_state)
     #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -213,7 +213,7 @@ class Game:
 
 
             #call this function again after second
-            self.screen.after(1000, self.update_timer)
+        self.screen.after(1000, self.update_timer)
 
 
 
@@ -294,7 +294,7 @@ class Game:
     def goal(self,whom):
     #whom is a boolean which dicatates who scored,   TRUE FOR AWAY (ROBOT), FALSE FOR HOME (HUMAN)
         
-        if whom == True:
+        if whom == False:
             self.home_score+=1
             self.canvas.itemconfig(self.home_scoreboard_text, text=self.home_score)
         else:
@@ -312,12 +312,12 @@ class Game:
 
 
 
-    #if goal is scored, calls goal, with correct team
+    #if goal is scored, calls goal, with correct team   -> TRUE FOR AWAY, FALSE FOR HOME
     def was_goal_scored(self):
         if self.away_goal.is_goal():
-            self.goal(False)
-        elif self.home_goal.is_goal():
             self.goal(True)
+        elif self.home_goal.is_goal():
+            self.goal(False)
 
 
 
@@ -344,8 +344,8 @@ class Game:
     def enter_WAITING(self):
         self.clear_screen_events()
         #creates a waiting screen with instructions
-        self.waiting_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill="red")
-        self.waiting_text = self.canvas.create_text (text="Place the ball in the enclosure, then press the start button.", fill="black",font=("Impact",80))
+        self.waiting_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill="red", state="normal")
+        self.waiting_text = self.canvas.create_text (self.width//2,self.height//2,text="Place the ball in the enclosure, then press the start button.", fill="black",font=("Impact",80),state="normal")
 
 
 
@@ -365,9 +365,11 @@ class Game:
             self.color = "blue"
 
         #displays winner, also leaves scoreboard up
-        self.game_over_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill=self.color)
-        self.game_over_text = self.canvas.create_text (text=self.winner+" wins!\nTo play again, press the start button.", fill="black",font=("Impact",80))
-
+        self.game_over_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill=self.color, state="normal")
+        self.game_over_text = self.canvas.create_text (self.width//2,self.height//2,text=self.winner+" wins!\nTo play again, press the start button.", fill="black",font=("Impact",80),state="normal")
+        
+        """MOVES TO IDLE"""
+        self.game_state = Game_States.IDLE
 
     def start_pressed(self):
         self.screen.after(0, self._start_pressed_ui)
@@ -425,7 +427,6 @@ class Game:
         self.was_goal_scored()      # Was a goal scored?
         if self.timer <= 0:         # Has a timer run out?
             self.game_over()
-            self.game_state = Game_States.IDLE
 
 
 
