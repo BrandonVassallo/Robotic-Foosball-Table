@@ -253,6 +253,16 @@ class Background:
 
 
 
+    #if goal is scored, calls goal, with correct team
+    def was_goal_scored(self):
+        if self.away_goal.is_goal():
+            self.goal(False)
+        elif self.home_goal.is_goal():
+            self.goal(True)
+
+
+
+
     def update_IDLE(self):
         pass
 
