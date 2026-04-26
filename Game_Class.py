@@ -167,17 +167,19 @@ class Game:
         #initialize the timer on the scoreboard
         self.timer_text = self.canvas.create_text(self.width*0.5, self.top_of_field//2, text= "0:00",fill="blue",font=("Impact",50) )
 
-
+        self.color = "red"
         self.ball = self.canvas.create_oval(0,0,1,1, fill="magenta", state="hidden")
         self.waiting_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill="red", state="hidden")
         self.waiting_text = self.canvas.create_text (text="Place the ball in the enclosure, then press the start button.", fill="black",font=("Impact",80),state="hidden")
         self.game_over_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill=self.color, state="hidden")
         self.game_over_text = self.canvas.create_text (text=" wins!\nTo play again, press the start button.", fill="black",font=("Impact",80),state="hidden")
 
+        self.screen.after(50,self.active_state)
     #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         #runs the loop
-        self.screen.mainloop()
+        #CHAT SAID TO COMMENT THIS AS IT doesnt work
+        #self.screen.mainloop()
 
 
 
@@ -190,11 +192,6 @@ class Game:
 
     def clear_screen_events(self):
         
-        self.waiting_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill="red", state="hidden")
-        self.waiting_text = self.canvas.create_text (text="Place the ball in the enclosure, then press the start button.", fill="black",font=("Impact",80),state="hidden")
-        self.game_over_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill=self.color, state="hidden")
-        self.game_over_text = self.canvas.create_text (text=" wins!\nTo play again, press the start button.", fill="black",font=("Impact",80),state="hidden")
-
         #gets rid of waiting screen and text
         self.canvas.delete(self.waiting_screen)
         self.canvas.delete(self.waiting_text)
@@ -229,6 +226,8 @@ class Game:
 
     #Used to after IDLE is exited to setup a new game
     def start_game(self):
+
+        self.update_timer()
 
         # Start the video object for openCV
         self.restart_cv()
@@ -271,7 +270,7 @@ class Game:
         self.timer = 0
         self.away_score=0
         self.home_score=0
-        self.update_scores
+        self.update_scores()
         self.canvas.itemconfig(self.timer_text,text=self.format_time(self.timer))
         self.away_goal.on()
         self.home_goal.on()
@@ -283,7 +282,8 @@ class Game:
         self.offense.up()
 
         # Reset Computer Vision Objects
-        self.vid.release()
+        if hasattr(self, "vid"):
+            self.vid.release()
         cv2.destroyAllWindows()
 
         """MOVE TO IDLE STATE"""
@@ -292,7 +292,7 @@ class Game:
     
     
     def goal(self,whom):
-    #whom is a boolean which dicatates who scored,   TRUE FOR HOME (ROBOT), FALSE FOR AWAY (HUMAN)
+    #whom is a boolean which dicatates who scored,   TRUE FOR AWAY (ROBOT), FALSE FOR HOME (HUMAN)
         
         if whom == True:
             self.home_score+=1
@@ -350,7 +350,7 @@ class Game:
 
 
     def game_over(self):
-        self.clear_screen_events
+        self.clear_screen_events()
 
 
         #determines winner
@@ -369,23 +369,27 @@ class Game:
         self.game_over_text = self.canvas.create_text (text=self.winner+" wins!\nTo play again, press the start button.", fill="black",font=("Impact",80))
 
 
-    
     def start_pressed(self):
+        self.screen.after(0, self._start_pressed_ui)
 
+
+    def _start_pressed_ui(self):
         if self.game_state == Game_States.IDLE:
             self.start_game()
 
         elif self.game_state == Game_States.WAITING:
-            self.clear_screen_events
+            self.clear_screen_events()
             self.game_state = Game_States.PLAYING
 
         elif self.game_state == Game_States.PLAYING:
             self.game_state = Game_States.WAITING
 
 
-
     def reset_pressed(self):
+        self.screen.after(0,self._reset_pressed_ui)
         
+
+    def _reset_pressed_ui(self):
         if self.game_state == Game_States.PLAYING:
             self.reset()
             self.game_state = Game_States.IDLE
