@@ -39,7 +39,7 @@ while True:     # Should break when the goal is triggered or the recalibration b
     prev -> For FPS usage
     ball_pos -> Current Center of the Ball (x, y)
     '''
-
+    
 
     if cv2.waitKey(1) & 0xFF == 27:
         print("ESCAPED IN MAIN")
