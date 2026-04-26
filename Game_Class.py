@@ -296,6 +296,10 @@ class Background:
         self.canvas.delete(self.waiting_text)
 
 
+    def game_over(self):
+        pass
+
+
 
     def update_IDLE(self):
         pass
