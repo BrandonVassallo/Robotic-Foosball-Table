@@ -253,7 +253,7 @@ class Background:
 
 
 
-    #if goal is scored, calls goal
+    #if goal is scored, calls goal, with correct team
     def was_goal_scored(self):
         if self.away_goal.is_goal():
             self.goal(False)
