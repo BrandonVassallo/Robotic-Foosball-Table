@@ -27,6 +27,7 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
         return None     # DO NOT MOVE THE SERVOS
 
     active_player = goalie      # Initalize the active player as the goalie for now
+    kick_bool = False           # Assume no kicking is needed yet
 
     # y = 0: FROM PLAYER'S PERSPECTIVE 
         # Player 1 is responsible for 136 > y > 0       (Closest to Player)
@@ -47,6 +48,8 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
     if ball_pos[0] < 216:
         active_player = goalie
         # ADD CHECK TO KICK
+        if ball_pos[0] < 100:
+            kick_bool = True
 
 
     # DEFENSE PLAYER:
@@ -57,6 +60,8 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
     elif ball_pos[0] < 428:
         active_player = defense
         # ADD CHECK TO KICK
+        if ball_pos[0] < 316:
+            kick_bool = True
 
 
     # OFFENSE PLAYERS:
@@ -67,6 +72,8 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
     elif ball_pos[0] < 639:
         active_player = offense
         # ADD CHECK TO KICK
+        if ball_pos[0] < 528:
+            kick_bool = True
 
 
     # Ball position is out of range
@@ -108,6 +115,8 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
         print(f"ball_pos was: {ball_pos}")
         return 
 
+    if kick_bool:
+        active_player.kick()
 
     # Player 1 y pos = Servo % * 119 + 17
         # Player 1 handles 36.5% of the field
@@ -117,10 +126,6 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
 
     # Player 3 y pos = Servo % * (136 - 17) + 223
         # Player 3 handles 36.5% of the field
-
-    
-    
-    pass
 
 
 

@@ -18,7 +18,7 @@ class Player_Line:
     def move(self,percentage):
         
         #moves the motor to the percentage requested
-        self.linear_motor.angle = percentage*180
+        self.linear_motor.angle = round(percentage*180)
 
 
     def kick(self):
