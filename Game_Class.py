@@ -193,11 +193,11 @@ class Game:
     def clear_screen_events(self):
         
         #gets rid of waiting screen and text
-        self.canvas.delete(self.waiting_screen)
-        self.canvas.delete(self.waiting_text)
-        #gets rid of gameover screen and text
-        self.canvas.delete(self.game_over_screen)
-        self.canvas.delete(self.game_over_text)
+        self.canvas.itemconfig(self.waiting_screen, state="hidden")
+        self.canvas.itemconfig(self.waiting_text, state="hidden")
+        #gets rid of game over screen
+        self.canvas.itemconfig(self.game_over_screen, state="hidden")
+        self.canvas.itemconfig(self.game_over_text, state="hidden")
 
 
 
