@@ -3,6 +3,8 @@ import gpiozero
 import ComputerVision as my_cv
 import PlayerPositions
 from enum import Enum
+import Laser_Activities as pew
+import Recalibration
 
 #import Recalibration
  
@@ -65,6 +67,14 @@ class Background:
         #makes the start button GPIO pin 3, reset gpio 2 
         self.start_button = gpiozero.Button(3)
         self.reset_button = gpiozero.Button(2)
+
+
+        #*****************************THESE PINS MAY ALSO NEED TO BE CHANGED******************************************
+        #creates the two laser systems for the goals according to the laser activities class structure
+        #pin one is reciever, pin two is laser
+        self.home_goal = pew(4,5)
+        self.away_goal = pew(6,7)
+        
 
 
         #init the game state using enum types
@@ -199,7 +209,10 @@ class Background:
         self.away_score = 0
         self.update_scores()
 
-        #Move game states to wait for ball
+        self.away_goal.on()
+        self.home_goal.on()
+
+        """MOVE TO WAITING STATE"""
         self.game_state = Game_States.WAITING
 
 
@@ -212,10 +225,32 @@ class Background:
         self.home_score=0
         self.update_scores
         self.canvas.itemconfig(self.timer_text,text=self.format_time(self.timer))
+        self.away_goal.on()
+        self.home_goal.on()
 
-        #start new game
+        """MOVE TO IDLE STATE"""
         self.game_state = Game_States.IDLE
     
+    
+    
+    def goal(self,whom):
+    #whom is a boolean which dicatates who scored,   TRUE FOR HOME (ROBOT), FALSE FOR AWAY (HUMAN)
+        
+        if whom == True:
+            self.home_score+=1
+            self.canvas.itemconfig(self.home_scoreboard_text, text=self.home_score)
+        else:
+            self.away_score+=1
+            self.canvas.itemconfig(self.away_scoreboard_text, text=self.away_score)
+
+        #turn goals off after goal is scored
+        self.away_goal.off()
+        self.home_goal.off()
+
+
+        """MOVE TO WAITING STATE"""
+        self.game_state = Game_States.WAITING
+
 
 
     def update_IDLE(self):
