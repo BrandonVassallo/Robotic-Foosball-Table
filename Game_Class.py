@@ -1,6 +1,7 @@
 import tkinter as tk
 import gpiozero
 import ComputerVision as my_cv
+import cv2
 import PlayerPositions as pps
 from enum import Enum
 import Laser_Activities as pew
@@ -280,6 +281,10 @@ class Background:
         self.goalie.up()
         self.defense.up()
         self.offense.up()
+
+        # Reset Computer Vision Objects
+        self.vid.release()
+        cv2.destroyAllWindows()
 
         """MOVE TO IDLE STATE"""
         self.game_state = Game_States.IDLE
