@@ -231,7 +231,8 @@ class Background:
     #Used to after IDLE is exited to setup a new game
     def start_game(self):
 
-        #recalibrate()
+        # Start the video object for openCV
+        self.restart_cv()
 
         #make timer display 5mins
         self.timer = 300
@@ -248,6 +249,15 @@ class Background:
         """MOVE TO WAITING STATE"""
         self.enter_WAITING()
         self.game_state = Game_States.WAITING
+
+    # Resets all of the computer vision variables (RUN WHEN RESET IS PRESSED)
+    def restart_cv(self):
+        self.vid, self.frame, self.v_width, self.v_height = my_cv.initalize_video(self.buffer, self.x_size, self.y_size)
+        self.frame, self.tracker = my_cv.initalize_tracker(self.vid, self.frame, self.x_size, self.y_size, self.v_width, self.v_height, self.buffer, self.tgt_color)
+
+        self.count = 0
+        self.fps = 0
+        self.prev = 0
 
 
 
@@ -374,7 +384,6 @@ class Background:
         
 
     def update_IDLE(self):
-        self.start_pressed()    # Was the start button pressed?
         pass
 
 
@@ -399,8 +408,6 @@ class Background:
 
         # Step 3: Check for interupts
         self.was_goal_scored()      # Was a goal scored?
-        self.start_pressed()        # Was the start button pressed? (Acts like pause)
-        self.reset_pressed()        # Was the reset button pressed?
         if self.timer <= 0:         # Has a timer run out?
             self.game_over()
             self.game_state = Game_States.IDLE

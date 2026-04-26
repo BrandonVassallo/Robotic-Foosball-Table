@@ -58,7 +58,7 @@ def initalize_video(buffer: int, x_size: int, y_size: int):
 
     frame = pull_frame(vid, x_size, y_size)
 
-    for i in range(10): # Pull some frames to let auto exposure do it's thang
+    for i in range(20): # Pull some frames to let auto exposure do it's thang
         frame = pull_frame(vid, x_size, y_size)
 
     return vid, frame, v_width, v_height

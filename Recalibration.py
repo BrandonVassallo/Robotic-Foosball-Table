@@ -8,22 +8,14 @@ in the main file that can trigger this as well as a button."""
 """I will need you to write CV recalibration code in here if that is a thing we need, I can handle the rest"""
 
 def recalibrate(vid=None, buffer=None, tracker=None, x_size=None, y_size=None, v_width=None, v_height=None, tgt_color=None, count=None, prev=None, fps=None):
-    if vid == None:     # If for some reason a video object was not created create one
-        vid, frame, v_width, v_height = my_cv.initalize_video(buffer, x_size, y_size)
-        frame, tracker = my_cv.initalize_tracker(vid, frame, x_size, y_size, v_width, v_height, buffer, tgt_color)
+    vid, frame, v_width, v_height = my_cv.initalize_video(buffer, x_size, y_size)
+    frame, tracker = my_cv.initalize_tracker(vid, frame, x_size, y_size, v_width, v_height, buffer, tgt_color)
 
-        count = 0
-        fps = 0
-        prev = 0
+    count = 0
+    fps = 0
+    prev = 0
 
-        # Then run tracker at count == 0 as the tracker was already reinitalized
-        count, tracker, fps, prev, ball_pos = my_cv.tracking_alg(vid, buffer, tracker, x_size, y_size, v_width, v_height, tgt_color, count, prev, fps)
+    # Then run tracker at count == 0 as the tracker was already reinitalized
+    count, tracker, fps, prev, ball_pos = my_cv.tracking_alg(vid, buffer, tracker, x_size, y_size, v_width, v_height, tgt_color, count, prev, fps)
 
-        return count, tracker, fps, prev, ball_pos
-    
-    else:
-        count = 100     # Forces recalibration at count 100
-
-        count, tracker, fps, prev, ball_pos = my_cv.tracking_alg(vid, buffer, tracker, x_size, y_size, v_width, v_height, tgt_color, count, prev, fps)
-
-        return count, tracker, fps, prev, ball_pos
+    return count, tracker, fps, prev, ball_pos
