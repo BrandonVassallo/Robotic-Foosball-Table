@@ -405,6 +405,8 @@ class Background:
             self.game_over()
             self.game_state = Game_States.IDLE
 
+
+
     #Calls itself constantly to run whatever services are needed for each state
     def active_state(self):
         if self.game_state == Game_States.IDLE:
