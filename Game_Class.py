@@ -1,9 +1,10 @@
 import tkinter as tk
 import gpiozero
 import ComputerVision as my_cv
-import PlayerPositions
+import PlayerPositions as pps
 from enum import Enum
 import Laser_Activities as pew
+import Player_Control as pc
 import Recalibration
 
 #import Recalibration
@@ -75,6 +76,18 @@ class Background:
         self.home_goal = pew(4,5)
         self.away_goal = pew(6,7)
         
+        #*****************************PLAYER DECLERATIONS******************************************
+        goalie_move_pin = 0
+        goalie_kick_pin = 0
+        self.goalie = pc.Player_Line(goalie_move_pin, goalie_kick_pin)
+
+        def_move_pin = 0
+        def_kick_pin = 0
+        self.defense = pc.Player_Line(def_move_pin, def_kick_pin)
+        
+        off_move_pin = 0
+        off_kick_pin = 0
+        self.offense = pc.Player_Line(off_move_pin, off_kick_pin)
 
 
         #init the game state using enum types
@@ -276,6 +289,20 @@ class Background:
 
 
     def update_PLAYING(self):
+        # Step 1: Track the ball
+        self.count, self.tracker, self.fps, self.prev, self.ball_pos = my_cv.tracking_alg(
+            self.vid, self.buffer, self.tracker, 
+            self.x_size, self.y_size, self.v_width, self.v_height, 
+            self.tgt_color, self.count, self.prev, self.fps)
+        
+        # Step 2: Use the new position to move the Players
+        pps.update_player_pos(self.ball_pos, self.goalie, self.defense, self.offense)
+
+        # Step 3: Check for interupts
+        self.was_goal_scored()      # Was a goal scored?
+        if self.timer <= 0:         # Has a timer run out?
+            self.game_over()
+            self.game_state = Game_States.IDLE
         pass
 
 
