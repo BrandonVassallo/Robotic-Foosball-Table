@@ -1,5 +1,5 @@
 import ComputerVision as my_cv
-import Background_Class as UI
+
 
 import cv2
 import sys
@@ -29,20 +29,6 @@ count = 0
 fps = 0
 prev = 0
 
-
-#--------------Jacks possibly rotten code--------------------------------------------------
-#I need this to be able to transfer ball pos variable into the UI class easily
-
-#ball_pos = (0,0)
-#def give_me_location():
-#    return ball_pos
-
-#Entire UI starts here, feeds ball cords by calling the function repeatedly
-
-#ui = UI(give_me_location)
-
-
-#---------------Jacks possibly rotten code ends here-----------------------------------------
 
 while True:     # Should break when the goal is triggered or the recalibration button is pressed
     count, tracker, fps, prev, ball_pos = my_cv.tracking_alg(vid, buffer, tracker, x_size, y_size, v_width, v_height, tgt_color, count, prev, fps)
