@@ -157,6 +157,8 @@ class Background:
         #initialize the timer on the scoreboard
         self.timer_text = self.canvas.create_text(self.width*0.5, self.top_of_field//2, text= "0:00",fill="blue",font=("Impact",50) )
 
+
+        self.ball = self.canvas.create_oval(0,0,1,1, fill="magenta", state="hidden")
     #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         #runs the loop
@@ -262,6 +264,38 @@ class Background:
 
 
 
+    def ui_ball_pos(self, ball_pos):
+
+        #the best method I found was to delete the ball and make a new one every time this is called.
+        #There is a move function but it needs difference in cords so we would have to init which would be annoying
+        #this should work with little to no performance hit
+        self.canvas.delete(self.ball)
+
+
+        #cord is a tuple containing the x,y cordinate of the ball.
+        #Brandon code uses 0,0 as top left and 640,360 as bottom right
+
+        #We want the y position of the ball to be the value to be below the scoreboard and provide a margin for the ball size
+        #Convert Brandon coordinates tuple (x, y) to UI coordinates
+        self.ball_x = self.width*0.02 + ball_pos[0] * ((self.width*0.98 - self.width*0.02)/640)
+        self.ball_y = self.top_of_field + ball_pos[1] * ((self.height - self.top_of_field)/360)
+
+        self.ball=self.canvas.create_oval(self.ball_x-15,self.ball_y-15,self.ball_x+15,self.ball_y+15, fill="magenta", state="normal")
+
+   
+
+    def enter_WAITING(self):
+        
+        #creates a waiting screen with instructions
+        self.waiting_screen = self.canvas.create_rectangle(0,0,self.width,self.height, fill="red")
+        self.waiting_text = self.canvas.create_text (text="Place the ball in the enclosure, then press the start button.", fill="black",font=("Impact",80))
+
+
+        #gets rid of waiting screen and text
+        self.canvas.delete(self.waiting_screen)
+        self.canvas.delete(self.waiting_text)
+
+
 
     def update_IDLE(self):
         pass
@@ -271,6 +305,7 @@ class Background:
 
     def update_WAITING(self):
         pass
+
 
 
 
