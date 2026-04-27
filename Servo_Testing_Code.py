@@ -25,7 +25,7 @@ MAX = 1
 MID = 2
 FULL_RANGE = 3
 CUSTOM = 4
-cutsom_spin_angle = 130
+cutsom_spin_angle = 100
 custom_lin_angle = 90
 
 spin_pin = 12
@@ -34,7 +34,7 @@ move_pin = 13
 Spin_motor = gpiozero.AngularServo(spin_pin, max_pulse_width=0.0025,min_pulse_width=0.0005, max_angle=180,min_angle=0)
 Lin_motor = gpiozero.AngularServo(move_pin, max_pulse_width=0.0025,min_pulse_width=0.0005, max_angle=180,min_angle=0)
 
-mode = ZERO
+mode = CUSTOM
 
 if mode == ZERO:
     Spin_motor.angle = 0

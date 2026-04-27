@@ -263,7 +263,7 @@ def findingROI(frame, x_size, y_size, buffer, tgt_color):
 
     # ADJUSTABLE PARAMETERS
     
-    sensitivity = 30            # ammount of color units of buffer between each tgt color
+    sensitivity = 20            # ammount of color units of buffer between each tgt color
 
     area_low_bound = 0       # The lower bounds of the objects area for error checking
     area_high_bound = 10000     # The upper bounds of the objects area for error checking

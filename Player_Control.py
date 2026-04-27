@@ -9,7 +9,7 @@ class Player_Line:
     def __init__(self,move_pin,kick_pin):
         self.pin1= move_pin
         self.pin2= kick_pin
-
+        self.kick_bool = False
 
         #Init both motors as servos
         self.linear_motor = gpiozero.AngularServo(move_pin,max_pulse_width=0.0025,min_pulse_width=0.0005, max_angle=180,min_angle=0)
@@ -36,7 +36,7 @@ class Player_Line:
     
     def up(self):
         
-        self.linear_motor.angle = 90
+        self.rotational_motor.angle = 30
 
         #add method to make them stand vertically with rotational motor
         
@@ -45,12 +45,13 @@ class Player_Line:
 
 
     def down(self):
-        self.linear_motor.angle = 100
+        self.rotational_motor.angle = 100
         pass
 
 
     def move_and_kick(self,percentage,kick_bool):
         self.linear_motor.angle = int(round(percentage*180))
+        self.kick_bool = kick_bool
         print(percentage)
         print(self.linear_motor.angle)
         print(round(percentage*180))
