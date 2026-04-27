@@ -78,23 +78,52 @@ def initalize_video(buffer: int, x_size: int, y_size: int):
     return vid, frame, v_width, v_height
 
 
-def initalize_tracker(vid, frame, x_size, y_size, v_width, v_height, buffer, tgt_color):
+def initalize_tracker(vid, frame, x_size, y_size, v_width, v_height, buffer, tgt_color,
+                      show: bool = False):
     """
     Spin until the ball is detected, then create and initialise a MOSSE tracker.
 
+    Parameters
+    ----------
+    show : bool
+        When True (debug mode) shows two windows while searching:
+          "Searching..." - live camera feed so you can verify the ball is in view
+          "HSV Mask"     - raw colour mask so you can diagnose HSV range issues
+                          (if the ball is visible but the mask is blank, the
+                           HSV range in BoundDetect needs tuning)
+
     Returns: frame, tracker
     """
+    print("Searching for ball...")
     bbox = findingROI(frame, x_size, y_size, buffer, tgt_color)
 
     while bbox is None:
         frame = pull_frame(vid, x_size, y_size)
         bbox  = findingROI(frame, x_size, y_size, buffer, tgt_color)
 
-        # Allow ESC to abort during startup
+        if show:
+            # Live feed — confirms camera is working and ball is in frame
+            display = frame.copy()
+            cv2.putText(display, "Searching for ball... (ESC to quit)",
+                        (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+            cv2.imshow("Searching...", display)
+
+            # HSV mask — if ball is visible above but mask is dark, tune HSV range
+            hsv  = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+            mask = cv2.inRange(hsv,
+                               numpy.array([145, 120, 120], dtype=numpy.uint8),
+                               numpy.array([165, 255, 255], dtype=numpy.uint8))
+            cv2.imshow("HSV Mask", mask)
+
         if cv2.waitKey(1) & 0xFF == 27:
             print("EXITING...")
             sys.exit()
 
+    if show:
+        cv2.destroyWindow("Searching...")
+        cv2.destroyWindow("HSV Mask")
+
+    print("Ball found - starting tracker.")
     tracker = cv2.legacy.TrackerMOSSE.create()
     tracker.init(frame, bbox)
     return frame, tracker
@@ -231,7 +260,7 @@ def findingROI(frame, x_size, y_size, buffer, tgt_color):
     AREA_MAX : largest plausible ball area in pixels  (reject false positives)
     """
     AREA_MIN = 200      # ~14×14 px minimum  — tune to your ball size
-    AREA_MAX = 2500   # ~50x50 px maximum
+    AREA_MAX = 10_000   # ~100×100 px maximum
 
     top, bottom = BoundDetect(frame, tgt_color)
     if top is None or bottom is None:
@@ -328,6 +357,28 @@ def pull_frame(vid: cv2.VideoCapture, x_size: int, y_size: int):
     return frame
 
 
+# ---------------------------------------------------------------------------
+# movementVector — kept for reference, not called by the game loop
+# ---------------------------------------------------------------------------
+def movementVector(frame, object_center_curr, object_center_prev):
+    """
+    Draw and return the per-frame displacement vector.
+    Not used in the main game loop; enable if you need velocity later.
+    """
+    VECTOR_SCALE = 1
+
+    if object_center_curr is None or object_center_prev is None:
+        return None
+
+    dx = object_center_curr[0] - object_center_prev[0]
+    dy = object_center_curr[1] - object_center_prev[1]
+
+    pt1 = tuple(map(int, object_center_curr))
+    pt2 = (int(object_center_curr[0] + dx * VECTOR_SCALE),
+           int(object_center_curr[1] + dy * VECTOR_SCALE))
+
+    frame = cv2.line(frame, pt1, pt2, (0, 0, 255), 3)
+    return frame, (dx, dy)
 
 
 # ---------------------------------------------------------------------------
@@ -336,31 +387,40 @@ def pull_frame(vid: cv2.VideoCapture, x_size: int, y_size: int):
 def debug():
     """
     Standalone debug loop.  Run with:  python Jack_Tweaks_CV.py
-    Press ESC to quit, R to force colour-detection redraw.
+    Press ESC to quit, R to force a colour-detection recalibration.
+
+    initalize_video() opens the camera — do NOT also call VideoCapture(0)
+    here or the two handles will fight over the device and the second open
+    will fail with "can't open camera by index".
     """
     X_SIZE, Y_SIZE = 640, 360
     BUFFER         = 5
     TGT_COLOR      = (100, 35, 100)
- 
+
     # initalize_video opens the camera, warms up auto-exposure, and returns
     # the VideoCapture object — use that handle for everything below.
     vid, frame, v_width, v_height = initalize_video(BUFFER, X_SIZE, Y_SIZE)
- 
+
     frame, tracker = initalize_tracker(vid, frame, X_SIZE, Y_SIZE,
-                                       v_width, v_height, BUFFER, TGT_COLOR)
- 
+                                       v_width, v_height, BUFFER, TGT_COLOR,
+                                       show=True)
+
     count = fps = prev = lost_counter = 0
- 
+
     while True:
         count, tracker, fps, prev, ball_pos, lost_counter = tracking_alg(
             vid, BUFFER, tracker, X_SIZE, Y_SIZE, v_width, v_height,
             TGT_COLOR, count, prev, fps, lost_counter,
             show=True)   # show=True renders the debug window
- 
+
         print(f"Ball pos: {ball_pos}  FPS: {fps:.1f}")
- 
+
         if cv2.waitKey(1) & 0xFF == 27:
             break
- 
+
     vid.release()
     cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    debug()

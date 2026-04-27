@@ -280,6 +280,7 @@ class Game:
         self.count = 0
         self.fps = 0
         self.prev = 0
+        self.lost_counter = 0
 
 
 
@@ -458,7 +459,6 @@ class Game:
             self.tgt_color, self.count, self.prev, self.fps, self.lost_counter)
 
         print(f"\nCurrent Ball Pos: {self.ball_pos}\n")
-        os.system("clear")
 
         # Step 2: Use the new position to move the Players
         if self.ball_pos != None:
