@@ -388,7 +388,7 @@ class Game:
 
         #displays winner, also leaves scoreboard up
         self.canvas.itemconfig(self.game_over_screen, state="normal")
-        self.canvas.itemconfig(self.game_over_text, state="normal")
+        self.canvas.itemconfig(self.game_over_text, state="normal",text=self.winner+" wins!\nTo play again, press the start button.")
         
         """MOVES TO IDLE"""
         print("Game Over")
