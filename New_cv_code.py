@@ -59,7 +59,7 @@ def initalize_video(buffer: int, x_size: int, y_size: int):
     vid.set(cv2.CAP_PROP_FPS,          30)
 
     # Stability settings
-    vid.set(cv2.CAP_PROP_AUTO_EXPOSURE,  0.75)
+    vid.set(cv2.CAP_PROP_AUTO_EXPOSURE,  1)
     # vid.set(cv2.CAP_PROP_EXPOSURE,     -6)
     vid.set(cv2.CAP_PROP_AUTO_WB,        1)
     vid.set(cv2.CAP_PROP_WB_TEMPERATURE, 4500)
@@ -337,8 +337,8 @@ def pull_frame(vid: cv2.VideoCapture, x_size: int, y_size: int):
     """
     LEFT_CROP  = 95
     RIGHT_CROP = 88
-    TOP_CROP   = 72
-    BOT_CROP   = 82
+    TOP_CROP   = 25
+    BOT_CROP   = 35
 
     ok_count = 0
     while True:
