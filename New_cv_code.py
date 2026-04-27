@@ -231,7 +231,7 @@ def findingROI(frame, x_size, y_size, buffer, tgt_color):
     AREA_MAX : largest plausible ball area in pixels  (reject false positives)
     """
     AREA_MIN = 200      # ~14×14 px minimum  — tune to your ball size
-    AREA_MAX = 10_000   # ~100×100 px maximum
+    AREA_MAX = 2500   # ~50x50 px maximum
 
     top, bottom = BoundDetect(frame, tgt_color)
     if top is None or bottom is None:
@@ -327,29 +327,6 @@ def pull_frame(vid: cv2.VideoCapture, x_size: int, y_size: int):
     frame = cv2.resize(frame, (x_size, y_size))
     return frame
 
-
-# ---------------------------------------------------------------------------
-# movementVector — kept for reference, not called by the game loop
-# ---------------------------------------------------------------------------
-def movementVector(frame, object_center_curr, object_center_prev):
-    """
-    Draw and return the per-frame displacement vector.
-    Not used in the main game loop; enable if you need velocity later.
-    """
-    VECTOR_SCALE = 1
-
-    if object_center_curr is None or object_center_prev is None:
-        return None
-
-    dx = object_center_curr[0] - object_center_prev[0]
-    dy = object_center_curr[1] - object_center_prev[1]
-
-    pt1 = tuple(map(int, object_center_curr))
-    pt2 = (int(object_center_curr[0] + dx * VECTOR_SCALE),
-           int(object_center_curr[1] + dy * VECTOR_SCALE))
-
-    frame = cv2.line(frame, pt1, pt2, (0, 0, 255), 3)
-    return frame, (dx, dy)
 
 
 # ---------------------------------------------------------------------------
