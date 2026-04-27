@@ -50,7 +50,7 @@ class Game:
         #These values will need to be tweaked in the future!!!!!!!  Changes all window sizes -> and shapes
         self.window_size = "1024x600"
         self.width = 1024
-        self.height = 600
+        self.height = 600j
 
 
         #scores will be 0-0 in initialization, used to track score of the game
@@ -175,9 +175,9 @@ class Game:
         self.color = "red"
         self.ball = self.canvas.create_oval(0,0,1,1, fill="magenta", state="hidden")
         self.waiting_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill="red", state="hidden")
-        self.waiting_text = self.canvas.create_text (self.width//2,self.height//2,text="Place the ball in the enclosure, then press the start button.", fill="black",font=("Impact",80),state="hidden")
+        self.waiting_text = self.canvas.create_text (self.width//2,self.height//2,text="Place the ball in the enclosure,\n then press the start button.", fill="black",font=("Impact",40),state="hidden")
         self.game_over_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill=self.color, state="hidden")
-        self.game_over_text = self.canvas.create_text (self.width//2,self.height//2,text=" wins!\nTo play again, press the start button.", fill="black",font=("Impact",80),state="hidden")
+        self.game_over_text = self.canvas.create_text (self.width//2,self.height//2,text=" wins!\nTo play again, press the start button.", fill="black",font=("Impact",40),state="hidden")
 
         self.screen.after(50,self.active_state)
     #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
