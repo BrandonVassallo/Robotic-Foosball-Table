@@ -56,7 +56,3 @@ class Player_Line:
         self.rotational_motor.angle = 120
         time.sleep(0.2)
         self.down()
-        pass
-        
-        
-        pass
