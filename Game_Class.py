@@ -227,7 +227,6 @@ class Game:
     #Used to after IDLE is exited to setup a new game
     def start_game(self):
 
-        self.update_timer()
 
         # Start the video object for openCV
         self.restart_cv()
@@ -236,6 +235,8 @@ class Game:
         self.timer = 300
         self.canvas.itemconfig(self.timer_text, text=self.format_time(self.timer))
         
+        self.update_timer()
+
         #reset scores
         self.home_score = 0
         self.away_score = 0
