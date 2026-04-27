@@ -66,7 +66,6 @@ class Game:
         self.ball_x = 0
         self.ball_y = 0
 
-        self.ball = None
 
 
 
@@ -341,7 +340,9 @@ class Game:
 
         if ball_pos != None:
             
-            self.canvas.delete(self.ball)
+            if self.ball != None:
+                self.canvas.delete(self.ball)
+
         #cord is a tuple containing the x,y cordinate of the ball.
         #Brandon code uses 0,0 as top left and 640,360 as bottom right
 
@@ -356,6 +357,11 @@ class Game:
 
     def enter_WAITING(self):
         self.clear_screen_events()
+
+        if self.ball != None:
+            self.canvas.delete(self.ball)
+
+
         #creates a waiting screen with instructions
         self.canvas.itemconfig(self.waiting_screen, state="normal")
         self.canvas.itemconfig(self.waiting_text,state="normal")
@@ -365,6 +371,9 @@ class Game:
     def game_over(self):
         self.clear_screen_events()
 
+
+        if self.ball != None:
+            self.canvas.delete(self.ball)
 
         #determines winner
         if self.away_score > self.home_score:
