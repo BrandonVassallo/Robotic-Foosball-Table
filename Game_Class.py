@@ -392,6 +392,7 @@ class Game:
             self.clear_screen_events()
             print("MODE CHANGED TO PLAYING")
             self.game_state = Game_States.PLAYING
+            self.update_timer()
 
         elif self.game_state == Game_States.PLAYING:
             self.enter_WAITING()
