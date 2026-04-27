@@ -3,6 +3,7 @@ import time
 #pip install lgpio
 
 class Player_line:
+
     def __init__(self,move_pin,kick_pin):
         self.move_pin = move_pin
         self.kick_pin = kick_pin
@@ -15,6 +16,7 @@ class Player_line:
         lgpio.gpio_claim(self.gpio_chip, self.kick_pin)
 
     
+
     def set_position(self,angle,pin):
         
         #convert the angle (0-180) to pwm
@@ -24,11 +26,17 @@ class Player_line:
         lgpio.pulsewidth(self.gpio_chip,pin,converted_pulse_width)
 
 
+
     def move(self,percentage):
-        real_angle = percentage*180
-        self.set_position(real_angle, self.move_pin)
+        self.target_angle = percentage*180
+        self.set_position(self.target_angle, self.move_pin)
+
+
+    def smooth_move(self):
+        pass
 
     
+
     def kick(self):
         self.set_position(80,self.kick_pin)
         time.sleep(0.2)
@@ -37,12 +45,15 @@ class Player_line:
         self.set_position(100,self.kick_pin)
 
 
+
     def up(self):
         self.set_position(30,self.kick_pin)
 
     
+
     def down(self):
         self.set_position(100,self.kick_pin)
+
 
 
     #releases the resources used by lgpio. We may need to use this if we run and stop the program over and over
