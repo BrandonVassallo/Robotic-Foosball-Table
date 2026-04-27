@@ -34,7 +34,7 @@ move_pin = 13
 Spin_motor = gpiozero.AngularServo(spin_pin, max_pulse_width=0.0025,min_pulse_width=0.0005, max_angle=180,min_angle=0)
 Lin_motor = gpiozero.AngularServo(move_pin, max_pulse_width=0.0025,min_pulse_width=0.0005, max_angle=180,min_angle=0)
 
-mode = CUSTOM
+mode = ZERO
 
 if mode == ZERO:
     Spin_motor.angle = 0

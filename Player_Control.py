@@ -50,8 +50,10 @@ class Player_Line:
 
 
     def move_and_kick(self,percentage,kick_bool):
-        self.linear_motor.angle = round(percentage*180)
-       
+        self.linear_motor.angle = int(round(percentage*180))
+        print(percentage)
+        print(self.linear_motor.angle)
+        print(round(percentage*180))
         if kick_bool:
             self.rotational_motor.angle = 80
             time.sleep(0.2)
