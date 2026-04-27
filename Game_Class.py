@@ -6,6 +6,7 @@ import PlayerPositions as pps
 from enum import Enum
 import Laser_Activities as pew
 import Player_Control as pc
+import os
 
  
  #Need to make recalibrate class in seperate file
@@ -456,10 +457,13 @@ class Game:
             self.tgt_color, self.count, self.prev, self.fps)
         
         print(f"\nCurrent Ball Pos: {self.ball_pos}\n")
+        os.system("clear")
 
         # Step 2: Use the new position to move the Players
         if self.ball_pos != None:
-            pps.update_player_pos(self.ball_pos, self.goalie, self.defense, self.offense)
+            if pps.update_player_pos(self.ball_pos, self.goalie, self.defense, self.offense):
+                self.tracker = cv2.legacy.TrackerCSRT.create()
+                self.frame, self.tracker = my_cv.initalize_tracker(self.vid, self.frame, self.x_size, self.y_size, self.v_width, self.v_height, self.buffer, self.tgt_color)
 
 
         # Step 2.5: Update the ball on the ui

@@ -47,9 +47,10 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
         # Moves when 216 > x > 0
 
     if ball_pos[0] < 216:
+        print("GOALIE")
         active_player = goalie
         # ADD CHECK TO KICK
-        if ball_pos[0] < 100:
+        if ball_pos[0] < 100 and not goalie.kick_bool:
             kick_bool = True
 
 
@@ -59,9 +60,10 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
         # Moves when 428 > x > 216
 
     elif ball_pos[0] < 428:
+        print("DEFENSE")
         active_player = defense
         # ADD CHECK TO KICK
-        if ball_pos[0] < 316:
+        if ball_pos[0] < 320 and not defense.kick_bool:
             kick_bool = True
 
 
@@ -71,9 +73,10 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
         # Moves when 639 > x > 428
 
     elif ball_pos[0] < 639:
+        print("OFFENSE")
         active_player = offense
         # ADD CHECK TO KICK
-        if ball_pos[0] < 528:
+        if ball_pos[0] < 528 and not offense.kick_bool:
             kick_bool = True
 
 
@@ -87,38 +90,44 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
 
     ##### WHAT PLAYER ON THE ROD IS RESPONSIBLE? #####
 
+    print(ball_pos)
+
     # Player 1 (Closest to Player)
     if ball_pos[1] < MAX_PLAYER_1_PIXEL:
+        print("PLAYER 1")
         if ball_pos[1] < RUBBER_BARRIER:
             move_to = 0     # If the ball is past the rubber barrier, move the servo to 0%
         else:
-            move_to = int((ball_pos[1]-RUBBER_BARRIER)/MAX_ROD_MOVEMENT_PIXELS)
-        active_player.move(move_to)
+            move_to = (ball_pos[1]-RUBBER_BARRIER)/MAX_ROD_MOVEMENT_PIXELS
+        active_player.move_and_kick(move_to, kick_bool)
 
     # Player 2 (Center)
     elif ball_pos[1] < MAX_PLAYER_2_PIXEL:
+        print("PLAYER 2")
         # Player 2's percentage must be calculated between the PLAYER_2_RANGE rather than the standard
-        move_to = int((ball_pos[1]-MAX_PLAYER_1_PIXEL)/PLAYER_2_RANGE)
+        move_to = (ball_pos[1]-MAX_PLAYER_1_PIXEL)/PLAYER_2_RANGE
         # Player 2 also does not need to worry about the 17 pixel rubber barrier
-        active_player.move(move_to)
+        active_player.move_and_kick(move_to, kick_bool)
 
     # Player 3 (Closest to Servos)
     elif ball_pos[1] < MAX_PLAYER_3_PIXEL:
+        print("PLAYER 3")
         if ball_pos[1] > (360 - RUBBER_BARRIER):
             move_to = 1     # If the ball is past the rubber barier, move the servo to 100%
         else:
-            move_to = int((ball_pos[1]-MAX_PLAYER_2_PIXEL)/MAX_ROD_MOVEMENT_PIXELS)
-        active_player.move(move_to)
+            move_to = (ball_pos[1]-MAX_PLAYER_2_PIXEL)/MAX_ROD_MOVEMENT_PIXELS
+        active_player.move_and_kick(move_to, kick_bool)
         
     # Ball position was invalid
     else:
         print("BALL POSITION INVALID!\n")
         print(f"ball_pos was: {ball_pos}")
         return None         # DO NOT MOVE THE SERVOS
+    return kick_bool
 
     # Do we need to kick?
-    if kick_bool:
-        active_player.kick()
+    # if kick_bool:
+    #     active_player.kick()
 
 
 

@@ -229,6 +229,9 @@ def tracking_alg(vid: cv2.VideoCapture,
     # Display the FPS
     cv2.putText(frame, f"FPS: {int(fps)}", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)
 
+    # Display the current position
+    cv2.putText(frame, f"POS: {current_center_of_object}", (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,0), 2)
+
     # ----------------- UPDATE PLAYER POSITION ------------------- #
 
     # Show the current frame
@@ -260,7 +263,7 @@ def findingROI(frame, x_size, y_size, buffer, tgt_color):
 
     # ADJUSTABLE PARAMETERS
     
-    sensitivity = 30            # ammount of color units of buffer between each tgt color
+    sensitivity = 20            # ammount of color units of buffer between each tgt color
 
     area_low_bound = 0       # The lower bounds of the objects area for error checking
     area_high_bound = 10000     # The upper bounds of the objects area for error checking
@@ -320,9 +323,9 @@ def findingROI(frame, x_size, y_size, buffer, tgt_color):
     # if platform.system() == "Windows":
     #     os.system('cls')
 
-    print(f"WIDTH:  {box_width}\n")
-    print(f"HEIGHT: {box_height}\n")
-    print(f"AREA:   {box_width*box_height}")
+    # print(f"WIDTH:  {box_width}\n")
+    # print(f"HEIGHT: {box_height}\n")
+    # print(f"AREA:   {box_width*box_height}")
 
     #cv2.putText(frame_red, "Reinitalizing...", (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)
     """           """

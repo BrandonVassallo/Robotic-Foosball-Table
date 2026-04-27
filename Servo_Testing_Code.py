@@ -25,7 +25,7 @@ MAX = 1
 MID = 2
 FULL_RANGE = 3
 CUSTOM = 4
-cutsom_spin_angle = 130
+cutsom_spin_angle = 100
 custom_lin_angle = 90
 
 spin_pin = 12
