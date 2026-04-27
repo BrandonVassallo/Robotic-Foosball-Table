@@ -239,7 +239,7 @@ class Game:
         self.restart_cv()
 
         #make timer display 5mins
-        self.timer = 300
+        self.timer = 60
         self.canvas.itemconfig(self.timer_text, text=self.format_time(self.timer))
         
         self.update_timer()
