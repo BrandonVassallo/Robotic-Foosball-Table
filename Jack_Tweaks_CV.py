@@ -62,10 +62,10 @@ def initalize_video(buffer: int, x_size: int, y_size: int):
     for i in range(20): # Pull some frames to let auto exposure do it's thang
         frame = pull_frame(vid, x_size, y_size)
 
+    
+
     return vid, frame, v_width, v_height
 
-    current_center_of_object = None
-    past_center_of_object = None
 
 def initalize_tracker(vid, frame, x_size, y_size, v_width, v_height, buffer, tgt_color):
     
@@ -110,7 +110,7 @@ def initalize_tracker(vid, frame, x_size, y_size, v_width, v_height, buffer, tgt
         - The Tracker will not start without an ROI
     '''
 
-    tracker = cv2.legacy.TrackerCSRT.create()       # When a bbox is finally found, start the tracker
+    tracker = cv2.legacy.TrackerMOSSE.create()      # When a bbox is finally found, start the tracker
     tracker.init(frame, bbox)                       # Initalize the tracker with the bbox on the ball
 
     return frame, tracker
@@ -161,24 +161,34 @@ def tracking_alg(vid: cv2.VideoCapture,
         calculation in this section
             (see the "if not success --> else" branch)
     '''
+    current_center_of_object = None
+
+
     curr = time.time()      # For FPS Calculaiton
     
     key = cv2.waitKey(1) & 0xFF
 
     frame = pull_frame(vid, x_size, y_size)
 
-    # Calculate frames every 0.25 seconds
-    if count % 25 == 0:
-        fps = 1 / (curr - prev)
+    #Averages the fps over time for more accurate measurments
+    fps = 0.9 * fps + 0.1 * (1 / (curr - prev))
         
-    if count == 100:   # Reset the tracker every couple frames for accuracy
+    lost_counter = 0
+
+    if tracker is not None:
+        success, bbox = tracker.update(frame)
+
+    if not success:
+        lost_counter += 1
+    else:
+        lost_counter = 0
+
+    if lost_counter > 5:
         bbox = findingROI(frame, x_size, y_size, buffer, tgt_color)    # Reinitalize the tracker for accuracy
         tracker = None
-        cv2.waitKey(1)
         if bbox != "Nothing Found":                             # If it doesn't work, keep trying
-            tracker = cv2.legacy.TrackerCSRT.create()
+            tracker = cv2.legacy.TrackerMOSSE.create()
             tracker.init(frame, bbox)
-            cv2.waitKey(1)
         count = 0       # Reset the timer
     else:
         count += 1
@@ -188,11 +198,9 @@ def tracking_alg(vid: cv2.VideoCapture,
         cv2.putText(frame, "Recalibrating", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)    # Show that it's recalibrating
         tracker = None
         bbox = findingROI(frame, x_size, y_size, buffer, tgt_color)                # Try to reinitalize the bbox
-        cv2.waitKey(5)
         if bbox != "Nothing Found":                             # If it doesn't work, keep trying
-            tracker = cv2.legacy.TrackerCSRT.create()
+            tracker = cv2.legacy.TrackerMOSSE.create()
             tracker.init(frame, bbox)
-            cv2.waitKey(5)
 
     elif key == 27:
         print("ESCAPED IN CV")
@@ -200,20 +208,23 @@ def tracking_alg(vid: cv2.VideoCapture,
 
     # If the user doesn't press R, track the object
     else:
+
+        success = False
         if tracker != None:
-            success, bbox = tracker.update(frame)       # Update the tracker every frame
+            success, bbox = tracker.update(frame)     # Update the tracker every frame
+
+
         if tracker == None or not success:                             # If the object is LOST
             cv2.putText(frame, "LOST", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)    # Show lost
             bbox = findingROI(frame, x_size, y_size, buffer, tgt_color)                # Try to reinitalize the bbox
             if bbox != "Nothing Found":                             # If it doesn't work, keep trying
-                tracker = cv2.legacy.TrackerCSRT.create()
+                tracker = cv2.legacy.TrackerMOSSE.create()
                 tracker.init(frame, bbox)
             current_center_of_object = None         # Say the ball isn't found
 
         else:                                       # If the object is FOUND
             x, y, w, h = [int(v) for v in bbox]     # Create a rectangle around it
             current_center_of_object = (x+(w/2), y+(h/2))
-            past_center_of_object = current_center_of_object
 
             # frame, move_vector = movementVector(frame, current_center_of_object, past_center_of_object)
 
@@ -222,21 +233,23 @@ def tracking_alg(vid: cv2.VideoCapture,
             """
 
             cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2)      # Slap the rectangle on the screen
-            cv2.putText(frame, "Tracking", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)    # Show that it's tracking
+            if count % 5 == 0:
+                cv2.putText(frame, "Tracking", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)    # Show that it's tracking
     
     prev = curr         # Used for FPS Tracking
 
     # Display the FPS
-    cv2.putText(frame, f"FPS: {int(fps)}", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)
+    if count % 5 == 0:
+        cv2.putText(frame, f"FPS: {int(fps)}", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)
 
     # Display the current position
-    cv2.putText(frame, f"POS: {current_center_of_object}", (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,0), 2)
+    if count % 5 == 0:
+        cv2.putText(frame, f"POS: {current_center_of_object}", (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,0), 2)
 
     # ----------------- UPDATE PLAYER POSITION ------------------- #
 
     # Show the current frame
     cv2.imshow("Webcam", frame)
-    cv2.waitKey(1)
 
     
 
@@ -280,7 +293,7 @@ def findingROI(frame, x_size, y_size, buffer, tgt_color):
     b = frame[:, :, 0]  # Extract the blue channel (assuming BGR format)
     g = frame[:, :, 1]  # Extract the green channel
     r = frame[:, :, 2]  # Extract the red channel
-    top_of_object, bottom_of_object = BoundDetect(b, g, r, tgt_color, sensitivity, x_size, y_size)
+    top_of_object, bottom_of_object = BoundDetect(frame, tgt_color, sensitivity)
 
     
     ################################
@@ -361,31 +374,32 @@ This function focuses on isolating the colors inside each provided blue, green a
 numpy arrays to find the target color for a specific pixel. The pixels returned will 
 represent the top and bottom of the object
 '''
-def BoundDetect(b, g, r, colr, sensitivity, x_size, y_size):
-    tgt_blue = colr[0]  # The target color's blue value
-    tgt_green = colr[1] # The target color's green value
-    tgt_red = colr[2]   # The target color's red value
+def BoundDetect(frame, tgt_color, sensitivity):
+    lower = numpy.array([
+        max(0, tgt_color[0] - sensitivity),
+        max(0, tgt_color[1] - sensitivity),
+        max(0, tgt_color[2] - sensitivity)
+    ], dtype=numpy.uint8)
 
-    # Create masks for each color channel based on the target color and sensitivity
-    mask_b = (b >= (tgt_blue - sensitivity)) & (b <= (tgt_blue + sensitivity))
-    mask_g = (g >= (tgt_green - sensitivity)) & (g <= (tgt_green + sensitivity))
-    mask_r = (r >= (tgt_red - sensitivity)) & (r <= (tgt_red + sensitivity))
+    upper = numpy.array([
+        min(255, tgt_color[0] + sensitivity),
+        min(255, tgt_color[1] + sensitivity),
+        min(255, tgt_color[2] + sensitivity)
+    ], dtype=numpy.uint8)
 
-    # Combine the masks for all three channels to find where the color matches
-    mask = mask_b & mask_g & mask_r
+    mask = cv2.inRange(frame, lower, upper)
 
-    # Use numpy.where() to get the coordinates of the matching pixels
-    y_coords, x_coords = numpy.where(mask)
+    coords = cv2.findNonZero(mask)
 
-    if len(x_coords) == 0 or len(y_coords) == 0:
+    if coords is None:
         return "Nothing Found", "Nothing Found"
 
-    # Find the top and bottom of the object by looking at the min and max coordinates
-    top_of_object = (x_coords.min(), y_coords.min())  # Top-left corner
-    bottom_of_object = (x_coords.max(), y_coords.max())  # Bottom-right corner
+    x, y, w, h = cv2.boundingRect(coords)
+
+    top_of_object = (x, y)
+    bottom_of_object = (x + w, y + h)
 
     return top_of_object, bottom_of_object
-
 
 """
 This function finds the movement vector of the object and adds a line in the UI
@@ -419,8 +433,9 @@ def movementVector(frame, object_center_curr, object_center_prev):
     y_vector = (object_center_curr[1] + y_change)*vector_scale
     
     # Draw the vector line on the current frame
-    frame = cv2.line(frame, object_center_curr, (x_vector, y_vector), (0,0,255), 3)
-
+    pt1 = tuple(map(int, object_center_curr))
+    pt2 = (int(x_vector), int(y_vector))
+    frame = cv2.line(frame, pt1, pt2, (0,0,255), 3)
     return frame, move_vector 
 
 
@@ -451,7 +466,7 @@ def pull_frame(vid: cv2.VideoCapture, x_size: int, y_size: int):
     while not ok:
         ok, frame = vid.read()      # Try and grab another frame
 
-        if not ok or frame.all() == None:                  # If it still is not found, report an error and add 1 to the counr
+        if not ok or frame is None:                  # If it still is not found, report an error and add 1 to the counr
             print("ERROR: frame not found")
             ok = False
             ok_count += 1
@@ -460,8 +475,10 @@ def pull_frame(vid: cv2.VideoCapture, x_size: int, y_size: int):
             print("TOO MANY FRAMES DROPPED. EXITING...")
             sys.exit()
 
-    frame = cv2.resize(frame, (x_size, y_size))  # Resize only once
-    frame = frame[top_crop_y:y_size - bot_crop_y, left_crop_x:x_size - right_crop_x]  # Crop
+    h, w = frame.shape[:2]
+
+    frame = frame[top_crop_y:h - bot_crop_y, left_crop_x:w - right_crop_x]
+    frame = cv2.resize(frame, (x_size, y_size))
     #frame = cv2.convertScaleAbs(frame, 1.0, 1)    # Increase the brigtness (default 1)
     
     # cv2.imshow("1080p60 Test", frame)
