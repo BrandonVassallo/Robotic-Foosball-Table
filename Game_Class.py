@@ -63,6 +63,13 @@ class Game:
         self.timer_running = False
 
 
+        self.ball_x = 0
+        self.ball_y = 0
+
+        self.ball = None
+
+
+
         #****************************WE MAY NEED TO PICK A DIFFERENT PIN HERE*********************************************
         #makes the start button GPIO pin 3, reset gpio 2 
         self.start_button = gpiozero.Button(5)
@@ -340,10 +347,10 @@ class Game:
 
         #We want the y position of the ball to be the value to be below the scoreboard and provide a margin for the ball size
         #Convert Brandon coordinates tuple (x, y) to UI coordinates
-            ball_x = self.width*0.02 + ball_pos[0] * ((self.width*0.98 - self.width*0.02)/640)
-            ball_y = self.top_of_field + ball_pos[1] * ((self.height - self.top_of_field)/360)
+            self.ball_x = self.width*0.02 + ball_pos[0] * ((self.width*0.98 - self.width*0.02)/640)
+            self.ball_y = self.top_of_field + ball_pos[1] * ((self.height - self.top_of_field)/360)
 
-            ball=self.canvas.create_oval(ball_x-15,ball_y-15,ball_x+15,ball_y+15, fill="magenta", state="normal")
+            ball=self.canvas.create_oval(self.ball_x-15,self.ball_y-15,self.ball_x+15,self.ball_y+15, fill="magenta", state="normal")
 
    
 
