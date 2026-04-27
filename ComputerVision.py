@@ -22,12 +22,13 @@ def initalize_video(buffer: int, x_size: int, y_size: int):
     '''
 
     # Opens the DEFAULT webcam with the parameter 0 ( 0 -> Default Webcam )
+    cv2.waitKey(20)     # Wait to see if the video object is found
     vid = cv2.VideoCapture(0)
 
     # Check if the webcam is detected
     if not vid.isOpened():
         print("No webcam found")
-        return
+        sys.exit()
     else:
         print("Openning webcam...")
         
