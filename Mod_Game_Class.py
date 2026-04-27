@@ -1,6 +1,6 @@
 import tkinter as tk
 import gpiozero
-import Jack_Tweaks_CV as my_cv
+import New_cv_code as my_cv
 import cv2
 import PlayerPositions as pps
 from enum import Enum
