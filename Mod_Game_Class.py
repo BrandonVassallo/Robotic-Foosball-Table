@@ -270,6 +270,7 @@ class Game:
 
     # Resets all of the computer vision variables (RUN WHEN RESET IS PRESSED)
     def restart_cv(self):
+        self.lost_counter = 0
         if self.vid != None:
             self.vid.release()
 
@@ -450,11 +451,12 @@ class Game:
 
     def update_PLAYING(self):
         # Step 1: Track the ball
-        self.count, self.tracker, self.fps, self.prev, self.ball_pos = my_cv.tracking_alg(
-            self.vid, self.buffer, self.tracker, 
-            self.x_size, self.y_size, self.v_width, self.v_height, 
-            self.tgt_color, self.count, self.prev, self.fps,self.lost_counter)
-        
+        self.count, self.tracker, self.fps, self.prev, \
+        self.ball_pos, self.lost_counter = my_cv.tracking_alg(
+            self.vid, self.buffer, self.tracker,
+            self.x_size, self.y_size, self.v_width, self.v_height,
+            self.tgt_color, self.count, self.prev, self.fps, self.lost_counter)
+
         print(f"\nCurrent Ball Pos: {self.ball_pos}\n")
         os.system("clear")
 
