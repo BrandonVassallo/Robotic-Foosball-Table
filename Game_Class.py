@@ -50,7 +50,7 @@ class Game:
         #These values will need to be tweaked in the future!!!!!!!  Changes all window sizes -> and shapes
         self.window_size = "1024x600"
         self.width = 1024
-        self.height = 600j
+        self.height = 600
 
 
         #scores will be 0-0 in initialization, used to track score of the game
@@ -209,6 +209,8 @@ class Game:
     def update_timer(self):
 
         #basic timer ticking down
+        print("UPDATE TIMER CALLED\n")
+        print(f"TIME = {self.timer}")
         if self.timer > 0 and self.game_state == Game_States.PLAYING:
             self.timer -= 1
 
