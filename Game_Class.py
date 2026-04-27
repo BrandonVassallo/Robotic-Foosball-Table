@@ -6,6 +6,7 @@ import PlayerPositions as pps
 from enum import Enum
 import Laser_Activities as pew
 import Player_Control as pc
+import os
 
  
  #Need to make recalibrate class in seperate file
@@ -456,6 +457,7 @@ class Game:
             self.tgt_color, self.count, self.prev, self.fps)
         
         print(f"\nCurrent Ball Pos: {self.ball_pos}\n")
+        os.system("clear")
 
         # Step 2: Use the new position to move the Players
         if self.ball_pos != None:
