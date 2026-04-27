@@ -134,7 +134,8 @@ def tracking_alg(vid: cv2.VideoCapture,
                  tgt_color: tuple[int, int, int],
                  count: int,
                  prev: int,
-                 fps: int):
+                 fps: int,
+                 lost_counter:int):
     '''
     docstring for tracking_alg:
 
@@ -171,9 +172,9 @@ def tracking_alg(vid: cv2.VideoCapture,
     frame = pull_frame(vid, x_size, y_size)
 
     #Averages the fps over time for more accurate measurments
-    fps = 0.9 * fps + 0.1 * (1 / (curr - prev))
+    dt = curr - prev if curr > prev else 1e-6
+    fps = 0.9 * fps + 0.1 * (1 / dt)
         
-    lost_counter = 0
 
     if tracker is not None:
         success, bbox = tracker.update(frame)
@@ -253,7 +254,7 @@ def tracking_alg(vid: cv2.VideoCapture,
 
     
 
-    return count, tracker, fps, prev, current_center_of_object
+    return count, tracker, fps, prev, current_center_of_object, lost_counter
 
 
 
