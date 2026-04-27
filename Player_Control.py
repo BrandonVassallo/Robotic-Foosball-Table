@@ -1,6 +1,6 @@
 import gpiozero
 import time
-from gpiozero.pins.pigpio import PiGPIOFactory
+
 
 
 """
@@ -11,10 +11,9 @@ class Player_Line:
         self.pin1= move_pin
         self.pin2= kick_pin
         self.kick_bool = False
-        self.factory = PiGPIOFactory()
         #Init both motors as servos
-        self.linear_motor = gpiozero.AngularServo(move_pin,max_pulse_width=0.0025,min_pulse_width=0.0005, max_angle=180,min_angle=0, pin_factory=self.factory)
-        self.rotational_motor = gpiozero.AngularServo(kick_pin, max_pulse_width=0.0025,min_pulse_width=0.0005, max_angle=180,min_angle=0,pin_factory=self.factory)
+        self.linear_motor = gpiozero.AngularServo(move_pin,max_pulse_width=0.0025,min_pulse_width=0.0005, max_angle=180,min_angle=0)
+        self.rotational_motor = gpiozero.AngularServo(kick_pin, max_pulse_width=0.0025,min_pulse_width=0.0005, max_angle=180,min_angle=0)
 
 
     def move(self,percentage):
