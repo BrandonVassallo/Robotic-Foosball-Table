@@ -25,7 +25,7 @@ class Goal:
 
     def is_goal(self):
         time = self.reciever.inactive_time
-        if time>0:
+        if time != None and time>0:
             #self.reciever.inactive_time = 0
             return True
     #checks if there has been inactive time, if there has been inactive time, the ball crossed the line-> goal    

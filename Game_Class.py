@@ -65,8 +65,8 @@ class Game:
 
         #****************************WE MAY NEED TO PICK A DIFFERENT PIN HERE*********************************************
         #makes the start button GPIO pin 3, reset gpio 2 
-        self.start_button = gpiozero.Button(3)
-        self.reset_button = gpiozero.Button(2)
+        self.start_button = gpiozero.Button(5)
+        self.reset_button = gpiozero.Button(6)
 
         self.start_button.when_activated = self.start_pressed
         self.reset_button.when_activated = self.reset_pressed
@@ -76,20 +76,25 @@ class Game:
         #*****************************THESE PINS MAY ALSO NEED TO BE CHANGED******************************************
         #creates the two laser systems for the goals according to the laser activities class structure
         #pin one is reciever, pin two is laser
-        self.home_goal = pew.Goal(4,5)
-        self.away_goal = pew.Goal(6,7)
+        home_goal_recv_pin = 4
+        home_goal_lazer_pin = 23
+        self.home_goal = pew.Goal(home_goal_recv_pin,home_goal_lazer_pin)
+
+        away_goal_recv_pin = 25
+        away_goal_lazer_pin = 24
+        self.away_goal = pew.Goal(away_goal_recv_pin,away_goal_lazer_pin)
         
         #*****************************PLAYER DECLERATIONS******************************************
-        goalie_move_pin = 0
-        goalie_kick_pin = 0
+        goalie_move_pin = 13
+        goalie_kick_pin = 19
         self.goalie = pc.Player_Line(goalie_move_pin, goalie_kick_pin)
 
-        def_move_pin = 0
-        def_kick_pin = 0
+        def_move_pin = 18
+        def_kick_pin = 12
         self.defense = pc.Player_Line(def_move_pin, def_kick_pin)
         
-        off_move_pin = 0
-        off_kick_pin = 0
+        off_move_pin = 21
+        off_kick_pin = 20
         self.offense = pc.Player_Line(off_move_pin, off_kick_pin)
 
 
@@ -370,6 +375,8 @@ class Game:
         self.canvas.itemconfig(self.game_over_text, state="normal")
         
         """MOVES TO IDLE"""
+        print("Game Over")
+        print("MODE CHANGED TO IDLE")
         self.game_state = Game_States.IDLE
 
     def start_pressed(self):
@@ -378,14 +385,17 @@ class Game:
 
     def _start_pressed_ui(self):
         if self.game_state == Game_States.IDLE:
+            print("Starting Game...")
             self.start_game()
 
         elif self.game_state == Game_States.WAITING:
             self.clear_screen_events()
+            print("MODE CHANGED TO PLAYING")
             self.game_state = Game_States.PLAYING
 
         elif self.game_state == Game_States.PLAYING:
             self.enter_WAITING()
+            print("MODE CHANGED TO WAITING")
             self.game_state = Game_States.WAITING
 
 
@@ -396,10 +406,12 @@ class Game:
     def _reset_pressed_ui(self):
         if self.game_state == Game_States.PLAYING:
             self.reset()
+            print("MODE CHANGED TO IDLE")
             self.game_state = Game_States.IDLE
 
         elif self.game_state == Game_States.WAITING:
             self.reset()
+            print("MODE CHANGED TO IDLE")
             self.game_state = Game_States.IDLE
 
         
@@ -422,6 +434,8 @@ class Game:
             self.x_size, self.y_size, self.v_width, self.v_height, 
             self.tgt_color, self.count, self.prev, self.fps)
         
+        print(f"\nCurrent Ball Pos: {self.ball_pos}\n")
+
         # Step 2: Use the new position to move the Players
         pps.update_player_pos(self.ball_pos, self.goalie, self.defense, self.offense)
 
@@ -436,9 +450,12 @@ class Game:
     def active_state(self):
         if self.game_state == Game_States.IDLE:
             self.update_IDLE()
+            print("IDLE UPDATED")
         elif self.game_state == Game_States.PLAYING:
+            print("PLAYING UPDATED")
             self.update_PLAYING()
         else:
+            print("WAITING UPDATED")
             self.update_WAITING()
 
         #THIS VARIABLE IS THE SPEED AT WHICH THE GAME WILL RUN, CURRENTLY 50ms PER LOOP
