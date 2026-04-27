@@ -334,7 +334,7 @@ class Game:
 
         if ball_pos != None:
             
-            self.canvas.delete(self.ball)
+            self.canvas.delete(ball)
         #cord is a tuple containing the x,y cordinate of the ball.
         #Brandon code uses 0,0 as top left and 640,360 as bottom right
 
@@ -343,7 +343,7 @@ class Game:
             ball_x = self.width*0.02 + ball_pos[0] * ((self.width*0.98 - self.width*0.02)/640)
             ball_y = self.top_of_field + ball_pos[1] * ((self.height - self.top_of_field)/360)
 
-            self.ball=self.canvas.create_oval(ball_x-15,self.ball_y-15,ball_x+15,ball_y+15, fill="magenta", state="normal")
+            ball=self.canvas.create_oval(ball_x-15,ball_y-15,ball_x+15,ball_y+15, fill="magenta", state="normal")
 
    
 
