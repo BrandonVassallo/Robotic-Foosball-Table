@@ -260,7 +260,7 @@ def findingROI(frame, x_size, y_size, buffer, tgt_color):
     AREA_MAX : largest plausible ball area in pixels  (reject false positives)
     """
     AREA_MIN = 200      # ~14×14 px minimum  — tune to your ball size
-    AREA_MAX = 10_000   # ~100×100 px maximum
+    AREA_MAX = 2500   # ~50×50 px maximum
 
     top, bottom = BoundDetect(frame, tgt_color)
     if top is None or bottom is None:
@@ -309,8 +309,8 @@ def BoundDetect(frame, tgt_color=None, sensitivity=None):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     # Magenta range — Hue ~145–165 in OpenCV's 0–179 scale
-    lower = numpy.array([145, 120, 120], dtype=numpy.uint8)
-    upper = numpy.array([165, 255, 255], dtype=numpy.uint8)
+    lower = numpy.array([130, 60, 60], dtype=numpy.uint8)
+    upper = numpy.array([175, 255, 255], dtype=numpy.uint8)
 
     mask = cv2.inRange(hsv, lower, upper)
 
