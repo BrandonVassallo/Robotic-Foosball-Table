@@ -1,4 +1,5 @@
 import gpiozero
+import time
 
 
 """
@@ -25,7 +26,11 @@ class Player_Line:
         
         #Kick should be 60 degrees
         #Make it follow through the swing in order to get maximum power
-        
+        self.rotational_motor.angle = 80
+        time.sleep(0.2)
+        self.rotational_motor.angle = 120
+        time.sleep(0.2)
+        self.down()
         pass
 
     
@@ -40,5 +45,5 @@ class Player_Line:
 
 
     def down(self):
-        self.linear_motor.angle = 90
+        self.linear_motor.angle = 100
         pass

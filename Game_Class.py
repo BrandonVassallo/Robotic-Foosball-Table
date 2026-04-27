@@ -91,11 +91,11 @@ class Game:
         self.away_goal = pew.Goal(away_goal_recv_pin,away_goal_lazer_pin)
         
         #*****************************PLAYER DECLERATIONS******************************************
-        goalie_move_pin = 13
+        goalie_move_pin = 22
         goalie_kick_pin = 19
         self.goalie = pc.Player_Line(goalie_move_pin, goalie_kick_pin)
 
-        def_move_pin = 18
+        def_move_pin = 13
         def_kick_pin = 12
         self.defense = pc.Player_Line(def_move_pin, def_kick_pin)
         
@@ -115,7 +115,7 @@ class Game:
         # ADJUSTABLE PARAMETERS
         self.buffer = 5  # The ammount of additional pixels to add to the ROI to ensure the object is in frame of the tracker
 
-        self.tgt_color = (121, 46, 130)     # The objects target color (Blue, Green, Red)
+        self.tgt_color = (100, 35, 100)     # The objects target color (Blue, Green, Red)
             # Sensitivity and ROI Area bounds can be adjusted within the function
 
         # CROPPING Values are in the pull_frame function
@@ -128,6 +128,7 @@ class Game:
         self.x_size = 640
         self.y_size = 360
 
+        self.vid = None
 
     #________________________________________________________________________________________________________________________
 
@@ -269,6 +270,9 @@ class Game:
 
     # Resets all of the computer vision variables (RUN WHEN RESET IS PRESSED)
     def restart_cv(self):
+        if self.vid != None:
+            self.vid.release()
+
         self.vid, self.frame, self.v_width, self.v_height = my_cv.initalize_video(self.buffer, self.x_size, self.y_size)
         self.frame, self.tracker = my_cv.initalize_tracker(self.vid, self.frame, self.x_size, self.y_size, self.v_width, self.v_height, self.buffer, self.tgt_color)
 
@@ -454,7 +458,8 @@ class Game:
         print(f"\nCurrent Ball Pos: {self.ball_pos}\n")
 
         # Step 2: Use the new position to move the Players
-        pps.update_player_pos(self.ball_pos, self.goalie, self.defense, self.offense)
+        if self.ball_pos != None:
+            pps.update_player_pos(self.ball_pos, self.goalie, self.defense, self.offense)
 
 
         # Step 2.5: Update the ball on the ui
