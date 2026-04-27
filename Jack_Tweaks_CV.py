@@ -175,24 +175,23 @@ def tracking_alg(vid: cv2.VideoCapture,
     dt = curr - prev if curr > prev else 1e-6
     fps = 0.9 * fps + 0.1 * (1 / dt)
         
-
     if tracker is not None:
         success, bbox = tracker.update(frame)
+    else:
+        success = False
 
     if not success:
         lost_counter += 1
     else:
         lost_counter = 0
 
-    if lost_counter > 5:
-        bbox = findingROI(frame, x_size, y_size, buffer, tgt_color)    # Reinitalize the tracker for accuracy
-        tracker = None
-        if bbox != "Nothing Found":                             # If it doesn't work, keep trying
+    # ONLY re-detect if actually lost
+    if lost_counter > 3:
+        bbox = findingROI(frame, x_size, y_size, buffer, tgt_color)                # Try to reinitalize the bbox
+        if bbox is not None:
             tracker = cv2.legacy.TrackerMOSSE.create()
             tracker.init(frame, bbox)
-        count = 0       # Reset the timer
-    else:
-        count += 1
+            lost_counter = 0
 
     # If the user presses R, recalibrate the tracker
     if key == ord('r'):
@@ -375,27 +374,66 @@ This function focuses on isolating the colors inside each provided blue, green a
 numpy arrays to find the target color for a specific pixel. The pixels returned will 
 represent the top and bottom of the object
 '''
-def BoundDetect(frame, tgt_color, sensitivity):
-    lower = numpy.array([
-        max(0, tgt_color[0] - sensitivity),
-        max(0, tgt_color[1] - sensitivity),
-        max(0, tgt_color[2] - sensitivity)
-    ], dtype=numpy.uint8)
+def BoundDetect(frame, tgt_color=None, sensitivity=None):
+    '''
+    Improved BoundDetect using HSV color space.
 
-    upper = numpy.array([
-        min(255, tgt_color[0] + sensitivity),
-        min(255, tgt_color[1] + sensitivity),
-        min(255, tgt_color[2] + sensitivity)
-    ], dtype=numpy.uint8)
+    Returns:
+        top_of_object, bottom_of_object
+        OR
+        None, None if nothing found
+    '''
 
-    mask = cv2.inRange(frame, lower, upper)
+    # ----------------------------------
+    # Convert to HSV
+    # ----------------------------------
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    coords = cv2.findNonZero(mask)
+    # ----------------------------------
+    # Magenta color range (tune if needed)
+    # ----------------------------------
+    # Hue: ~140–170 for magenta in OpenCV
+    lower = numpy.array([145, 120, 120], dtype=numpy.uint8)
+    upper = numpy.array([165, 255, 255], dtype=numpy.uint8)
 
-    if coords is None:
-        return "Nothing Found", "Nothing Found"
+    # ----------------------------------
+    # Create mask
+    # ----------------------------------
+    mask = cv2.inRange(hsv, lower, upper)
 
-    x, y, w, h = cv2.boundingRect(coords)
+    # ----------------------------------
+    # Noise reduction (VERY important)
+    # ----------------------------------
+    kernel = numpy.ones((5, 5), numpy.uint8)
+    mask = cv2.erode(mask, kernel, iterations=2)
+    mask = cv2.dilate(mask, kernel, iterations=2)
+
+    # Optional: blur for smoother contours
+    mask = cv2.GaussianBlur(mask, (5, 5), 0)
+
+    # ----------------------------------
+    # Find contours instead of raw pixels
+    # ----------------------------------
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    if not contours:
+        return None, None
+
+    # ----------------------------------
+    # Pick the largest contour (likely the ball)
+    # ----------------------------------
+    largest = max(contours, key=cv2.contourArea)
+
+    area = cv2.contourArea(largest)
+
+    # Filter out tiny noise blobs
+    if area < 50:   # <-- tune this if needed
+        return None, None
+
+    # ----------------------------------
+    # Bounding box
+    # ----------------------------------
+    x, y, w, h = cv2.boundingRect(largest)
 
     top_of_object = (x, y)
     bottom_of_object = (x + w, y + h)
