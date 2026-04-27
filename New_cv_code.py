@@ -341,44 +341,26 @@ def debug():
     X_SIZE, Y_SIZE = 640, 360
     BUFFER         = 5
     TGT_COLOR      = (100, 35, 100)
-
-    vid = cv2.VideoCapture(0)
-    if not vid.isOpened():
-        print("No webcam found")
-        return
-
-    vid.set(cv2.CAP_PROP_FOURCC,       cv2.VideoWriter_fourcc(*'MJPG'))
-    vid.set(cv2.CAP_PROP_FRAME_WIDTH,  1920)
-    vid.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-    vid.set(cv2.CAP_PROP_FPS,          60)
-    vid.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)
-    vid.set(cv2.CAP_PROP_EXPOSURE,     -6)
-    vid.set(cv2.CAP_PROP_AUTO_WB,       0)
-    vid.set(cv2.CAP_PROP_WB_TEMPERATURE, 4500)
-
-    print(f"Width : {int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))}")
-    print(f"Height: {int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))}")
-    print(f"FPS   : {vid.get(cv2.CAP_PROP_FPS)}")
-
-    count = fps = prev = lost_counter = 0
-    _, frame, v_width, v_height = initalize_video(BUFFER, X_SIZE, Y_SIZE)
+ 
+    # initalize_video opens the camera, warms up auto-exposure, and returns
+    # the VideoCapture object — use that handle for everything below.
+    vid, frame, v_width, v_height = initalize_video(BUFFER, X_SIZE, Y_SIZE)
+ 
     frame, tracker = initalize_tracker(vid, frame, X_SIZE, Y_SIZE,
                                        v_width, v_height, BUFFER, TGT_COLOR)
-
+ 
+    count = fps = prev = lost_counter = 0
+ 
     while True:
         count, tracker, fps, prev, ball_pos, lost_counter = tracking_alg(
             vid, BUFFER, tracker, X_SIZE, Y_SIZE, v_width, v_height,
             TGT_COLOR, count, prev, fps, lost_counter,
-            show=True)   # <-- show=True only in debug
-
+            show=True)   # show=True renders the debug window
+ 
         print(f"Ball pos: {ball_pos}  FPS: {fps:.1f}")
-
+ 
         if cv2.waitKey(1) & 0xFF == 27:
             break
-
+ 
     vid.release()
     cv2.destroyAllWindows()
-
-
-if __name__ == "__main__":
-    debug()
