@@ -440,6 +440,11 @@ class Game:
         # Step 2: Use the new position to move the Players
         pps.update_player_pos(self.ball_pos, self.goalie, self.defense, self.offense)
 
+
+        # Step 2.5: Update the ball on the ui
+        self.ui_ball_pos(self.ball_pos)
+
+
         # Step 3: Check for interupts
         self.was_goal_scored()      # Was a goal scored?
         if self.timer <= 0:         # Has a timer run out?
