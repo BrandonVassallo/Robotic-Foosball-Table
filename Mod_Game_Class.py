@@ -414,10 +414,13 @@ class Game:
             self.start_game()
 
         elif self.game_state == Game_States.WAITING:
-            self.clear_screen_events()
-            print("MODE CHANGED TO PLAYING")
-            self.game_state = Game_States.PLAYING
-            self.update_timer()
+            # If the ball is found, continue
+            if self.ball_pos != None:
+                self.clear_screen_events()
+                print("MODE CHANGED TO PLAYING")
+                self.game_state = Game_States.PLAYING
+                self.update_timer()
+            # If the ball is not found, do not switch to playing
 
         elif self.game_state == Game_States.PLAYING:
             self.enter_WAITING()
