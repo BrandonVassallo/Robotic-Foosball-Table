@@ -4,8 +4,8 @@ import New_cv_code as my_cv
 import cv2
 import PlayerPositions as pps
 from enum import Enum
-import Laser_Activities as pew
-import Player_Control as pc
+
+import Player_Control_V2 as pc
 import os
 
  
@@ -55,8 +55,8 @@ class Game:
 
 
         #scores will be 0-0 in initialization, used to track score of the game
-        self.home_score = 0
-        self.away_score = 0
+        self.human_score = 0
+        self.robot_score = 0
 
 
         #time in seconds
@@ -66,9 +66,6 @@ class Game:
         self.ball_x = 0
         self.ball_y = 0
 
-        self.target_angle_goalie = 0
-        self.target_angle_offense = 0
-        self.target_angle_defense = 0
 
         self.current_angle_goalie = 0
         self.current_angle_offense = 0
@@ -76,36 +73,33 @@ class Game:
 
 
         #****************************WE MAY NEED TO PICK A DIFFERENT PIN HERE*********************************************
-        #makes the start button GPIO pin 3, reset gpio 2 
-        self.start_button = gpiozero.Button(5)
-        self.reset_button = gpiozero.Button(6)
+        #makes the start button GPIO pin 
+        self.start_button = gpiozero.Button(23)
+        self.reset_button = gpiozero.Button(24)
 
         self.start_button.when_activated = self.start_pressed
         self.reset_button.when_activated = self.reset_pressed
 
+        self.robot = gpiozero.Button(17)
+        self.human = gpiozero.Button(27)
 
+        self.human.when_activated = self.human_goal
+        self.robot.when_activated = self.robot_goal
 
-        #*****************************THESE PINS MAY ALSO NEED TO BE CHANGED******************************************
-        #creates the two laser systems for the goals according to the laser activities class structure
-        #pin one is reciever, pin two is laser
-        home_goal_recv_pin = 4
-        self.home_goal = pew.Goal(home_goal_recv_pin)
-
-        away_goal_recv_pin = 25
-        self.away_goal = pew.Goal(away_goal_recv_pin)
         
+
         #*****************************PLAYER DECLERATIONS******************************************
-        goalie_move_pin = 22
-        goalie_kick_pin = 19
-        self.goalie = pc.Player_Line(goalie_move_pin, goalie_kick_pin)
+        self.goalie_move_pin = 26
+        self.goalie_kick_pin = 19
+        self.goalie = pc.Player_line(self.goalie_move_pin, self.goalie_kick_pin)
 
-        def_move_pin = 13
-        def_kick_pin = 12
-        self.defense = pc.Player_Line(def_move_pin, def_kick_pin)
+        self.def_move_pin = 6
+        self.def_kick_pin = 13
+        self.defense = pc.Player_line(self.def_move_pin, self.def_kick_pin)
         
-        off_move_pin = 21
-        off_kick_pin = 20
-        self.offense = pc.Player_Line(off_move_pin, off_kick_pin)
+        self.off_move_pin = 20
+        self.off_kick_pin = 21
+        self.offense = pc.Player_line(self.off_move_pin, self.off_kick_pin)
 
 
         #init the game state using enum types
@@ -178,14 +172,14 @@ class Game:
         #Creates an outline of the field and green field.
         self.field_outline = self.canvas.create_rectangle(self.width*0.02,self.top_of_field, self.width*0.98,self.height, outline = "white", fill="green")
 
-        #Creates text for the top of the scoreboard for the away and home labels
-        self.scoreboard_text= self.canvas.create_text(self.width*0.25,self.top_of_field//2,text="HOME", fill="white", font=("Impact",40)) 
-        self.scoreboard_text= self.canvas.create_text(self.width*0.75,self.top_of_field//2,text="AWAY", fill="white", font=("Impact",40)) 
+        #Creates text for the top of the scoreboard for the robot and human labels
+        self.scoreboard_text= self.canvas.create_text(self.width*0.25,self.top_of_field//2,text="human", fill="white", font=("Impact",40)) 
+        self.scoreboard_text= self.canvas.create_text(self.width*0.75,self.top_of_field//2,text="robot", fill="white", font=("Impact",40)) 
 
 
         #displays current score on scoreboard
-        self.home_scoreboard_text = self.canvas.create_text(self.width*0.1, self.top_of_field//2, text= self.home_score, fill = "white", font = ("Impact",55))
-        self.away_scoreboard_text = self.canvas.create_text(self.width*0.9, self.top_of_field//2, text= self.away_score, fill = "white", font = ("Impact",55))
+        self.human_scoreboard_text = self.canvas.create_text(self.width*0.1, self.top_of_field//2, text= self.human_score, fill = "white", font = ("Impact",55))
+        self.robot_scoreboard_text = self.canvas.create_text(self.width*0.9, self.top_of_field//2, text= self.robot_score, fill = "white", font = ("Impact",55))
         
 
         #initialize the timer on the scoreboard
@@ -242,8 +236,8 @@ class Game:
 
     #Writes the scoreboard with current vals because im tired of typing this
     def update_scores(self):
-        self.canvas.itemconfig(self.away_scoreboard_text,text=self.away_score)
-        self.canvas.itemconfig(self.home_scoreboard_text, text=self.home_score)
+        self.canvas.itemconfig(self.robot_scoreboard_text,text=self.robot_score)
+        self.canvas.itemconfig(self.human_scoreboard_text, text=self.human_score)
 
 
 
@@ -258,16 +252,10 @@ class Game:
         self.update_timer()
 
         #reset scores
-        self.home_score = 0
-        self.away_score = 0
+        self.human_score = 0
+        self.robot_score = 0
         self.update_scores()
 
-
-
-        # Move all three player rods down, to begin playing
-        self.goalie.down()
-        self.defense.down()
-        self.offense.down()
 
         """MOVE TO WAITING STATE"""
         self.game_state = Game_States.WAITING
@@ -294,8 +282,8 @@ class Game:
     def reset(self):
         #reset basic vars
         self.timer = 0
-        self.away_score=0
-        self.home_score=0
+        self.robot_score=0
+        self.human_score=0
         self.update_scores()
         self.canvas.itemconfig(self.timer_text,text=self.format_time(self.timer))
         self.clear_screen_events()
@@ -320,32 +308,20 @@ class Game:
     
     
     def goal(self,whom):
-    #whom is a boolean which dicatates who scored,   TRUE FOR AWAY (ROBOT), FALSE FOR HOME (HUMAN)
+    #whom is a boolean which dicatates who scored,   TRUE FOR robot (ROBOT), FALSE FOR human (HUMAN)
         
         if whom == False:
-            self.home_score+=1
-            self.canvas.itemconfig(self.home_scoreboard_text, text=self.home_score)
+            self.human_score+=1
+            self.canvas.itemconfig(self.human_scoreboard_text, text=self.human_score)
         else:
-            self.away_score+=1
-            self.canvas.itemconfig(self.away_scoreboard_text, text=self.away_score)
-
-        #turn goals off after goal is scored
-        self.away_goal.off()
-        self.home_goal.off()
+            self.robot_score+=1
+            self.canvas.itemconfig(self.robot_scoreboard_text, text=self.robot_score)
 
 
         """MOVE TO WAITING STATE"""
         self.enter_WAITING()
         self.game_state = Game_States.WAITING
 
-
-
-    #if goal is scored, calls goal, with correct team   -> TRUE FOR AWAY, FALSE FOR HOME
-    def was_goal_scored(self):
-        if self.away_goal.is_goal():
-            self.goal(True)
-        elif self.home_goal.is_goal():
-            self.goal(False)
 
 
 
@@ -372,6 +348,17 @@ class Game:
     def enter_WAITING(self):
         self.clear_screen_events()
 
+        # Move all three player rods down, to begin playing
+        self.goalie.down()
+        self.defense.down()
+        self.offense.down()
+
+
+        #Move all Lines to center position and update current angles
+        self.current_angle_goalie = self.goalie.set_position(90,self.goalie_move_pin)
+        self.current_angle_defense = self.defense.set_position(90,self.def_move_pin)
+        self.current_angle_offense = self.offense.set_position(90,self.off_move_pin)
+
         if self.ball != None:
             self.canvas.delete(self.ball)
 
@@ -395,10 +382,10 @@ class Game:
             self.canvas.delete(self.ball)
 
         #determines winner
-        if self.away_score > self.home_score:
+        if self.robot_score > self.human_score:
             self.winner = "Robot"
             self.color = "red"
-        elif self.away_score < self.home_score:
+        elif self.robot_score < self.human_score:
             self.winner = "Human"
             self.color = "green"
         else:
@@ -413,6 +400,8 @@ class Game:
         print("Game Over")
         print("MODE CHANGED TO IDLE")
         self.game_state = Game_States.IDLE
+
+
 
     def start_pressed(self):
         self.screen.after(0, self._start_pressed_ui)
@@ -450,6 +439,22 @@ class Game:
             print("MODE CHANGED TO IDLE")
             self.game_state = Game_States.IDLE
 
+
+    def human_goal(self):
+        self.screen.after(0,self._human_goal_ui)
+
+    def _human_goal_ui(self):
+        if self.game_state == Game_States.PLAYING:
+            self.goal(False)
+    
+    def robot_goal(self):
+        self.screen.after(0,self._robot_goal_ui)
+
+    def _robot_goal_ui(self):
+        if self.game_state == Game_States.PLAYING:
+            self.goal(True)
+    
+
         
 
     def update_IDLE(self):
@@ -465,7 +470,7 @@ class Game:
 
     def update_PLAYING(self):
         # Step 1: Track the ball
-        self.count, self.tracker, self.fps, self.prev, \
+        self.count, self.tracker, self.fps, self.prev,
         self.ball_pos, self.lost_counter = my_cv.tracking_alg(
             self.vid, self.buffer, self.tracker,
             self.x_size, self.y_size, self.v_width, self.v_height,
@@ -475,17 +480,34 @@ class Game:
 
         # Step 2: Use the new position to move the Players
         if self.ball_pos != None:
-            if pps.update_player_pos(self.ball_pos, self.goalie, self.defense, self.offense):
-                self.tracker = cv2.legacy.TrackerMOSSE.create()
-                self.frame, self.tracker = my_cv.initalize_tracker(self.vid, self.frame, self.x_size, self.y_size, self.v_width, self.v_height, self.buffer, self.tgt_color)
+            cmd_array = pps.update_player_pos(self.ball_pos)
 
+            #Linear motion of the lines
+            self.current_angle_goalie = self.goalie.give_target_angle(cmd_array[0][0],self.current_angle_goalie)
+            print("goalie move "+self.current_angle_goalie)
+            self.current_angle_offense = self.offense.give_target_angle(cmd_array[2][0],self.current_angle_offense)
+            print("offense move "+self.current_angle_goalie)
+            self.current_angle_defense = self.defense.give_target_angle(cmd_array[1][0],self.current_angle_defense)
+            print("defense move "+self.current_angle_goalie)
+
+            #kicking function of the lines
+            if cmd_array[0][1] == True:
+                self.goalie.kick()
+                print("goalie kick")
+            if cmd_array[1][1] == True:
+                self.defense.kick()
+                print("defense kick")
+            if cmd_array[2][1] == True:
+                self.offense.kick()
+                print("offense kick")
+                    
+                
 
         # Step 2.5: Update the ball on the ui
         self.ui_ball_pos(self.ball_pos)
 
 
         # Step 3: Check for interupts
-        self.was_goal_scored()      # Was a goal scored?
         if self.timer <= 0:         # Has a timer run out?
             self.game_over()
 

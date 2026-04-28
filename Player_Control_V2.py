@@ -26,24 +26,32 @@ class Player_line:
         lgpio.pulsewidth(self.gpio_chip,pin,converted_pulse_width)
 
 
-
-    def give_target_angle(self,percentage):
-        self.target_angle = percentage*180
-        return self.target_angle
+    #controls all motion
+    def give_target_angle(self,percentage,current):
+        if percentage!=None:
+            self.target_angle = percentage*180
+        else:
+            self.target_angle = None
+        self.smooth_move(self.target_angle,current)
     
 
 
     def smooth_move(self, target, current):
-        if abs(target-current)<=5:
+
+        if self.target_angle == None:
+            return current
+        
+        elif abs(target-current)<=5:
             self.set_position(target,self.move_pin)
+            return target
         elif target>current:
             self.set_position((target-current)//10 + current,self.move_pin)
+            return (target-current)//10 + current
         elif current<target:
             self.set_position(current - (current-target)//10, self.move_pin)
-        elif current==target:
-            pass
+            return current - (current-target)//10
         else:
-            self.set_position(90,self.move_pin)
+            return target
         
 
 
