@@ -309,8 +309,8 @@ def BoundDetect(frame, tgt_color=None, sensitivity=None):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     # Magenta range — Hue ~145–165 in OpenCV's 0–179 scale
-    lower = numpy.array([130, 60, 60], dtype=numpy.uint8)
-    upper = numpy.array([175, 255, 255], dtype=numpy.uint8)
+    lower = numpy.array([140, 120, 120], dtype=numpy.uint8)
+    upper = numpy.array([165, 255, 255], dtype=numpy.uint8)
 
     mask = cv2.inRange(hsv, lower, upper)
 
