@@ -274,6 +274,7 @@ class Game:
 
         """MOVE TO WAITING STATE"""
         self.game_state = Game_States.WAITING
+        
         self.enter_WAITING()
 
     # Resets all of the computer vision variables (RUN WHEN RESET IS PRESSED)
@@ -303,6 +304,10 @@ class Game:
         self.away_goal.on()
         self.home_goal.on()
         self.clear_screen_events()
+
+        # Delete the ball
+        if self.ball != None:
+            self.canvas.delete(self.ball)
 
         # Move all three player rods up
         self.goalie.up()
@@ -375,10 +380,12 @@ class Game:
         if self.ball != None:
             self.canvas.delete(self.ball)
 
-
         #creates a waiting screen with instructions
         self.canvas.itemconfig(self.waiting_screen, state="normal")
         self.canvas.itemconfig(self.waiting_text,state="normal")
+
+        self.canvas.update_idletasks()
+        self.canvas.update()
 
         # Start the video object for openCV
         self.restart_cv()
