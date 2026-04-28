@@ -26,32 +26,28 @@ class Player_line:
         lgpio.tx_servo(self.gpio_chip,pin,converted_pulse_width)
 
 
-    #controls all motion
-    def give_target_angle(self,percentage,current):
+
+
+    def smooth_move(self, percentage, current):
+        
+        
         if percentage!=None:
-            self.target_angle = percentage*180
-        else:
-            self.target_angle = None
-        self.smooth_move(self.target_angle,current)
-    
+            self.target = percentage*180
 
-
-    def smooth_move(self, target, current):
-
-        if self.target_angle == None:
+        if percentage == None:
             return current
         
-        elif abs(target-current)<=5:
-            self.set_position(target,self.move_pin)
-            return target
-        elif target>current:
-            self.set_position((target-current)//10 + current,self.move_pin)
-            return (target-current)//10 + current
-        elif current<target:
-            self.set_position(current - (current-target)//10, self.move_pin)
-            return current - (current-target)//10
+        elif abs(self.target-current)<=5:
+            self.set_position(self.target,self.move_pin)
+            return self.target
+        elif self.target>current:
+            self.set_position((self.target-current)//10 + current,self.move_pin)
+            return (self.target-current)//10 + current
+        elif current<self.target:
+            self.set_position(current - (current-self.target)//10, self.move_pin)
+            return current - (current-self.target)//10
         else:
-            return target
+            return self.target
         
 
 

@@ -131,7 +131,7 @@ class Game:
         self.lost_counter = 0
 
         self.ball_pos = None
-
+        self.fps = 0
     #________________________________________________________________________________________________________________________
 
 
@@ -195,6 +195,8 @@ class Game:
         self.game_over_text = self.canvas.create_text (self.width//2,self.height//2,text=" wins!\nTo play again, press the start button.", fill="black",font=("Impact",40),state="hidden")
 
         self.screen.after(50,self.active_state)
+
+        self.fps_text = self.canvas.create_text(self.width//2, self.height//2,text="", font=("impact",80))
     #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -358,9 +360,15 @@ class Game:
 
 
         #Move all Lines to center position and update current angles
-        self.current_angle_goalie = self.goalie.set_position(90,self.goalie_move_pin)
-        self.current_angle_defense = self.defense.set_position(90,self.def_move_pin)
-        self.current_angle_offense = self.offense.set_position(90,self.off_move_pin)
+        self.current_angle_goalie = 90
+        self.current_angle_defense = 90
+        self.current_angle_offense = 90
+
+        self.offense.set_position(90,self.off_move_pin)
+        self.defense.set_position(90,self.def_move_pin)
+        self.goalie.set_position(90,self.goalie_move_pin)
+
+
 
         if self.ball != None:
             self.canvas.delete(self.ball)
@@ -374,8 +382,7 @@ class Game:
 
         # Start the video object for openCV and get the ball's position
         self.restart_cv()
-        self.count, self.tracker, self.fps, self.prev,
-        self.ball_pos, self.lost_counter = my_cv.tracking_alg(
+        self.count, self.tracker, self.fps, self.prev, self.ball_pos, self.lost_counter = my_cv.tracking_alg(
             self.vid, self.buffer, self.tracker,
             self.x_size, self.y_size, self.v_width, self.v_height,
             self.tgt_color, self.count, self.prev, self.fps, self.lost_counter)
@@ -484,8 +491,7 @@ class Game:
 
     def update_PLAYING(self):
         # Step 1: Track the ball
-        self.count, self.tracker, self.fps, self.prev,
-        self.ball_pos, self.lost_counter = my_cv.tracking_alg(
+        self.count, self.tracker, self.fps, self.prev, self.ball_pos, self.lost_counter = my_cv.tracking_alg(
             self.vid, self.buffer, self.tracker,
             self.x_size, self.y_size, self.v_width, self.v_height,
             self.tgt_color, self.count, self.prev, self.fps, self.lost_counter)
@@ -497,12 +503,12 @@ class Game:
             cmd_array = pps.update_player_pos(self.ball_pos)
 
             #Linear motion of the lines
-            self.current_angle_goalie = self.goalie.give_target_angle(cmd_array[0][0],self.current_angle_goalie)
-            print("goalie move "+self.current_angle_goalie)
-            self.current_angle_offense = self.offense.give_target_angle(cmd_array[2][0],self.current_angle_offense)
-            print("offense move "+self.current_angle_goalie)
-            self.current_angle_defense = self.defense.give_target_angle(cmd_array[1][0],self.current_angle_defense)
-            print("defense move "+self.current_angle_goalie)
+            self.current_angle_goalie = self.goalie.smooth_move(cmd_array[0][0],self.current_angle_goalie)
+            print(f"goalie move {self.current_angle_goalie}")
+            self.current_angle_offense = self.offense.smooth_move(cmd_array[2][0],self.current_angle_offense)
+            print(f"offense move {self.current_angle_goalie}")
+            self.current_angle_defense = self.defense.smooth_move(cmd_array[1][0],self.current_angle_defense)
+            print(f"defense move {self.current_angle_goalie}")
 
             #kicking function of the lines
             if cmd_array[0][1] == True:
@@ -539,8 +545,11 @@ class Game:
             print("WAITING UPDATED")
             self.update_WAITING()
 
+        self.canvas.itemconfig(self.fps_text, text=round(self.fps))
+
+        
         #THIS VARIABLE IS THE SPEED AT WHICH THE GAME WILL RUN, CURRENTLY 50ms PER LOOP
-        self.screen.after(500,self.active_state)
+        self.screen.after(25,self.active_state)
 
     
 
