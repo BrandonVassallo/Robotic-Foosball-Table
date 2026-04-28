@@ -467,7 +467,7 @@ class Game:
 
     def update_PLAYING(self):
         # Step 1: Track the ball
-        self.count, self.tracker, self.fps, self.prev, \
+        self.count, self.tracker, self.fps, self.prev,
         self.ball_pos, self.lost_counter = my_cv.tracking_alg(
             self.vid, self.buffer, self.tracker,
             self.x_size, self.y_size, self.v_width, self.v_height,
@@ -477,9 +477,11 @@ class Game:
 
         # Step 2: Use the new position to move the Players
         if self.ball_pos != None:
-            if pps.update_player_pos(self.ball_pos, self.goalie, self.defense, self.offense):
-                self.tracker = cv2.legacy.TrackerMOSSE.create()
-                self.frame, self.tracker = my_cv.initalize_tracker(self.vid, self.frame, self.x_size, self.y_size, self.v_width, self.v_height, self.buffer, self.tgt_color)
+            cmd_array = pps.update_player_pos(self.ball_pos)
+            self.current_angle_offense = self.offense.give_target_angle(cmd_array[2][0],self.current_angle_offense)
+            self.current_angle_defense = self.defense.give_target_angle(cmd_array[1][0],self.current_angle_defense)
+            self.current_angle_goalie = self.goalie.give_target_angle(cmd_array[0][0],self.current_angle_goalie)
+
 
 
         # Step 2.5: Update the ball on the ui

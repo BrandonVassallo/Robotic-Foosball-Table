@@ -26,10 +26,10 @@ class Player_line:
         lgpio.pulsewidth(self.gpio_chip,pin,converted_pulse_width)
 
 
-
-    def give_target_angle(self,percentage):
+    #controls all motion
+    def give_target_angle(self,percentage,current):
         self.target_angle = percentage*180
-        return self.target_angle
+        self.smooth_move(self.target_angle,current)
     
 
 
