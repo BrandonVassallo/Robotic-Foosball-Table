@@ -1,4 +1,4 @@
-import New_cv_code_copy
+import New_cv_code
 
 
-New_cv_code_copy.debug()         
+New_cv_code.debug()         
