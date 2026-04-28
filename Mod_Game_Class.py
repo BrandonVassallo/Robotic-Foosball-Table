@@ -260,18 +260,6 @@ class Game:
         self.update_scores()
 
 
-
-        # Move all three player rods down, to begin playing
-        self.goalie.down()
-        self.defense.down()
-        self.offense.down()
-
-
-        #Move all Lines to center position and update current angles
-        self.current_angle_goalie = self.goalie.set_position(90,self.goalie_move_pin)
-        self.current_angle_defense = self.defense.set_position(90,self.def_move_pin)
-        self.current_angle_offense = self.offense.set_position(90,self.off_move_pin)
-
         """MOVE TO WAITING STATE"""
         self.game_state = Game_States.WAITING
         
@@ -374,6 +362,17 @@ class Game:
 
     def enter_WAITING(self):
         self.clear_screen_events()
+
+        # Move all three player rods down, to begin playing
+        self.goalie.down()
+        self.defense.down()
+        self.offense.down()
+
+
+        #Move all Lines to center position and update current angles
+        self.current_angle_goalie = self.goalie.set_position(90,self.goalie_move_pin)
+        self.current_angle_defense = self.defense.set_position(90,self.def_move_pin)
+        self.current_angle_offense = self.offense.set_position(90,self.off_move_pin)
 
         if self.ball != None:
             self.canvas.delete(self.ball)
