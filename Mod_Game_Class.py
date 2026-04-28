@@ -545,7 +545,7 @@ class Game:
             print("WAITING UPDATED")
             self.update_WAITING()
 
-        self.canvas.itemconfig(self.fps_text, text=round(self.fps))
+        # self.canvas.itemconfig(self.fps_text, text=round(self.fps))
 
         
         #THIS VARIABLE IS THE SPEED AT WHICH THE GAME WILL RUN, CURRENTLY 50ms PER LOOP

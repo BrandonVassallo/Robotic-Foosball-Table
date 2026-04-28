@@ -35,6 +35,17 @@ import time
 _MORPH_KERNEL = numpy.ones((3, 3), numpy.uint8)
 
 
+# HSV Bounds
+high_hue = 175
+low_hue = 130
+
+high_sat = 200
+low_sat = 150
+
+high_val = 200
+low_val = 100
+
+
 def initalize_video(buffer: int, x_size: int, y_size: int):
     """
     Open the default webcam, apply settings, warm up auto-exposure, and
@@ -112,8 +123,8 @@ def initalize_tracker(vid, frame, x_size, y_size, v_width, v_height, buffer, tgt
             # [Hue, Saturation, Value]
             hsv  = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
             mask = cv2.inRange(hsv,
-                               numpy.array([120, 60, 60], dtype=numpy.uint8),
-                               numpy.array([175, 255, 255], dtype=numpy.uint8))
+                               numpy.array([low_hue, low_sat, low_val], dtype=numpy.uint8),
+                               numpy.array([high_hue, high_sat, high_val], dtype=numpy.uint8))
             cv2.imshow("HSV Mask", mask)
 
         if cv2.waitKey(1) & 0xFF == 27:
@@ -181,7 +192,7 @@ def tracking_alg(vid: cv2.VideoCapture,
         sys.exit()
 
     # ── R → manual recalibrate ──────────────────────────────────────────────
-    if key == ord('r'):
+    if key == ord('r') or (count % 80) == 0:
         tracker = _reinit_tracker(frame, x_size, y_size, buffer, tgt_color)
         lost_counter = 0
 
@@ -261,7 +272,7 @@ def findingROI(frame, x_size, y_size, buffer, tgt_color):
     AREA_MAX : largest plausible ball area in pixels  (reject false positives)
     """
     AREA_MIN = 200      # ~14×14 px minimum  — tune to your ball size
-    AREA_MAX = 2500   # ~50×50 px maximum
+    AREA_MAX = 4900   # ~70×70 px maximum
 
     top, bottom = BoundDetect(frame, tgt_color)
     if top is None or bottom is None:
@@ -310,8 +321,8 @@ def BoundDetect(frame, tgt_color=None, sensitivity=None):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     # Magenta range — Hue ~145–165 in OpenCV's 0–179 scale
-    lower = numpy.array([120, 60, 60], dtype=numpy.uint8)
-    upper = numpy.array([175, 255, 255], dtype=numpy.uint8)
+    lower = numpy.array([low_hue, low_sat, low_val], dtype=numpy.uint8)
+    upper = numpy.array([high_hue, high_sat, high_val], dtype=numpy.uint8)
 
     mask = cv2.inRange(hsv, lower, upper)
 
