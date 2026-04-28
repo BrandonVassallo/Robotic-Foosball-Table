@@ -242,9 +242,6 @@ class Game:
     def start_game(self):
 
 
-        # Start the video object for openCV
-        self.restart_cv()
-
         #make timer display 5mins
         self.timer = 60
         self.canvas.itemconfig(self.timer_text, text=self.format_time(self.timer))
@@ -371,6 +368,9 @@ class Game:
         #creates a waiting screen with instructions
         self.canvas.itemconfig(self.waiting_screen, state="normal")
         self.canvas.itemconfig(self.waiting_text,state="normal")
+
+        # Start the video object for openCV
+        self.restart_cv()
 
 
 
