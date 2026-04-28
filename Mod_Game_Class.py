@@ -4,7 +4,7 @@ import New_cv_code as my_cv
 import cv2
 import PlayerPositions as pps
 from enum import Enum
-import Laser_Activities as pew
+
 import Player_Control_V2 as pc
 import os
 
@@ -80,17 +80,14 @@ class Game:
         self.start_button.when_activated = self.start_pressed
         self.reset_button.when_activated = self.reset_pressed
 
+        self.home = gpiozero.Button(4)
+        self.away = gpiozero.Button(25)
 
+        self.home.when_activated = self.home_goal
+        self.away.when_activated = self.away_goal
 
-        #*****************************THESE PINS MAY ALSO NEED TO BE CHANGED******************************************
-        #creates the two laser systems for the goals according to the laser activities class structure
-        #pin one is reciever, pin two is laser
-        home_goal_recv_pin = 4
-        self.home_goal = pew.Goal(home_goal_recv_pin)
-
-        away_goal_recv_pin = 25
-        self.away_goal = pew.Goal(away_goal_recv_pin)
         
+
         #*****************************PLAYER DECLERATIONS******************************************
         self.goalie_move_pin = 22
         self.goalie_kick_pin = 19
@@ -320,23 +317,11 @@ class Game:
             self.away_score+=1
             self.canvas.itemconfig(self.away_scoreboard_text, text=self.away_score)
 
-        #turn goals off after goal is scored
-        self.away_goal.off()
-        self.home_goal.off()
-
 
         """MOVE TO WAITING STATE"""
         self.enter_WAITING()
         self.game_state = Game_States.WAITING
 
-
-
-    #if goal is scored, calls goal, with correct team   -> TRUE FOR AWAY, FALSE FOR HOME
-    def was_goal_scored(self):
-        if self.away_goal.is_goal():
-            self.goal(True)
-        elif self.home_goal.is_goal():
-            self.goal(False)
 
 
 
@@ -416,6 +401,8 @@ class Game:
         print("MODE CHANGED TO IDLE")
         self.game_state = Game_States.IDLE
 
+
+
     def start_pressed(self):
         self.screen.after(0, self._start_pressed_ui)
 
@@ -451,6 +438,22 @@ class Game:
             self.reset()
             print("MODE CHANGED TO IDLE")
             self.game_state = Game_States.IDLE
+
+
+    def home_goal(self):
+        self.screen.after(0,self._home_goal_ui)
+
+    def _home_goal_ui(self):
+        if self.game_state == Game_States.PLAYING:
+            self.goal(False)
+    
+    def away_goal(self):
+        self.screen.after(0,self._away_goal_ui)
+
+    def _away_goal_ui(self):
+        if self.game_state == Game_States.PLAYING:
+            self.goal(True)
+    
 
         
 
@@ -505,7 +508,6 @@ class Game:
 
 
         # Step 3: Check for interupts
-        self.was_goal_scored()      # Was a goal scored?
         if self.timer <= 0:         # Has a timer run out?
             self.game_over()
 
