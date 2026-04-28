@@ -15,7 +15,7 @@ class Goal:
         self.laser=OutputDevice(Lpin)
         #self.reciever.inactive_time = 0
         #YOU MUST INPUT THE RECIEVER PIN FIRST THEN THE LASER PIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-       
+
 
     def is_laser_detected(self): 
         return self.reciever.is_active

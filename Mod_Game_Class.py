@@ -145,7 +145,13 @@ class Game:
 
         #Create the main window
         self.screen = tk.Tk()
+
+        # IF THE SECOND LARGER SCREEN IS CONNECTED
+        self.screen.geometry("1024x600+0+0")
        
+        # Force the screen to full screen
+        #self.screen.attributes("-fullscreen", True)
+
         #Name the window
         self.screen.title("Jumbotron")
 
