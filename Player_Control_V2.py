@@ -8,12 +8,12 @@ class Player_line:
         self.move_pin = move_pin
         self.kick_pin = kick_pin
 
-        lgpio.setwarnings(False)
-        lgpio.setmode(lgpio.BCM)
+        # lgpio.setwarnings(False)
+        # lgpio.setmode(lgpio.BCM)
         self.gpio_chip = lgpio.gpiochip_open(0)
 
-        lgpio.gpio_claim(self.gpio_chip, self.move_pin)
-        lgpio.gpio_claim(self.gpio_chip, self.kick_pin)
+        lgpio.gpio_claim_output(self.gpio_chip, self.move_pin)
+        lgpio.gpio_claim_output(self.gpio_chip, self.kick_pin)
 
 
 
@@ -23,7 +23,7 @@ class Player_line:
         pulse_width = 0.0005 + (angle/180)*(0.0025-0.0005)
         converted_pulse_width = int(pulse_width*1000000)
         #sends the signal
-        lgpio.pulsewidth(self.gpio_chip,pin,converted_pulse_width)
+        lgpio.tx_servo(self.gpio_chip,pin,converted_pulse_width)
 
 
     #controls all motion
