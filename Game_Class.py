@@ -461,9 +461,14 @@ class Game:
 
         # Step 2: Use the new position to move the Players
         if self.ball_pos != None:
-            if pps.update_player_pos(self.ball_pos, self.goalie, self.defense, self.offense):
-                self.tracker = cv2.legacy.TrackerCSRT.create()
-                self.frame, self.tracker = my_cv.initalize_tracker(self.vid, self.frame, self.x_size, self.y_size, self.v_width, self.v_height, self.buffer, self.tgt_color)
+            positional_array = pps.update_player_pos(self.ball_pos, self.goalie, self.defense, self.offense)
+            # RETURNS THE BELOW ARRAY:
+            # positional_array = [(goalie_percent, goalie_kick_bool), (def_percent, def_kick_bool), (off_percent, off_kick_bool)]
+            
+            
+                # KICKING BUG FIX BELOW
+                # self.tracker = cv2.legacy.TrackerCSRT.create()
+                # self.frame, self.tracker = my_cv.initalize_tracker(self.vid, self.frame, self.x_size, self.y_size, self.v_width, self.v_height, self.buffer, self.tgt_color)
 
 
         # Step 2.5: Update the ball on the ui
