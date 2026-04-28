@@ -481,16 +481,22 @@ class Game:
 
             #Linear motion of the lines
             self.current_angle_goalie = self.goalie.give_target_angle(cmd_array[0][0],self.current_angle_goalie)
+            print("goalie move "+self.current_angle_goalie)
             self.current_angle_offense = self.offense.give_target_angle(cmd_array[2][0],self.current_angle_offense)
+            print("offense move "+self.current_angle_goalie)
             self.current_angle_defense = self.defense.give_target_angle(cmd_array[1][0],self.current_angle_defense)
+            print("defense move "+self.current_angle_goalie)
 
             #kicking function of the lines
             if cmd_array[0][1] == True:
                 self.goalie.kick()
+                print("goalie kick")
             if cmd_array[1][1] == True:
                 self.defense.kick()
+                print("defense kick")
             if cmd_array[2][1] == True:
                 self.offense.kick()
+                print("offense kick")
                     
                 
 
