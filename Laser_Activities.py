@@ -26,7 +26,7 @@ class Goal:
     #checks if laser is currently detected. This may or may not work depending on our clock cycle
     #Ex: if the ball passes through faster than the clock cycle, a goal will not be detected if we check this
      
-
+#IF GOAL DOUBLE COUNTS/GLITCHES, ADD A WAIT HERE
     def is_goal(self):
         if self.goal_notification == True:
             self.goal_notification = False

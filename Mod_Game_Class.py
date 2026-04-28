@@ -89,12 +89,10 @@ class Game:
         #creates the two laser systems for the goals according to the laser activities class structure
         #pin one is reciever, pin two is laser
         home_goal_recv_pin = 4
-        home_goal_lazer_pin = 26
-        self.home_goal = pew.Goal(home_goal_recv_pin,home_goal_lazer_pin)
+        self.home_goal = pew.Goal(home_goal_recv_pin)
 
         away_goal_recv_pin = 25
-        away_goal_lazer_pin = 27
-        self.away_goal = pew.Goal(away_goal_recv_pin,away_goal_lazer_pin)
+        self.away_goal = pew.Goal(away_goal_recv_pin)
         
         #*****************************PLAYER DECLERATIONS******************************************
         goalie_move_pin = 22
@@ -264,8 +262,7 @@ class Game:
         self.away_score = 0
         self.update_scores()
 
-        self.away_goal.on()
-        self.home_goal.on()
+
 
         # Move all three player rods down, to begin playing
         self.goalie.down()
@@ -301,8 +298,6 @@ class Game:
         self.home_score=0
         self.update_scores()
         self.canvas.itemconfig(self.timer_text,text=self.format_time(self.timer))
-        self.away_goal.on()
-        self.home_goal.on()
         self.clear_screen_events()
 
         # Delete the ball
