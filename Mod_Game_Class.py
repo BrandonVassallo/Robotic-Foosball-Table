@@ -273,8 +273,8 @@ class Game:
         self.offense.down()
 
         """MOVE TO WAITING STATE"""
-        self.enter_WAITING()
         self.game_state = Game_States.WAITING
+        self.enter_WAITING()
 
     # Resets all of the computer vision variables (RUN WHEN RESET IS PRESSED)
     def restart_cv(self):
