@@ -130,6 +130,8 @@ class Game:
 
         self.lost_counter = 0
 
+        self.ball_pos = None
+
     #________________________________________________________________________________________________________________________
 
 
@@ -370,8 +372,14 @@ class Game:
         self.canvas.update_idletasks()
         self.canvas.update()
 
-        # Start the video object for openCV
+        # Start the video object for openCV and get the ball's position
         self.restart_cv()
+        self.count, self.tracker, self.fps, self.prev,
+        self.ball_pos, self.lost_counter = my_cv.tracking_alg(
+            self.vid, self.buffer, self.tracker,
+            self.x_size, self.y_size, self.v_width, self.v_height,
+            self.tgt_color, self.count, self.prev, self.fps, self.lost_counter)
+        print(f"self.ball_pos = {self.ball_pos}")
 
 
 
@@ -420,6 +428,8 @@ class Game:
                 print("MODE CHANGED TO PLAYING")
                 self.game_state = Game_States.PLAYING
                 self.update_timer()
+            else:
+                print("Ball not found?")
             # If the ball is not found, do not switch to playing
 
         elif self.game_state == Game_States.PLAYING:
