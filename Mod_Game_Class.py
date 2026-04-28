@@ -55,8 +55,8 @@ class Game:
 
 
         #scores will be 0-0 in initialization, used to track score of the game
-        self.home_score = 0
-        self.away_score = 0
+        self.human_score = 0
+        self.robot_score = 0
 
 
         #time in seconds
@@ -73,32 +73,32 @@ class Game:
 
 
         #****************************WE MAY NEED TO PICK A DIFFERENT PIN HERE*********************************************
-        #makes the start button GPIO pin 3, reset gpio 2 
-        self.start_button = gpiozero.Button(5)
-        self.reset_button = gpiozero.Button(6)
+        #makes the start button GPIO pin 
+        self.start_button = gpiozero.Button(23)
+        self.reset_button = gpiozero.Button(24)
 
         self.start_button.when_activated = self.start_pressed
         self.reset_button.when_activated = self.reset_pressed
 
-        self.home = gpiozero.Button(4)
-        self.away = gpiozero.Button(25)
+        self.robot = gpiozero.Button(17)
+        self.human = gpiozero.Button(27)
 
-        self.home.when_activated = self.home_goal
-        self.away.when_activated = self.away_goal
+        self.human.when_activated = self.human_goal
+        self.robot.when_activated = self.robot_goal
 
         
 
         #*****************************PLAYER DECLERATIONS******************************************
-        self.goalie_move_pin = 22
+        self.goalie_move_pin = 26
         self.goalie_kick_pin = 19
         self.goalie = pc.Player_line(self.goalie_move_pin, self.goalie_kick_pin)
 
-        self.def_move_pin = 13
-        self.def_kick_pin = 12
+        self.def_move_pin = 6
+        self.def_kick_pin = 13
         self.defense = pc.Player_line(self.def_move_pin, self.def_kick_pin)
         
-        self.off_move_pin = 21
-        self.off_kick_pin = 20
+        self.off_move_pin = 20
+        self.off_kick_pin = 21
         self.offense = pc.Player_line(self.off_move_pin, self.off_kick_pin)
 
 
@@ -172,14 +172,14 @@ class Game:
         #Creates an outline of the field and green field.
         self.field_outline = self.canvas.create_rectangle(self.width*0.02,self.top_of_field, self.width*0.98,self.height, outline = "white", fill="green")
 
-        #Creates text for the top of the scoreboard for the away and home labels
-        self.scoreboard_text= self.canvas.create_text(self.width*0.25,self.top_of_field//2,text="HOME", fill="white", font=("Impact",40)) 
-        self.scoreboard_text= self.canvas.create_text(self.width*0.75,self.top_of_field//2,text="AWAY", fill="white", font=("Impact",40)) 
+        #Creates text for the top of the scoreboard for the robot and human labels
+        self.scoreboard_text= self.canvas.create_text(self.width*0.25,self.top_of_field//2,text="human", fill="white", font=("Impact",40)) 
+        self.scoreboard_text= self.canvas.create_text(self.width*0.75,self.top_of_field//2,text="robot", fill="white", font=("Impact",40)) 
 
 
         #displays current score on scoreboard
-        self.home_scoreboard_text = self.canvas.create_text(self.width*0.1, self.top_of_field//2, text= self.home_score, fill = "white", font = ("Impact",55))
-        self.away_scoreboard_text = self.canvas.create_text(self.width*0.9, self.top_of_field//2, text= self.away_score, fill = "white", font = ("Impact",55))
+        self.human_scoreboard_text = self.canvas.create_text(self.width*0.1, self.top_of_field//2, text= self.human_score, fill = "white", font = ("Impact",55))
+        self.robot_scoreboard_text = self.canvas.create_text(self.width*0.9, self.top_of_field//2, text= self.robot_score, fill = "white", font = ("Impact",55))
         
 
         #initialize the timer on the scoreboard
@@ -236,8 +236,8 @@ class Game:
 
     #Writes the scoreboard with current vals because im tired of typing this
     def update_scores(self):
-        self.canvas.itemconfig(self.away_scoreboard_text,text=self.away_score)
-        self.canvas.itemconfig(self.home_scoreboard_text, text=self.home_score)
+        self.canvas.itemconfig(self.robot_scoreboard_text,text=self.robot_score)
+        self.canvas.itemconfig(self.human_scoreboard_text, text=self.human_score)
 
 
 
@@ -252,8 +252,8 @@ class Game:
         self.update_timer()
 
         #reset scores
-        self.home_score = 0
-        self.away_score = 0
+        self.human_score = 0
+        self.robot_score = 0
         self.update_scores()
 
 
@@ -282,8 +282,8 @@ class Game:
     def reset(self):
         #reset basic vars
         self.timer = 0
-        self.away_score=0
-        self.home_score=0
+        self.robot_score=0
+        self.human_score=0
         self.update_scores()
         self.canvas.itemconfig(self.timer_text,text=self.format_time(self.timer))
         self.clear_screen_events()
@@ -308,14 +308,14 @@ class Game:
     
     
     def goal(self,whom):
-    #whom is a boolean which dicatates who scored,   TRUE FOR AWAY (ROBOT), FALSE FOR HOME (HUMAN)
+    #whom is a boolean which dicatates who scored,   TRUE FOR robot (ROBOT), FALSE FOR human (HUMAN)
         
         if whom == False:
-            self.home_score+=1
-            self.canvas.itemconfig(self.home_scoreboard_text, text=self.home_score)
+            self.human_score+=1
+            self.canvas.itemconfig(self.human_scoreboard_text, text=self.human_score)
         else:
-            self.away_score+=1
-            self.canvas.itemconfig(self.away_scoreboard_text, text=self.away_score)
+            self.robot_score+=1
+            self.canvas.itemconfig(self.robot_scoreboard_text, text=self.robot_score)
 
 
         """MOVE TO WAITING STATE"""
@@ -382,10 +382,10 @@ class Game:
             self.canvas.delete(self.ball)
 
         #determines winner
-        if self.away_score > self.home_score:
+        if self.robot_score > self.human_score:
             self.winner = "Robot"
             self.color = "red"
-        elif self.away_score < self.home_score:
+        elif self.robot_score < self.human_score:
             self.winner = "Human"
             self.color = "green"
         else:
@@ -440,17 +440,17 @@ class Game:
             self.game_state = Game_States.IDLE
 
 
-    def home_goal(self):
-        self.screen.after(0,self._home_goal_ui)
+    def human_goal(self):
+        self.screen.after(0,self._human_goal_ui)
 
-    def _home_goal_ui(self):
+    def _human_goal_ui(self):
         if self.game_state == Game_States.PLAYING:
             self.goal(False)
     
-    def away_goal(self):
-        self.screen.after(0,self._away_goal_ui)
+    def robot_goal(self):
+        self.screen.after(0,self._robot_goal_ui)
 
-    def _away_goal_ui(self):
+    def _robot_goal_ui(self):
         if self.game_state == Game_States.PLAYING:
             self.goal(True)
     
