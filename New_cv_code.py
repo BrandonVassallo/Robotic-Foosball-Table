@@ -221,7 +221,7 @@ def tracking_alg(vid: cv2.VideoCapture,
         lost_counter += 1
 
         # Attempt colour-based re-detection after a few consecutive failures
-        if lost_counter > 3:
+        if lost_counter > 3 and (lost_counter%10) == 0:
             tracker = _reinit_tracker(frame, x_size, y_size, buffer, tgt_color)
             if tracker is not None:
                 lost_counter = 0
