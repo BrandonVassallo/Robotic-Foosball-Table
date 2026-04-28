@@ -59,7 +59,7 @@ def initalize_video(buffer: int, x_size: int, y_size: int):
     vid.set(cv2.CAP_PROP_FPS,          30)
 
     # Stability settings
-    vid.set(cv2.CAP_PROP_AUTO_EXPOSURE,  1)
+    vid.set(cv2.CAP_PROP_AUTO_EXPOSURE,  0.75)
     # vid.set(cv2.CAP_PROP_EXPOSURE,     -6)
     vid.set(cv2.CAP_PROP_AUTO_WB,        1)
     vid.set(cv2.CAP_PROP_WB_TEMPERATURE, 4500)
@@ -111,8 +111,8 @@ def initalize_tracker(vid, frame, x_size, y_size, v_width, v_height, buffer, tgt
             # HSV mask — if ball is visible above but mask is dark, tune HSV range
             hsv  = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
             mask = cv2.inRange(hsv,
-                               numpy.array([145, 120, 120], dtype=numpy.uint8),
-                               numpy.array([165, 255, 255], dtype=numpy.uint8))
+                               numpy.array([145, 70, 70], dtype=numpy.uint8),
+                               numpy.array([165, 200, 200], dtype=numpy.uint8))
             cv2.imshow("HSV Mask", mask)
 
         if cv2.waitKey(1) & 0xFF == 27:
@@ -309,8 +309,8 @@ def BoundDetect(frame, tgt_color=None, sensitivity=None):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     # Magenta range — Hue ~145–165 in OpenCV's 0–179 scale
-    lower = numpy.array([140, 120, 120], dtype=numpy.uint8)
-    upper = numpy.array([165, 255, 255], dtype=numpy.uint8)
+    lower = numpy.array([145, 70, 70], dtype=numpy.uint8)
+    upper = numpy.array([165, 200, 200], dtype=numpy.uint8)
 
     mask = cv2.inRange(hsv, lower, upper)
 
