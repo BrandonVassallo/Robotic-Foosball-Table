@@ -342,6 +342,7 @@ class Game:
             self.ball_y = self.top_of_field + ball_pos[1] * ((self.height - self.top_of_field)/360)
 
             self.ball=self.canvas.create_oval(self.ball_x-15,self.ball_y-15,self.ball_x+15,self.ball_y+15, fill="magenta", state="normal")
+            print("ball created")
 
    
 
@@ -526,7 +527,7 @@ class Game:
             self.update_WAITING()
 
         #THIS VARIABLE IS THE SPEED AT WHICH THE GAME WILL RUN, CURRENTLY 50ms PER LOOP
-        self.screen.after(25,self.active_state)
+        self.screen.after(500,self.active_state)
 
     
 
