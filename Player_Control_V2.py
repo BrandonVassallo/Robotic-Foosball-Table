@@ -15,7 +15,7 @@ class Player_line:
         lgpio.gpio_claim(self.gpio_chip, self.move_pin)
         lgpio.gpio_claim(self.gpio_chip, self.kick_pin)
 
-    
+
 
     def set_position(self,angle,pin):
         
@@ -27,15 +27,16 @@ class Player_line:
 
 
 
-    def move(self,percentage):
+    def give_target_angle(self,percentage):
         self.target_angle = percentage*180
-        self.set_position(self.target_angle, self.move_pin)
+        return self.target_angle
+    
 
 
     def smooth_move(self):
         pass
 
-    
+
 
     def kick(self):
         self.set_position(80,self.kick_pin)
@@ -49,7 +50,7 @@ class Player_line:
     def up(self):
         self.set_position(30,self.kick_pin)
 
-    
+
 
     def down(self):
         self.set_position(100,self.kick_pin)
