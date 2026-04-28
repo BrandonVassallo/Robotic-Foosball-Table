@@ -5,7 +5,7 @@ import cv2
 import PlayerPositions as pps
 from enum import Enum
 import Laser_Activities as pew
-import Player_Control as pc
+import Player_Control_V2 as pc
 import os
 
  
@@ -66,9 +66,6 @@ class Game:
         self.ball_x = 0
         self.ball_y = 0
 
-        self.target_angle_goalie = 0
-        self.target_angle_offense = 0
-        self.target_angle_defense = 0
 
         self.current_angle_goalie = 0
         self.current_angle_offense = 0
@@ -95,17 +92,17 @@ class Game:
         self.away_goal = pew.Goal(away_goal_recv_pin)
         
         #*****************************PLAYER DECLERATIONS******************************************
-        goalie_move_pin = 22
-        goalie_kick_pin = 19
-        self.goalie = pc.Player_Line(goalie_move_pin, goalie_kick_pin)
+        self.goalie_move_pin = 22
+        self.goalie_kick_pin = 19
+        self.goalie = pc.Player_line(self.goalie_move_pin, self.goalie_kick_pin)
 
-        def_move_pin = 13
-        def_kick_pin = 12
-        self.defense = pc.Player_Line(def_move_pin, def_kick_pin)
+        self.def_move_pin = 13
+        self.def_kick_pin = 12
+        self.defense = pc.Player_line(self.def_move_pin, self.def_kick_pin)
         
-        off_move_pin = 21
-        off_kick_pin = 20
-        self.offense = pc.Player_Line(off_move_pin, off_kick_pin)
+        self.off_move_pin = 21
+        self.off_kick_pin = 20
+        self.offense = pc.Player_line(self.off_move_pin, self.off_kick_pin)
 
 
         #init the game state using enum types
@@ -268,6 +265,12 @@ class Game:
         self.goalie.down()
         self.defense.down()
         self.offense.down()
+
+
+        #Move all Lines to center position and update current angles
+        self.current_angle_goalie = self.goalie.set_position(90,self.goalie_move_pin)
+        self.current_angle_defense = self.defense.set_position(90,self.def_move_pin)
+        self.current_angle_offense = self.offense.set_position(90,self.off_move_pin)
 
         """MOVE TO WAITING STATE"""
         self.game_state = Game_States.WAITING
