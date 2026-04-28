@@ -28,7 +28,9 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
         return None     # DO NOT MOVE THE SERVOS
 
     active_player = goalie      # Initalize the active player as the goalie for now
-    kick_bool = False           # Assume no kicking is needed yet
+    goalie_kick_bool = False           # Assume no kicking is needed yet
+    def_kick_bool = False           # Assume no kicking is needed yet
+    off_kick_bool = False           # Assume no kicking is needed yet
 
     # y = 0: FROM PLAYER'S PERSPECTIVE 
         # Player 1 is responsible for 136 > y > 0       (Closest to Player)
@@ -51,7 +53,7 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
         active_player = goalie
         # ADD CHECK TO KICK
         if ball_pos[0] < 100 and not goalie.kick_bool:
-            kick_bool = True
+            goalie_kick_bool = True
 
 
     # DEFENSE PLAYER:
@@ -64,7 +66,7 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
         active_player = defense
         # ADD CHECK TO KICK
         if ball_pos[0] < 320 and not defense.kick_bool:
-            kick_bool = True
+            def_kick_bool = True
 
 
     # OFFENSE PLAYERS:
@@ -77,7 +79,7 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
         active_player = offense
         # ADD CHECK TO KICK
         if ball_pos[0] < 528 and not offense.kick_bool:
-            kick_bool = True
+            off_kick_bool = True
 
 
     # Ball position is out of range
@@ -99,7 +101,7 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
             move_to = 0     # If the ball is past the rubber barrier, move the servo to 0%
         else:
             move_to = (ball_pos[1]-RUBBER_BARRIER)/MAX_ROD_MOVEMENT_PIXELS
-        active_player.move_and_kick(move_to, kick_bool)
+        # active_player.move_and_kick(move_to, kick_bool)
 
     # Player 2 (Center)
     elif ball_pos[1] < MAX_PLAYER_2_PIXEL:
@@ -107,7 +109,7 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
         # Player 2's percentage must be calculated between the PLAYER_2_RANGE rather than the standard
         move_to = (ball_pos[1]-MAX_PLAYER_1_PIXEL)/PLAYER_2_RANGE
         # Player 2 also does not need to worry about the 17 pixel rubber barrier
-        active_player.move_and_kick(move_to, kick_bool)
+        # active_player.move_and_kick(move_to, kick_bool)
 
     # Player 3 (Closest to Servos)
     elif ball_pos[1] < MAX_PLAYER_3_PIXEL:
@@ -116,14 +118,28 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
             move_to = 1     # If the ball is past the rubber barier, move the servo to 100%
         else:
             move_to = (ball_pos[1]-MAX_PLAYER_2_PIXEL)/MAX_ROD_MOVEMENT_PIXELS
-        active_player.move_and_kick(move_to, kick_bool)
+        # active_player.move_and_kick(move_to, kick_bool)
         
     # Ball position was invalid
     else:
         print("BALL POSITION INVALID!\n")
         print(f"ball_pos was: {ball_pos}")
         return None         # DO NOT MOVE THE SERVOS
-    return kick_bool
+    
+    if active_player == offense:
+        off_move_to = move_to
+        def_move_to = None      # Don't Move Defense
+        goalie_move_to = None   # Don't Move Goalie (Change to move_to if you want goalie to track no matter what)
+    elif active_player == defense:
+        def_move_to = move_to
+        off_move_to = None      # Don't Move Offense
+        goalie_move_to = None   # Don't Move Goalie (Change to move_to if you want goalie to track no matter what)
+    elif active_player == goalie:
+        goalie_move_to = move_to
+        def_move_to = None      # Don't Move Defense
+        off_move_to = None      # Don't Move Offense
+    
+    return [(goalie_move_to, goalie_kick_bool),(def_move_to, def_kick_bool),(off_move_to, off_kick_bool)]
 
     # Do we need to kick?
     # if kick_bool:
