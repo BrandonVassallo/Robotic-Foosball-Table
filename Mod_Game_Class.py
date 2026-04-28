@@ -67,7 +67,9 @@ class Game:
         self.ball_x = 0
         self.ball_y = 0
 
-
+        self.target_angle_goalie = 0
+        self.target_angle_offense = 0
+        self.target_angle_defense = 0
 
 
         #****************************WE MAY NEED TO PICK A DIFFERENT PIN HERE*********************************************
