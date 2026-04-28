@@ -28,14 +28,20 @@ class Player_line:
 
     #controls all motion
     def give_target_angle(self,percentage,current):
-        self.target_angle = percentage*180
+        if percentage!=None:
+            self.target_angle = percentage*180
+        else:
+            self.target_angle = None
         self.smooth_move(self.target_angle,current)
     
 
 
     def smooth_move(self, target, current):
 
-        if abs(target-current)<=5:
+        if self.target_angle == None:
+            return current
+        
+        elif abs(target-current)<=5:
             self.set_position(target,self.move_pin)
             return target
         elif target>current:
