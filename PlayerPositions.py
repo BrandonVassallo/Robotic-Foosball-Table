@@ -1,8 +1,7 @@
 import cv2
-import Player_Control as pc
 import sys
 
-def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line, offense: pc.Player_Line):
+def update_player_pos(ball_pos):
     '''
     - Use the ball_pos's x-value to figure out where the servos should move to
         - Make sure to have sections for each player
@@ -23,11 +22,15 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
     MAX_PLAYER_2_PIXEL = MAX_ROD_MOVEMENT_PIXELS + PLAYER_2_RANGE
     MAX_PLAYER_3_PIXEL = MAX_ROD_MOVEMENT_PIXELS*2 + PLAYER_2_RANGE
 
+    GOALIE = 0
+    DEFENSE = 1
+    OFFENSE = 2
+
     if (ball_pos == None):
         print("NO BALL POSITION INPUTTED")
         return None     # DO NOT MOVE THE SERVOS
 
-    active_player = goalie      # Initalize the active player as the goalie for now
+    active_player = GOALIE     # Initalize the active player as the goalie for now
     goalie_kick_bool = False           # Assume no kicking is needed yet
     def_kick_bool = False           # Assume no kicking is needed yet
     off_kick_bool = False           # Assume no kicking is needed yet
@@ -50,9 +53,9 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
 
     if ball_pos[0] < 216:
         print("GOALIE")
-        active_player = goalie
+        active_player = GOALIE
         # ADD CHECK TO KICK
-        if ball_pos[0] < 100 and not goalie.kick_bool:
+        if ball_pos[0] < 100:
             goalie_kick_bool = True
 
 
@@ -63,9 +66,9 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
 
     elif ball_pos[0] < 428:
         print("DEFENSE")
-        active_player = defense
+        active_player = DEFENSE
         # ADD CHECK TO KICK
-        if ball_pos[0] < 320 and not defense.kick_bool:
+        if ball_pos[0] < 320:
             def_kick_bool = True
 
 
@@ -76,9 +79,9 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
 
     elif ball_pos[0] < 639:
         print("OFFENSE")
-        active_player = offense
+        active_player = OFFENSE
         # ADD CHECK TO KICK
-        if ball_pos[0] < 528 and not offense.kick_bool:
+        if ball_pos[0] < 528:
             off_kick_bool = True
 
 
@@ -126,15 +129,15 @@ def update_player_pos(ball_pos, goalie: pc.Player_Line, defense: pc.Player_Line,
         print(f"ball_pos was: {ball_pos}")
         return None         # DO NOT MOVE THE SERVOS
     
-    if active_player == offense:
+    if active_player == OFFENSE:
         off_move_to = move_to
         def_move_to = None      # Don't Move Defense
         goalie_move_to = None   # Don't Move Goalie (Change to move_to if you want goalie to track no matter what)
-    elif active_player == defense:
+    elif active_player == DEFENSE:
         def_move_to = move_to
         off_move_to = None      # Don't Move Offense
         goalie_move_to = None   # Don't Move Goalie (Change to move_to if you want goalie to track no matter what)
-    elif active_player == goalie:
+    elif active_player == GOALIE:
         goalie_move_to = move_to
         def_move_to = None      # Don't Move Defense
         off_move_to = None      # Don't Move Offense
