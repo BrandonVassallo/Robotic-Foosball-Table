@@ -1,15 +1,15 @@
-import gpiozero
 import Laser_Activities
 
-new = Laser_Activities.Goal(4,26)
+new = Laser_Activities.Goal(4)
 
-new.on()
+while True:
 
-while new.is_laser_detected:
-    print(new.reciever.inactive_time)
+    if new.is_laser_detected:
+        print("Laser detected")
+    else:
+        print("Nothing")
 
+    if new.is_goal:
+        print("Goal Scored")
 
-
-
-
-print(new.is_goal)
+    
