@@ -109,10 +109,11 @@ def initalize_tracker(vid, frame, x_size, y_size, v_width, v_height, buffer, tgt
             cv2.imshow("Searching...", display)
 
             # HSV mask — if ball is visible above but mask is dark, tune HSV range
+            # [Hue, Saturation, Value]
             hsv  = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
             mask = cv2.inRange(hsv,
-                               numpy.array([145, 70, 70], dtype=numpy.uint8),
-                               numpy.array([165, 200, 200], dtype=numpy.uint8))
+                               numpy.array([120, 60, 60], dtype=numpy.uint8),
+                               numpy.array([175, 255, 255], dtype=numpy.uint8))
             cv2.imshow("HSV Mask", mask)
 
         if cv2.waitKey(1) & 0xFF == 27:
@@ -124,7 +125,7 @@ def initalize_tracker(vid, frame, x_size, y_size, v_width, v_height, buffer, tgt
         cv2.destroyWindow("HSV Mask")
 
     print("Ball found - starting tracker.")
-    tracker = cv2.legacy.TrackerMOSSE.create()
+    tracker = cv2.legacy.TrackerCSRT.create()
     tracker.init(frame, bbox)
     return frame, tracker
 
@@ -244,7 +245,7 @@ def _reinit_tracker(frame, x_size, y_size, buffer, tgt_color):
     bbox = findingROI(frame, x_size, y_size, buffer, tgt_color)
     if bbox is None:
         return None
-    tracker = cv2.legacy.TrackerMOSSE.create()
+    tracker = cv2.legacy.TrackerCSRT.create()
     tracker.init(frame, bbox)
     return tracker
 
@@ -309,8 +310,8 @@ def BoundDetect(frame, tgt_color=None, sensitivity=None):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     # Magenta range — Hue ~145–165 in OpenCV's 0–179 scale
-    lower = numpy.array([145, 70, 70], dtype=numpy.uint8)
-    upper = numpy.array([165, 200, 200], dtype=numpy.uint8)
+    lower = numpy.array([120, 60, 60], dtype=numpy.uint8)
+    upper = numpy.array([175, 255, 255], dtype=numpy.uint8)
 
     mask = cv2.inRange(hsv, lower, upper)
 
