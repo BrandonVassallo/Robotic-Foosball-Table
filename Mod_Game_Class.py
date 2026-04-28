@@ -61,7 +61,6 @@ class Game:
 
         #time in seconds
         self.timer = 0 
-        self.timer_running = False
 
 
         self.ball_x = 0
@@ -70,6 +69,10 @@ class Game:
         self.target_angle_goalie = 0
         self.target_angle_offense = 0
         self.target_angle_defense = 0
+
+        self.current_angle_goalie = 0
+        self.current_angle_offense = 0
+        self.current_angle_defense = 0
 
 
         #****************************WE MAY NEED TO PICK A DIFFERENT PIN HERE*********************************************
@@ -86,11 +89,11 @@ class Game:
         #creates the two laser systems for the goals according to the laser activities class structure
         #pin one is reciever, pin two is laser
         home_goal_recv_pin = 4
-        home_goal_lazer_pin = 23
+        home_goal_lazer_pin = 26
         self.home_goal = pew.Goal(home_goal_recv_pin,home_goal_lazer_pin)
 
         away_goal_recv_pin = 25
-        away_goal_lazer_pin = 24
+        away_goal_lazer_pin = 27
         self.away_goal = pew.Goal(away_goal_recv_pin,away_goal_lazer_pin)
         
         #*****************************PLAYER DECLERATIONS******************************************
