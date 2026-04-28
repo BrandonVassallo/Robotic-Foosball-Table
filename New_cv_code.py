@@ -297,8 +297,8 @@ def BoundDetect(frame, tgt_color=None, sensitivity=None):
 
     Performance notes for Pi5
     -------------------------
-    - Morphological ops use a 3×3 kernel (down from 5×5) and 1 iteration
-      (down from 2) — adequate for a foosball-sized blob, ~2× faster.
+    - Morphological ops use a 3x3 kernel (down from 5x5) and 1 iteration
+      (down from 2) — adequate for a foosball-sized blob, ~2x faster.
     - The Gaussian blur pass has been removed; the erode/dilate is sufficient
       to suppress single-pixel noise at this scale.
     - The kernel is pre-allocated at module level (_MORPH_KERNEL) so it is not
@@ -423,4 +423,5 @@ def debug():
 
 
 if __name__ == "__main__":
-    debug()
+    # debug()
+    pass
