@@ -33,8 +33,18 @@ class Player_line:
     
 
 
-    def smooth_move(self):
-        pass
+    def smooth_move(self, target, current):
+        if abs(target-current)<=5:
+            self.set_position(target,self.move_pin)
+        elif target>current:
+            self.set_position((target-current)//10 + current,self.move_pin)
+        elif current<target:
+            self.set_position(current - (current-target)//10, self.move_pin)
+        elif current==target:
+            pass
+        else:
+            self.set_position(90,self.move_pin)
+        
 
 
 
