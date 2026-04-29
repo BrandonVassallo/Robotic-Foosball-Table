@@ -63,7 +63,10 @@ class Player_line:
 
     def kick_followthrough(self):
         """Call this ~200ms after kick_start(). Non-blocking."""
-        self.set_position(self.vertical_pos+50, self.kick_pin)
+        if self.vertical_pos+50 > 180:
+            self.set_position(180,self.kick_pin)
+        else:
+            self.set_position(self.vertical_pos+50, self.kick_pin)
 
     def kick_reset(self):
         """Call this ~200ms after kick_followthrough(). Non-blocking."""
