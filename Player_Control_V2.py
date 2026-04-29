@@ -38,13 +38,13 @@ class Player_line:
         if percentage == None:
             return current
         
-        elif self.target > 180:
+        if self.target > 180:
             self.target = 180
 
-        elif self.target < 0:
+        if self.target < 0:
             self.target = 0  
         
-        elif abs(self.target-current)<=5:
+        if abs(self.target-current)<=5:
             self.set_position(self.target,self.move_pin)
             return self.target
         elif self.target>current:
