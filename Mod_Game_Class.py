@@ -259,7 +259,7 @@ class Game:
 
 
         #make timer display 5mins
-        self.timer = 60
+        self.timer = 300
         self.canvas.itemconfig(self.timer_text, text=self.format_time(self.timer))
         
         self.update_timer()
