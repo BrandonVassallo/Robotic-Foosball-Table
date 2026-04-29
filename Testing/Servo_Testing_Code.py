@@ -25,11 +25,26 @@ MAX = 1
 MID = 2
 FULL_RANGE = 3
 CUSTOM = 4
-cutsom_spin_angle = 100
-custom_lin_angle = 90
+cutsom_spin_angle = 85
+custom_lin_angle = 180
 
-spin_pin = 12
-move_pin = 13
+custom_lin_angle += 0
+
+if custom_lin_angle < 0:
+    custom_lin_angle = 0
+if custom_lin_angle > 180:
+    custom_lin_angle = 180
+
+# Pin numbers
+    # Goalie
+        # 26 move, 19 kick
+    # Defense
+        # 6 move, 13 kick
+    # Offense
+        # 20 move, 21 kick
+
+spin_pin = 21
+move_pin = 20
 
 Spin_motor = gpiozero.AngularServo(spin_pin, max_pulse_width=0.0025,min_pulse_width=0.0005, max_angle=180,min_angle=0)
 Lin_motor = gpiozero.AngularServo(move_pin, max_pulse_width=0.0025,min_pulse_width=0.0005, max_angle=180,min_angle=0)
