@@ -339,8 +339,8 @@ class Game:
 
         #We want the y position of the ball to be the value to be below the scoreboard and provide a margin for the ball size
         #Convert Brandon coordinates tuple (x, y) to UI coordinates
-            self.ball_x = self.width*0.02 + ball_pos[0] * ((self.width*0.98 - self.width*0.02)/640)
-            self.ball_y = self.top_of_field + ball_pos[1] * ((self.height - self.top_of_field)/360)
+            self.ball_x = self.width - self.width*0.02 + ball_pos[0] * ((self.width*0.98 - self.width*0.02)/640)
+            self.ball_y = self.height - self.top_of_field + ball_pos[1] * ((self.height - self.top_of_field)/360)
             self.canvas.coords(self.ball,self.ball_x-15,self.ball_y-15,self.ball_x+15,self.ball_y+15 )
             self.canvas.itemconfig(self.ball, state="normal")
 
