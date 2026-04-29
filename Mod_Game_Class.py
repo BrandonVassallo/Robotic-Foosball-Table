@@ -553,7 +553,7 @@ class Game:
 
         
         #THIS VARIABLE IS THE SPEED AT WHICH THE GAME WILL RUN, CURRENTLY 50ms PER LOOP
-        self.screen.after(25,self.active_state)
+        self.screen.after(35,self.active_state)
 
     
 
