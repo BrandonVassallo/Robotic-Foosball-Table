@@ -342,6 +342,7 @@ class Game:
             self.ball_x = self.width*0.02 + ball_pos[0] * ((self.width*0.98 - self.width*0.02)/640)
             self.ball_y = self.top_of_field + ball_pos[1] * ((self.height - self.top_of_field)/360)
             self.canvas.coords(self.ball,self.ball_x-15,self.ball_y-15,self.ball_x+15,self.ball_y+15 )
+            self.canvas.itemconfig(self.ball, state="normal")
 
    
 
@@ -366,7 +367,7 @@ class Game:
 
 
         if self.ball != None:
-            self.canvas.delete(self.ball)
+            self.canvas.itemconfig(self.ball, state="hidden")
 
         #creates a waiting screen with instructions
         self.canvas.itemconfig(self.waiting_screen, state="normal")
@@ -390,7 +391,7 @@ class Game:
 
 
         if self.ball != None:
-            self.canvas.delete(self.ball)
+            self.canvas.itemconfig(self.ball, state="hidden")
 
         #determines winner
         if self.robot_score > self.human_score:
@@ -540,7 +541,7 @@ class Game:
             print("WAITING UPDATED")
             self.update_WAITING()
 
-        # self.canvas.itemconfig(self.fps_text, text=round(self.fps))
+        self.canvas.itemconfig(self.fps_text, text=round(self.fps))
 
         
         #THIS VARIABLE IS THE SPEED AT WHICH THE GAME WILL RUN, CURRENTLY 50ms PER LOOP
