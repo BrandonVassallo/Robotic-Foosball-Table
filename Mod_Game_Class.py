@@ -199,7 +199,7 @@ class Game:
         self.waiting_text = self.canvas.create_text (self.width//2,self.height//2,text="Place the ball in the enclosure,\n then press the start button.", fill="black",font=("Impact",40),state="hidden")
         self.game_over_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill=self.color, state="hidden")
         self.game_over_text = self.canvas.create_text (self.width//2,self.height//2,text=" wins!\nTo play again, press the start button.", fill="black",font=("Impact",40),state="hidden")
-        self.fps_text = self.canvas.create_text(self.width//2, self.height//2,text="", font=("impact",80))
+        self.fps_text = self.canvas.create_text(self.width//2, self.height//2,text="", font=("impact",40))
 
 
 
