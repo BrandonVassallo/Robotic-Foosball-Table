@@ -476,6 +476,14 @@ class Game:
             self.goal(True)
     
 
+    def kick_helper(self, player_line: pc.Player_line):
+        if not player_line.is_kicking:
+            player_line.is_kicking = True   # Prevent's multiple kick attempts during the kick
+            player_line.kick_start()
+            # These commands tell tkinter to run the referenced functions after x amount of miliseconds
+            self.screen.after(200, player_line.kick_followthrough)
+            self.screen.after(400, player_line.kick_reset)
+            
         
 
     def update_IDLE(self):
@@ -512,13 +520,13 @@ class Game:
 
             #kicking function of the lines
             if cmd_array[0][1] == True:
-                self.goalie.kick()
+                self.kick_helper(self.goalie)
                 print("goalie kick")
             if cmd_array[1][1] == True:
-                self.defense.kick()
+                self.kick_helper(self.defense)
                 print("defense kick")
             if cmd_array[2][1] == True:
-                self.offense.kick()
+                self.kick_helper(self.offense)
                 print("offense kick")
                     
                 

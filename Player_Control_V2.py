@@ -8,6 +8,8 @@ class Player_line:
         self.move_pin = move_pin
         self.kick_pin = kick_pin
 
+        self.is_kicking = False # Used for .after checking  
+
         # lgpio.setwarnings(False)
         # lgpio.setmode(lgpio.BCM)
         self.gpio_chip = lgpio.gpiochip_open(0)
@@ -50,14 +52,18 @@ class Player_line:
             return self.target
         
 
+    def kick_start(self):
+        """Call this to BEGIN a kick. Non-blocking."""
+        self.set_position(80, self.kick_pin)
 
+    def kick_followthrough(self):
+        """Call this ~200ms after kick_start(). Non-blocking."""
+        self.set_position(130, self.kick_pin)
 
-    def kick(self):
-        self.set_position(80,self.kick_pin)
-        time.sleep(0.2)
-        self.set_position(130,self.kick_pin)
-        time.sleep(0.2)
-        self.set_position(100,self.kick_pin)
+    def kick_reset(self):
+        """Call this ~200ms after kick_followthrough(). Non-blocking."""
+        self.set_position(100, self.kick_pin)
+        self.is_kicking = False
 
 
 
