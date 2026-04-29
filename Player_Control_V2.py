@@ -8,7 +8,7 @@ class Player_line:
         self.move_pin = move_pin
         self.kick_pin = kick_pin
         self.vertical_pos = vertical
-        self.middle_pos = middle
+        self.middle_off = middle
 
         self.is_kicking = False # Used for .after checking  
 
@@ -33,7 +33,13 @@ class Player_line:
     def smooth_move(self, percentage, current):
         
         if percentage!=None:
-            self.target = percentage*180
+            self.target = percentage*180 + self.middle_off
+        
+        if self.target > 180:
+            self.target = 180
+
+        if self.target < 0:
+            self.target = 0            
 
         if percentage == None:
             return current
