@@ -4,14 +4,14 @@ import time
 
 class Player_line:
 
-    def __init__(self,move_pin,kick_pin):
+    def __init__(self,move_pin,kick_pin,vertical,middle):
         self.move_pin = move_pin
         self.kick_pin = kick_pin
+        self.vertical_pos = vertical
+        self.middle_pos = middle
 
         self.is_kicking = False # Used for .after checking  
 
-        # lgpio.setwarnings(False)
-        # lgpio.setmode(lgpio.BCM)
         self.gpio_chip = lgpio.gpiochip_open(0)
 
         lgpio.gpio_claim_output(self.gpio_chip, self.move_pin)
@@ -31,7 +31,6 @@ class Player_line:
 
 
     def smooth_move(self, percentage, current):
-        
         
         if percentage!=None:
             self.target = percentage*180
@@ -54,26 +53,26 @@ class Player_line:
 
     def kick_start(self):
         """Call this to BEGIN a kick. Non-blocking."""
-        self.set_position(80, self.kick_pin)
+        self.set_position(self.vertical_pos-20, self.kick_pin)
 
     def kick_followthrough(self):
         """Call this ~200ms after kick_start(). Non-blocking."""
-        self.set_position(130, self.kick_pin)
+        self.set_position(self.vertical_pos+30, self.kick_pin)
 
     def kick_reset(self):
         """Call this ~200ms after kick_followthrough(). Non-blocking."""
-        self.set_position(100, self.kick_pin)
+        self.set_position(self.vertical_pos, self.kick_pin)
         self.is_kicking = False
 
 
 
     def up(self):
-        self.set_position(30,self.kick_pin)
+        self.set_position(self.vertical_pos-70,self.kick_pin)
 
 
 
     def down(self):
-        self.set_position(100,self.kick_pin)
+        self.set_position(self.vertical_pos,self.kick_pin)
 
 
 

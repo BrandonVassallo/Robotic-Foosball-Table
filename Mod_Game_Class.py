@@ -91,15 +91,21 @@ class Game:
         #*****************************PLAYER DECLERATIONS******************************************
         self.goalie_move_pin = 26
         self.goalie_kick_pin = 19
-        self.goalie = pc.Player_line(self.goalie_move_pin, self.goalie_kick_pin)
+        self.g_vert = 135
+        self.g_mid = 0
+        self.goalie = pc.Player_line(self.goalie_move_pin, self.goalie_kick_pin,self.g_vert,self.g_mid)
 
         self.def_move_pin = 6
         self.def_kick_pin = 13
-        self.defense = pc.Player_line(self.def_move_pin, self.def_kick_pin)
+        self.d_vert = 100
+        self.d_mid = 0
+        self.defense = pc.Player_line(self.def_move_pin, self.def_kick_pin,self.d_vert, self.d_mid)
         
         self.off_move_pin = 20
         self.off_kick_pin = 21
-        self.offense = pc.Player_line(self.off_move_pin, self.off_kick_pin)
+        self.o_vert = 85
+        self.o_mid = 0
+        self.offense = pc.Player_line(self.off_move_pin, self.off_kick_pin,self.o_vert, self.o_mid)
 
 
         #init the game state using enum types
