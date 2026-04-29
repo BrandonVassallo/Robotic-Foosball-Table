@@ -362,13 +362,13 @@ class Game:
 
 
         #Move all Lines to center position and update current angles
-        self.current_angle_goalie = 90
-        self.current_angle_defense = 90
-        self.current_angle_offense = 90
+        self.current_angle_goalie = 90+self.g_mid
+        self.current_angle_defense = 90+self.d_mid
+        self.current_angle_offense = self.o_mid
 
-        self.offense.set_position(90,self.off_move_pin)
-        self.defense.set_position(90,self.def_move_pin)
-        self.goalie.set_position(90,self.goalie_move_pin)
+        self.offense.set_position(90+self.o_mid,self.off_move_pin)
+        self.defense.set_position(90+self.d_mid,self.def_move_pin)
+        self.goalie.set_position(90+self.g_mid,self.goalie_move_pin)
 
 
 
