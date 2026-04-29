@@ -301,12 +301,6 @@ class Game:
         self.canvas.itemconfig(self.timer_text,text=self.format_time(self.timer))
         self.clear_screen_events()
 
-
-        # Move all three player rods up
-        self.goalie.up()
-        self.defense.up()
-        self.offense.up()
-
         # Reset Computer Vision Objects
         if hasattr(self, "vid"):
             self.vid.release()
