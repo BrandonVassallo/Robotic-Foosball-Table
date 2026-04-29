@@ -44,10 +44,11 @@ class Player_line:
         if self.target < 0:
             self.target = 0  
         
-        if abs(self.target-current)<=5:
-            self.set_position(self.target,self.move_pin)
-            return self.target
-        elif self.target>current:
+        #if abs(self.target-current)<=5:
+        #    self.set_position(self.target,self.move_pin)
+        #    return self.target
+
+        if self.target>current:
             self.set_position((self.target-current)//10 + current,self.move_pin)
             return (self.target-current)//10 + current
         elif current<self.target:
