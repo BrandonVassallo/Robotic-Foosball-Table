@@ -188,15 +188,18 @@ class Game:
         self.timer_text = self.canvas.create_text(self.width*0.5, self.top_of_field//2, text= "0:00",fill="blue",font=("Impact",50) )
 
         self.color = "red"
-        self.ball = self.canvas.create_oval(self.ball_x-15,self.ball_y-15,self.ball_x+15,self.ball_y+15, fill="magenta", state="hidden")
+        self.ball = self.canvas.create_oval(self.ball_x-15,self.ball_y-15,self.ball_x+15,self.ball_y+15, fill="magenta", state="normal")
         self.waiting_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill="red", state="hidden")
         self.waiting_text = self.canvas.create_text (self.width//2,self.height//2,text="Place the ball in the enclosure,\n then press the start button.", fill="black",font=("Impact",40),state="hidden")
         self.game_over_screen = self.canvas.create_rectangle(0,self.top_of_field,self.width,self.height, fill=self.color, state="hidden")
         self.game_over_text = self.canvas.create_text (self.width//2,self.height//2,text=" wins!\nTo play again, press the start button.", fill="black",font=("Impact",40),state="hidden")
+        self.fps_text = self.canvas.create_text(self.width//2, self.height//2,text="", font=("impact",80))
+
+
+
 
         self.screen.after(50,self.active_state)
 
-        self.fps_text = self.canvas.create_text(self.width//2, self.height//2,text="", font=("impact",80))
     #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -292,9 +295,6 @@ class Game:
         self.canvas.itemconfig(self.timer_text,text=self.format_time(self.timer))
         self.clear_screen_events()
 
-        # Delete the ball
-        if self.ball != None:
-            self.canvas.delete(self.ball)
 
         # Move all three player rods up
         self.goalie.up()
@@ -334,9 +334,6 @@ class Game:
 
         if ball_pos != None:
             
-            if self.ball != None:
-                self.canvas.delete(self.ball)
-
         #cord is a tuple containing the x,y cordinate of the ball.
         #Brandon code uses 0,0 as top left and 640,360 as bottom right
 
@@ -344,9 +341,8 @@ class Game:
         #Convert Brandon coordinates tuple (x, y) to UI coordinates
             self.ball_x = self.width*0.02 + ball_pos[0] * ((self.width*0.98 - self.width*0.02)/640)
             self.ball_y = self.top_of_field + ball_pos[1] * ((self.height - self.top_of_field)/360)
-
-            self.ball=self.canvas.create_oval(self.ball_x-15,self.ball_y-15,self.ball_x+15,self.ball_y+15, fill="magenta", state="normal")
-            print("ball created")
+            self.canvas.coords(self.ball,self.ball_x-15,self.ball_y-15,self.ball_x+15,self.ball_y+15 )
+            self.canvas.itemconfig(self.ball, state="normal")
 
    
 
@@ -371,7 +367,7 @@ class Game:
 
 
         if self.ball != None:
-            self.canvas.delete(self.ball)
+            self.canvas.itemconfig(self.ball, state="hidden")
 
         #creates a waiting screen with instructions
         self.canvas.itemconfig(self.waiting_screen, state="normal")
@@ -395,7 +391,7 @@ class Game:
 
 
         if self.ball != None:
-            self.canvas.delete(self.ball)
+            self.canvas.itemconfig(self.ball, state="hidden")
 
         #determines winner
         if self.robot_score > self.human_score:
@@ -553,7 +549,7 @@ class Game:
             print("WAITING UPDATED")
             self.update_WAITING()
 
-        # self.canvas.itemconfig(self.fps_text, text=round(self.fps))
+        self.canvas.itemconfig(self.fps_text, text=round(self.fps))
 
         
         #THIS VARIABLE IS THE SPEED AT WHICH THE GAME WILL RUN, CURRENTLY 50ms PER LOOP
